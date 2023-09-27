@@ -1,0 +1,68 @@
+Parameters:
+  name:         CalorChain
+  comment:      "Top level calorimeter chain"
+  nEvents:      $nevents
+  nEventsMax:   400
+  nRepeat:      $nrepeat
+  RunMC:        6
+  RunRaw:       329
+  OutDir:       . 
+  nFilesPerJob: 1
+  macro:        Fun4All_CaloProduction.C
+  memory:       2048
+  cpuTimePerEvent: 75000
+
+Resources:
+  - file: /sphenix/u/jwebb2/work/2023/macros/CaloProduction/Fun4All_CaloProduction.C
+
+InputDataSets:
+  - name: EventCombine/outDS
+    comment: Output of event combinator
+    nFilesPerJob: 1
+
+OutputDataSets:
+  - name: CalorChain/outDS
+    filelist:
+      - "regex|calor_emcal*"
+
+JobCommands: |-
+
+  # Initialize environment... using the "build" environment, unless it
+  # was not specified
+  if [ -z ${build+x} ]; then 
+     echo "build is unset [default to latest]"
+     source /opt/sphenix/core/bin/sphenix_setup.sh -n 
+  else 
+     echo "build is set to ${build}"
+     source /opt/sphenix/core/bin/sphenix_setup.sh -n ${build}
+  fi  
+
+  echo ..........................................................................
+  echo Running ${name} ${runNumber} $@
+  echo ..........................................................................
+
+  # Strip the task ID for the matching file(s)
+  strip_task_id "*.prdf.panda*" .prdf
+  echo ls -l *.prdf
+  ls -l *.prdf
+  echo  readlink -f *.prdf
+  readlink -f *.prdf
+  echo readlink -e *.prdf
+  readlink -e *.prdf
+
+  # Input file is the input prdr
+  input=`ls *.prdf`
+
+  # Output file replace beam_emcal with calor
+  output=${input/beam/calor}
+  echo root -q -b ${macro}\(\"${input}\",\"${output}\"\)
+  root -q -b ${macro}\(\"${input}\",\"${output}\"\)
+
+  # And append the task ID
+  append_task_id "calor*.prdf" .prdf
+
+
+
+
+
+
