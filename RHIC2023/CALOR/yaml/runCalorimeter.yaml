@@ -13,7 +13,7 @@ Parameters:
   cpuTimePerEvent: 75000
 
 Resources:
-  - file: /sphenix/u/jwebb2/work/2023/macros/CaloProduction/Fun4All_CaloProduction.C
+  - file: /sphenix/u/sphnxpro/macros/CaloProduction/Fun4All_CaloProduction.C
 
 InputDataSets:
   - name: EventCombine/outDS

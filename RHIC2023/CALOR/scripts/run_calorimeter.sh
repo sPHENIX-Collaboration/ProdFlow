@@ -13,20 +13,20 @@
 # <debugopt> "--debug taskname" enables realtime logging for taskname
 #
 
-#nevents=1000
+
 nevents=0
-#run="00009245"
-#run="00021707"
-#run="00023721"
-#run="000"$1
 dir=/sphenix/lustre01/sphnxpro/commissioning/emcal/beam
 dirhcal=/sphenix/lustre01/sphnxpro/commissioning/HCal/beam
 dirzdc=/sphenix/lustre01/sphnxpro/commissioning/ZDC/beam
 dirmbd=/sphenix/lustre01/sphnxpro/commissioning/mbd/beam
 topDir=/sphenix/u/sphnxpro/shrek/
-#submitopt=" --submit --group sphenix.test "
-submitopt=" --submit --group sphenix "
-debugopt=" --debug none "
+
+submitopt=" --no-submit --group sphenix --no-uuid"   # --no-timestamp for final/official productions
+debugopt=" --debug ALL "
+scope=user.lebedev
+
+workflows=ProdFlow/RHIC2023/CALOR/yaml
+
 if [[ $1 ]]; then
    run=$( printf "%08d" $1 )
 fi
@@ -43,10 +43,11 @@ if [[ $5 ]]; then
    debugopt=$5
 fi
 
-echo "RUNNUMBER: " $run
+tag=sP23x-CALOR-${run}
 
-scope=user.lebedev
-tag=sP22x
+echo "RUNNUMBER: " $run
+echo "TAG:       " $tag
+
 
 # Clean out / create temp directory for filelists
 if [ -e /tmp/${USER}/$run ]; then
@@ -83,12 +84,6 @@ ls /tmp/${USER}/$run/hcalwest.list >> run-${run}.filelist
 ls /tmp/${USER}/$run/zdc.list >> run-${run}.filelist
 ls /tmp/${USER}/$run/mbd.list >> run-${run}.filelist
 
-tagin=`tail -n 1 filetag`
-echo FILETAG IS ${tagin}
-echo $(( tagin + 1 )) >> filetag
-
-#shrek ${submitopt} ${debugopt} --topDir=${topDir} --outDS ${scope}.${tag}_${USER}${tagin}_calor_calib --nevents=${nevents} --no-pause --tag calor-calib workflows/rhic2023.AuAu200.calor/*.yaml --filetag=test${tagin} --runNumber=${run} --filelist=run-${run}.filelist 
-
-shrek ${submitopt} ${debugopt} --topDir=${topDir} --nevents=${nevents} --no-pause --tag calor-calib workflows/rhic2023.AuAu200.calor/*.yaml --filetag=test${tagin} --runNumber=${run} --filelist=run-${run}.filelist 
+shrek ${submitopt} ${debugopt} --topDir=${topDir} --nevents=${nevents} --no-pause --tag ${tag} ${workflows}/*.yaml --runNumber=${run} --filelist=run-${run}.filelist 
 
 
