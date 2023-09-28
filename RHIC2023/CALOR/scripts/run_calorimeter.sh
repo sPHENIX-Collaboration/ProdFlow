@@ -21,9 +21,8 @@ dirzdc=/sphenix/lustre01/sphnxpro/commissioning/ZDC/beam
 dirmbd=/sphenix/lustre01/sphnxpro/commissioning/mbd/beam
 topDir=/sphenix/u/sphnxpro/shrek/
 
-submitopt=" --no-submit --group sphenix --no-uuid"   # --no-timestamp for final/official productions
+submitopt=" --submit --group sphenix --no-uuid"   # --no-timestamp for final/official productions
 debugopt=" --debug ALL "
-scope=user.lebedev
 
 workflows=ProdFlow/RHIC2023/CALOR/yaml
 
