@@ -7,7 +7,6 @@ Parameters:
   RunMC:        6
   RunRaw:       329
   OutDir:       /sphenix/lustre01/sphnxpro/scratch
-  pfnList:      filelist
   nFilesPerJob: 12
   macro:        Fun4All_Combiner.C
   memory:       2048
@@ -15,6 +14,10 @@ Parameters:
 
 Resources:
   - file: /sphenix/u/sphnxpro/macros/eventcombine/Fun4All_Combiner.C
+
+InputDataSets:
+  - name: topInputDS
+    datasets: ebinputs
 
 OutputDataSets:
   - name: EventCombine/outDS
@@ -36,8 +39,22 @@ JobCommands: |-
   echo Running ${name} ${runNumber} $@
   echo ..........................................................................
 
-  # Input is a pfnlist... but really, we ignore it.  The sebXX.list files should be
+  # Input is a dataset of empty files... but really, we ignore it.  The sebXX.list files should be
   # packed and ready to go...
+  ln -s *.seb00 seb00.list
+  ln -s *.seb01 seb01.list
+  ln -s *.seb02 seb02.list
+  ln -s *.seb03 seb03.list
+  ln -s *.seb04 seb04.list
+  ln -s *.seb05 seb05.list
+  ln -s *.seb06 seb06.list
+  ln -s *.seb07 seb07.list
+  ln -s *.hcaleast hcaleast.list
+  ln -s *.hcalwest hcalwest.list
+  ln -s *.zdc zdc.list
+  ln -s *.mdb mbd.list
+
+  ls -la
 
   # Make sure we keep each run in its own scratch space on lustre
   target=${OutDir}/${runNumber}
