@@ -52,7 +52,7 @@ JobCommands: |-
   ln -s *.hcaleast hcaleast.list
   ln -s *.hcalwest hcalwest.list
   ln -s *.zdc zdc.list
-  ln -s *.mdb mbd.list
+  ln -s *.mbd mbd.list
 
   ls -la
 
