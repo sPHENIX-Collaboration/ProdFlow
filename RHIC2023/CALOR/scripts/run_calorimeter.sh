@@ -42,7 +42,6 @@ if [[ $5 ]]; then
    debugopt=$5
 fi
 
-#tag=sP23x-CALOR-${run}
 tag=rn${run}-CALOR-sP23x
 ts=`date +%Y%h%d-%H%M%S`
 
@@ -119,7 +118,7 @@ for f in [ "seb00", "seb01", "seb02", "seb03", "seb04", "seb05", "seb06", "seb07
 EOF
 
 shrek ${submitopt} ${debugopt} --topDir=${topDir} --nevents=${nevents} --no-pause --tag ${tag} ${workflows}/*.yaml --runNumber=${run} --filelist=run-${run}.filelist --ebinputs=${scope}:${DATASET} \
-    --pack  /tmp/${USER}/$run/${tag}-${ts}.seb00   \
+    --pack  /tmp/${USER}/$run/${tag}-${ts}.seb00  \
     --pack  /tmp/${USER}/$run/${tag}-${ts}.seb01  \
     --pack  /tmp/${USER}/$run/${tag}-${ts}.seb02  \
     --pack  /tmp/${USER}/$run/${tag}-${ts}.seb03  \
