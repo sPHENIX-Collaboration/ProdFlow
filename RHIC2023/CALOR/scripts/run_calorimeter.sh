@@ -13,6 +13,13 @@
 # <debugopt> "--debug taskname" enables realtime logging for taskname
 #
 
+BUILD=ana.378
+sphenix_setup.sh ${BUILD}
+
+# Re-parse from offline main
+BUILD=`basename ${OFFLINE_MAIN}`
+
+
 nevents=0
 dir=/sphenix/lustre01/sphnxpro/commissioning/emcal/beam
 dirhcal=/sphenix/lustre01/sphnxpro/commissioning/HCal/beam
@@ -42,14 +49,13 @@ if [[ $5 ]]; then
    debugopt=$5
 fi
 
-tag=rn${run}-CALOR-sP23x
+tag=rn${run}-CALOR-${BUILD}
 ts=`date +%Y%h%d-%H%M%S`
 
 echo "RUNNUMBER: " $run
 echo "TAG:       " $tag
 echo "TIMESTAMP: " $ts
 DATASET=${tag}-${ts}
-
 
 echo "DATASET:   " ${DATASET}
 echo "SCOPE:     " ${scope}
@@ -117,7 +123,7 @@ for f in [ "seb00", "seb01", "seb02", "seb03", "seb04", "seb05", "seb06", "seb07
     client.set_metadata( "group.sphenix", filename, 'guid', str(uuid.uuid4()) )
 EOF
 
-shrek ${submitopt} ${debugopt} --topDir=${topDir} --nevents=${nevents} --no-pause --tag ${tag} ${workflows}/*.yaml --runNumber=${run} --filelist=run-${run}.filelist --ebinputs=${scope}:${DATASET} \
+shrek ${submitopt} ${debugopt} --build=${BUILD} --topDir=${topDir} --nevents=${nevents} --no-pause --tag ${tag} ${workflows}/*.yaml --runNumber=${run} --filelist=run-${run}.filelist --ebinputs=${scope}:${DATASET} \
     --pack  /tmp/${USER}/$run/${tag}-${ts}.seb00  \
     --pack  /tmp/${USER}/$run/${tag}-${ts}.seb01  \
     --pack  /tmp/${USER}/$run/${tag}-${ts}.seb02  \
