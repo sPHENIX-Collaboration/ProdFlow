@@ -2,7 +2,7 @@
 
 # Usage
 #
-# run_calorimeter.sh <run number> <input directory> <out/link directory> <nevents> <debugopt>
+# run_calorimeter.sh <run number> <nevents> <input directory> <out/link directory> <debugopt>
 #
 # where 
 #
@@ -15,17 +15,23 @@
 
 BUILD=ana.378
 sphenix_setup.sh ${BUILD}
+# DBOPT=" --dbtag=pro "
+DBOPT=""
 
-# Re-parse from offline main
+# Re-parse from offline main (ensures that we get a valid build)
 BUILD=`basename ${OFFLINE_MAIN}`
 
-
-nevents=0
+nevents=50000
 dir=/sphenix/lustre01/sphnxpro/commissioning/emcal/beam
 dirhcal=/sphenix/lustre01/sphnxpro/commissioning/HCal/beam
 dirzdc=/sphenix/lustre01/sphnxpro/commissioning/ZDC/beam
 dirmbd=/sphenix/lustre01/sphnxpro/commissioning/mbd/beam
-topDir=/sphenix/u/sphnxpro/shrek/
+
+#topDir=/sphenix/u/sphnxpro/shrek/
+
+# Target directory for the softlinks
+topDir=/sphenix/lustre01/sphnxpro/production/2023/
+ssh sphnxpro@`hostname -s` mkdir -p ${topDir}
 
 submitopt=" --submit --group sphenix --no-uuid"   # --no-timestamp for final/official productions
 debugopt=" --debug all "
@@ -37,19 +43,19 @@ if [[ $1 ]]; then
    run=$( printf "%08d" $1 )
 fi
 if [[ $2 ]]; then
-   dir=$2
+   nevents=$2
 fi
 if [[ $3 ]]; then
-   topDir=$3
+   dir=$3
 fi
 if [[ $4 ]]; then
-   nevents=$3
+   topDir=$4
 fi
 if [[ $5 ]]; then
    debugopt=$5
 fi
 
-tag=rn${run}-CALOR-${BUILD}
+tag=rn${run}-CALOR-${BUILD//./}
 ts=`date +%Y%h%d-%H%M%S`
 
 echo "RUNNUMBER: " $run
@@ -123,7 +129,7 @@ for f in [ "seb00", "seb01", "seb02", "seb03", "seb04", "seb05", "seb06", "seb07
     client.set_metadata( "group.sphenix", filename, 'guid', str(uuid.uuid4()) )
 EOF
 
-shrek ${submitopt} ${debugopt} --build=${BUILD} --topDir=${topDir} --nevents=${nevents} --no-pause --tag ${tag} ${workflows}/*.yaml --runNumber=${run} --filelist=run-${run}.filelist --ebinputs=${scope}:${DATASET} \
+shrek ${submitopt} ${debugopt} --build=${BUILD} ${DBOPT} --topDir=${topDir} --nevents=${nevents} --no-pause --tag ${tag} ${workflows}/run*.yaml --runNumber=${run} --filelist=run-${run}.filelist --ebinputs=${scope}:${DATASET} \
     --pack  /tmp/${USER}/$run/${tag}-${ts}.seb00  \
     --pack  /tmp/${USER}/$run/${tag}-${ts}.seb01  \
     --pack  /tmp/${USER}/$run/${tag}-${ts}.seb02  \
