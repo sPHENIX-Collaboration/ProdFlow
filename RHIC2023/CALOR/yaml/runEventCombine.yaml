@@ -68,11 +68,16 @@ JobCommands: |-
   # the transfer to rucio
   ln -s ${target}/*.prdf .
 
+  for f in *.prdf
+  do
+
+  done
+
   # appends the panda task ID to the matching files so that we don't run
   # into namespace issues
-  echo ls before append .......
-  append_task_id "*.prdf" .prdf
-  echo ls after append .......
+  # echo ls before append .......
+  # append_task_id "*.prdf" .prdf
+  # echo ls after append .......
 
   stash_job_log
   
