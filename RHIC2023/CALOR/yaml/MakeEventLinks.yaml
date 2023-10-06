@@ -1,28 +1,28 @@
 Parameters:
-  name: MakeLinks
+  name: MakeEventLinks
   comment: "Create symbolic links to the rucio managed files"
   memory: 2048
   maxAttempt: 3
   
 InputDataSets:
-  - name: CalorChain/outDS
-    comment: "Output of the calorimeter chain"
+  - name: EventCombine/outDS
+    comment: Output of event combinator
 
 OutputDataSets:
-  - name: MakeLinks/outDS
+  - name: MakeEventLinks/outDS
     filelist:
-      - "requried: manifest.dat"
+      - "requried: manifestevent.dat"
 
 JobCommands: |-
   # Loop over all input files provided
-  echo ${IN1} >> manifest.dat
+  echo ${IN1} >> manifestevent.dat
 
   # DB tag
   BUILD=${build/./}
   DBTAG=${dbtag:-default}
 
   # Create link directories
-  lnkdir1=${topDir}/${BUILD^^}/${DBTAG}/run${runNumber}/calor
+  lnkdir1=${topDir}/${BUILD^^}/${DBTAG}/run${runNumber}/event
 
   [ -d "${lnkdir1}" ] && rm -r ${lnkdir1}
 
@@ -53,12 +53,8 @@ JobCommands: |-
     fi
 
     #ln -s ${src} ${tgt}
-    ln -s ${src} .
+    ln -s .
     cd -
 
   done
-
-
-
-
 
