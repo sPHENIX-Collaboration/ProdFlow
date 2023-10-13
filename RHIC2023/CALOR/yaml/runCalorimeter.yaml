@@ -2,10 +2,6 @@ Parameters:
   name:         CalorChain
   comment:      "Top level calorimeter chain"
   nEvents:      $nevents
-  nEventsMax:   400
-  nRepeat:      $nrepeat
-  RunMC:        6
-  RunRaw:       329
   OutDir:       . 
   nFilesPerJob: 1
   macro:        Fun4All_CaloProduction.C
@@ -23,7 +19,7 @@ InputDataSets:
 OutputDataSets:
   - name: CalorChain/outDS
     filelist:
-      - "regex|calor_emcal*"
+      - "regex|DST_calor*"
 
 JobCommands: |-
 
@@ -53,13 +49,31 @@ JobCommands: |-
   # Input file is the input prdr
   input=`ls *.prdf`
 
-  # Output file replace beam_emcal with calor
-  output=${input/beam/calor}
-  echo root -q -b ${macro}\(\"${input}\",\"${output}\"\)
-  root -q -b ${macro}\(\"${input}\",\"${output}\"\)
+  DBTAG=${dbtag:-ptid${PanDA_TaskID}}
+  BUILDTAG=${build/./}
+  FILETAG=${BUILDTAG}_${DBTAG}  
 
-  # And append the task ID
-  #$$$append_task_id "calor*.prdf" .prdf
+  # Get the run-sequence number... If we cant decode this, we don't
+  # match the input file and we will not produce output (and the
+  # job will be failed in panda...)
+
+  myregex_="*-([0-9-]+).prdf"
+  #if [[ $fname=~$regex ]]; then echo "moopsie"; fi
+  if [[ $input=~$myregex_ ]]; then
+     #... bash_rematch is empty for some reason ...
+     #runseq=${BASH_REMATCH[1]}
+     runseq=${input#*-}
+     runseq=${runseq%.*}
+     output=DST_calor_${FILETAG}_${runseq}.root     
+     echo root -q -b ${macro}\(\"${input}\",\"${output}\"\)
+     root -q -b ${macro}\(\"${input}\",\"${output}\"\)
+  else
+     echo ${input} failed regex match to $myregex_
+     stash_job_log
+  fi
+
+
+
 
 
 
