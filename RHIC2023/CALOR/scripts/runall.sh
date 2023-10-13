@@ -7,6 +7,8 @@ do
   echo "$line"
   #runno="000"$line
   #echo $runno
-  source ProdFlow/RHIC2023/CALOR/scripts/run_calorimeter.sh $line 0
+  echo ------------------------------------------------------------ 
+  echo $line                                                        
+  source ProdFlow/RHIC2023/CALOR/scripts/run_calorimeter.sh $line 
 done < "$input"
 
