@@ -13,15 +13,18 @@
 # <debugopt> "--debug taskname" enables realtime logging for taskname
 #
 
-BUILD=ana.378
-sphenix_setup.sh ${BUILD}
-# DBOPT=" --dbtag=pro "
-DBOPT=""
+nevents=0
+BUILD=ana.380
+#DBTAG=TESTp001p19
+DBTAG=2023p001
+sphenix_setup.sh -n ${BUILD}
+DBOPT=" --dbtag=${DBTAG} "
+#DBOPT=""
+
 
 # Re-parse from offline main (ensures that we get a valid build)
 BUILD=`basename ${OFFLINE_MAIN}`
 
-nevents=50000
 dir=/sphenix/lustre01/sphnxpro/commissioning/emcal/beam
 dirhcal=/sphenix/lustre01/sphnxpro/commissioning/HCal/beam
 dirzdc=/sphenix/lustre01/sphnxpro/commissioning/ZDC/beam
@@ -35,7 +38,7 @@ ssh sphnxpro@`hostname -s` mkdir -p ${topDir}
 
 submitopt=" --submit --group sphenix --no-uuid"   # --no-timestamp for final/official productions
 debugopt=" --debug all "
-scope=group.sphenix
+scope="group.sphenix"
 
 workflows=ProdFlow/RHIC2023/CALOR/yaml
 
@@ -61,10 +64,25 @@ ts=`date +%Y%h%d-%H%M%S`
 echo "RUNNUMBER: " $run
 echo "TAG:       " $tag
 echo "TIMESTAMP: " $ts
-DATASET=${tag}-${ts}
-
+DATASET=${tag}-${DBTAG}
 echo "DATASET:   " ${DATASET}
 echo "SCOPE:     " ${scope}
+
+DATASET_EXISTS=`rucio ls --short ${scope}:${DATASET}`
+if [[ -z "${DATASET_EXISTS}" ]]; 
+then
+   echo "Create and populate ${scope}:${DATASET} for workflow submission"
+else
+   echo "-]${DATASET_EXISTS}[-"
+   echo
+   echo "The dataset ${DATASET} is already registered in rucio.  This may"
+   echo "indicate that the given run has alread been produced with the"
+   echo "requested analysis build and/or database configuration.  You will"
+   echo "need to remove the submission dataset, and the resultant datasets"
+   echo "in order to proceed."
+   echo 
+   return 12345
+fi
 
 # Clean out / create temp directory for filelists
 if [ -e /tmp/${USER}/$run ]; then
@@ -76,18 +94,18 @@ mkdir /tmp/${USER}/$run -p
 # Build file lists
 #
 
-find ${dir} -type f -name *seb00*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${tag}-${ts}.seb00
-find ${dir} -type f -name *seb01*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${tag}-${ts}.seb01
-find ${dir} -type f -name *seb02*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${tag}-${ts}.seb02
-find ${dir} -type f -name *seb03*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${tag}-${ts}.seb03
-find ${dir} -type f -name *seb04*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${tag}-${ts}.seb04
-find ${dir} -type f -name *seb05*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${tag}-${ts}.seb05
-find ${dir} -type f -name *seb06*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${tag}-${ts}.seb06
-find ${dir} -type f -name *seb07*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${tag}-${ts}.seb07
-find ${dirhcal} -type f -name *West*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${tag}-${ts}.hcalwest
-find ${dirhcal} -type f -name *East*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${tag}-${ts}.hcaleast
-find ${dirzdc} -type f -name *seb14*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${tag}-${ts}.zdc
-find ${dirmbd} -type f -name *seb18*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${tag}-${ts}.mbd
+find ${dir} -type f -name *seb00*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${DATASET}.seb00
+find ${dir} -type f -name *seb01*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${DATASET}.seb01
+find ${dir} -type f -name *seb02*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${DATASET}.seb02
+find ${dir} -type f -name *seb03*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${DATASET}.seb03
+find ${dir} -type f -name *seb04*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${DATASET}.seb04
+find ${dir} -type f -name *seb05*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${DATASET}.seb05
+find ${dir} -type f -name *seb06*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${DATASET}.seb06
+find ${dir} -type f -name *seb07*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${DATASET}.seb07
+find ${dirhcal} -type f -name *West*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${DATASET}.hcalwest
+find ${dirhcal} -type f -name *East*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${DATASET}.hcaleast
+find ${dirzdc} -type f -name *seb14*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${DATASET}.zdc
+find ${dirmbd} -type f -name *seb18*${run}-????.prdf -print | sort > /tmp/${USER}/$run/${DATASET}.mbd
 
 #
 # Create a directory under lustre / rse BNL_PROD3 for the definition of the workflow inputs
@@ -101,6 +119,9 @@ scp /tmp/${USER}/$run/* sphnxpro@`hostname -s`:${TARGETDIR}/
 #
 # Build a rucio dataset consisting of these files
 #
+echo CREATING DATASET=${DATASET}
+ls -l ${TARGETDIR}
+
 cat <<EOF | python
 from rucio.client import Client
 import hashlib
@@ -130,18 +151,21 @@ for f in [ "seb00", "seb01", "seb02", "seb03", "seb04", "seb05", "seb06", "seb07
 EOF
 
 shrek ${submitopt} ${debugopt} --build=${BUILD} ${DBOPT} --topDir=${topDir} --nevents=${nevents} --no-pause --tag ${tag} ${workflows}/run*.yaml --runNumber=${run} --filelist=run-${run}.filelist --ebinputs=${scope}:${DATASET} \
-    --pack  /tmp/${USER}/$run/${tag}-${ts}.seb00  \
-    --pack  /tmp/${USER}/$run/${tag}-${ts}.seb01  \
-    --pack  /tmp/${USER}/$run/${tag}-${ts}.seb02  \
-    --pack  /tmp/${USER}/$run/${tag}-${ts}.seb03  \
-    --pack  /tmp/${USER}/$run/${tag}-${ts}.seb04  \
-    --pack  /tmp/${USER}/$run/${tag}-${ts}.seb05  \
-    --pack  /tmp/${USER}/$run/${tag}-${ts}.seb06  \
-    --pack  /tmp/${USER}/$run/${tag}-${ts}.seb07  \
-    --pack  /tmp/${USER}/$run/${tag}-${ts}.hcaleast  \
-    --pack  /tmp/${USER}/$run/${tag}-${ts}.hcalwest  \
-    --pack  /tmp/${USER}/$run/${tag}-${ts}.zdc  \
-    --pack  /tmp/${USER}/$run/${tag}-${ts}.mbd 
+    --pack  /tmp/${USER}/$run/${DATASET}.seb00  \
+    --pack  /tmp/${USER}/$run/${DATASET}.seb01  \
+    --pack  /tmp/${USER}/$run/${DATASET}.seb02  \
+    --pack  /tmp/${USER}/$run/${DATASET}.seb03  \
+    --pack  /tmp/${USER}/$run/${DATASET}.seb04  \
+    --pack  /tmp/${USER}/$run/${DATASET}.seb05  \
+    --pack  /tmp/${USER}/$run/${DATASET}.seb06  \
+    --pack  /tmp/${USER}/$run/${DATASET}.seb07  \
+    --pack  /tmp/${USER}/$run/${DATASET}.hcaleast  \
+    --pack  /tmp/${USER}/$run/${DATASET}.hcalwest  \
+    --pack  /tmp/${USER}/$run/${DATASET}.zdc  \
+    --pack  /tmp/${USER}/$run/${DATASET}.mbd 
+
+# And cleanup the temp directory
+rm /tmp/${USER}/$run/${DATASET}.*
 
 
 
