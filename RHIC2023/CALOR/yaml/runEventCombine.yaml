@@ -77,8 +77,6 @@ JobCommands: |-
   do
       mv ${fname} ${fname/beam_emcal/beam_emcal_${FILETAG}}
   done
-
-  stash_job_log
   
 
 
