@@ -17,13 +17,19 @@ nevents=0
 BUILD=ana.380
 #DBTAG=TESTp001p19
 DBTAG=2023p001
-sphenix_setup.sh -n ${BUILD}
+source /opt/sphenix/core/bin/sphenix_setup.sh -n ${BUILD}
 DBOPT=" --dbtag=${DBTAG} "
 #DBOPT=""
 
 
 # Re-parse from offline main (ensures that we get a valid build)
-BUILD=`basename ${OFFLINE_MAIN}`
+CHECK_BUILD=`basename ${OFFLINE_MAIN}`
+
+if [[ ! BUILD == CHECK_BUILD ]]; then
+   echo "Requested build ${BUILD} does not match setup build ${CHECK_BUILD}."
+   return
+fi
+
 
 dir=/sphenix/lustre01/sphnxpro/commissioning/emcal/beam
 dirhcal=/sphenix/lustre01/sphnxpro/commissioning/HCal/beam
