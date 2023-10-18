@@ -68,8 +68,6 @@ EOF
 
 	shrek ${submitopt} --inputds=${RUN} ${debugopt} --build=${BUILD} ${DBOPT} --nevents=${nevents} --no-pause --tag ${tag}-${DBTAG} ${workflows}/rerunCalorimeter.yaml --runNumber=${run}  \
 
-	return
-
     done
 
 }
