@@ -19,7 +19,7 @@ InputDataSets:
 OutputDataSets:
   - name: CalorChain/outDS
     filelist:
-      - "regex|DST_calor*"
+      - "regex|DST_CALOR*"
 
 JobCommands: |-
 
@@ -64,12 +64,12 @@ JobCommands: |-
      #runseq=${BASH_REMATCH[1]}
      runseq=${input#*-}
      runseq=${runseq%.*}
-     output=DST_calor_${FILETAG}_${runseq}.root     
+     output=DST_CALOR_${FILETAG}_${runseq}.root     
      echo root -q -b ${macro}\(\"${input}\",\"${output}\"\)
      root -q -b ${macro}\(\"${input}\",\"${output}\"\)
   else
      echo ${input} failed regex match to $myregex_
-     stash_job_log
+  #  stash_job_log
   fi
 
 
