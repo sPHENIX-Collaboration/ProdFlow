@@ -14,7 +14,7 @@
 #
 
 nevents=0
-BUILD=ana.380
+BUILD=ana.381
 #DBTAG=TESTp001p19
 DBTAG=2023p001
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${BUILD}
@@ -23,12 +23,12 @@ DBOPT=" --dbtag=${DBTAG} "
 
 
 # Re-parse from offline main (ensures that we get a valid build)
-CHECK_BUILD=`basename ${OFFLINE_MAIN}`
+#CHECK_BUILD=`basename ${OFFLINE_MAIN}`
 
-if [[ ! BUILD == CHECK_BUILD ]]; then
-   echo "Requested build ${BUILD} does not match setup build ${CHECK_BUILD}."
-   return
-fi
+#if [[ ! BUILD == CHECK_BUILD ]]; then
+#   echo "Requested build ]${BUILD}[ does not match setup build ]${CHECK_BUILD}[."
+#   return
+#fi
 
 
 dir=/sphenix/lustre01/sphnxpro/commissioning/emcal/beam
@@ -42,7 +42,7 @@ dirmbd=/sphenix/lustre01/sphnxpro/commissioning/mbd/beam
 topDir=/sphenix/lustre01/sphnxpro/production/2023/
 ssh sphnxpro@`hostname -s` mkdir -p ${topDir}
 
-submitopt=" --submit --group sphenix --no-uuid"   # --no-timestamp for final/official productions
+submitopt=" --submit --group sphenix --no-uuid --no-timestamp "   
 debugopt=" --debug all "
 scope="group.sphenix"
 
@@ -156,7 +156,7 @@ for f in [ "seb00", "seb01", "seb02", "seb03", "seb04", "seb05", "seb06", "seb07
     client.set_metadata( "group.sphenix", filename, 'guid', str(uuid.uuid4()) )
 EOF
 
-shrek ${submitopt} ${debugopt} --build=${BUILD} ${DBOPT} --topDir=${topDir} --nevents=${nevents} --no-pause --tag ${tag} ${workflows}/run*.yaml --runNumber=${run} --filelist=run-${run}.filelist --ebinputs=${scope}:${DATASET} \
+shrek ${submitopt} ${debugopt} --build=${BUILD} ${DBOPT} --topDir=${topDir} --nevents=${nevents} --no-pause --tag ${tag}-${DBTAG} ${workflows}/run*.yaml --runNumber=${run} --filelist=run-${run}.filelist --ebinputs=${scope}:${DATASET} \
     --pack  /tmp/${USER}/$run/${DATASET}.seb00  \
     --pack  /tmp/${USER}/$run/${DATASET}.seb01  \
     --pack  /tmp/${USER}/$run/${DATASET}.seb02  \
