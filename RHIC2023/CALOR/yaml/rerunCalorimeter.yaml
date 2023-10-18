@@ -1,0 +1,83 @@
+Parameters:
+  name:         CalorChain
+  comment:      "Top level calorimeter chain"
+  nEvents:      $nevents
+  OutDir:       . 
+  nFilesPerJob: 1
+  macro:        Fun4All_CaloProduction.C
+  memory:       2048
+  cpuTimePerEvent: 75000
+
+Resources:
+  - file: /sphenix/u/sphnxpro/macros/CaloProduction/Fun4All_CaloProduction.C
+
+InputDataSets:
+  - name: EventCombine/outDS
+    comment: Output of event combinator
+    datasets: $inputds
+    nFilesPerJob: 1
+
+OutputDataSets:
+  - name: CalorChain/outDS
+    filelist:
+      - "regex|DST_CALOR*"
+
+JobCommands: |-
+
+  # Initialize environment... using the "build" environment, unless it
+  # was not specified
+  if [ -z ${build+x} ]; then 
+     echo "build is unset [default to latest]"
+     source /opt/sphenix/core/bin/sphenix_setup.sh -n 
+  else 
+     echo "build is set to ${build}"
+     source /opt/sphenix/core/bin/sphenix_setup.sh -n ${build}
+  fi  
+
+  echo ..........................................................................
+  echo Running ${name} ${runNumber} $@
+  echo ..........................................................................
+
+  # Strip the task ID for the matching file(s)
+  strip_task_id "*.prdf.panda*" .prdf
+  echo ls -l *.prdf
+  ls -l *.prdf
+  echo  readlink -f *.prdf
+  readlink -f *.prdf
+  echo readlink -e *.prdf
+  readlink -e *.prdf
+
+  # Input file is the input prdr
+  input=`ls *.prdf`
+
+  DBTAG=${dbtag:-ptid${PanDA_TaskID}}
+  BUILDTAG=${build/./}
+  FILETAG=${BUILDTAG}_${DBTAG}  
+
+  # Get the run-sequence number... If we cant decode this, we don't
+  # match the input file and we will not produce output (and the
+  # job will be failed in panda...)
+
+  myregex_="*-([0-9-]+).prdf"
+  #if [[ $fname=~$regex ]]; then echo "moopsie"; fi
+  if [[ $input=~$myregex_ ]]; then
+     #... bash_rematch is empty for some reason ...
+     #runseq=${BASH_REMATCH[1]}
+     runseq=${input#*-}
+     runseq=${runseq%.*}
+     output=DST_CALOR_${FILETAG}_${runseq}.root     
+     echo root -q -b ${macro}\(\"${input}\",\"${output}\"\)
+     root -q -b ${macro}\(\"${input}\",\"${output}\"\)
+  else
+     echo ${input} failed regex match to $myregex_
+  #  stash_job_log
+  fi
+
+
+
+
+
+
+
+
+
