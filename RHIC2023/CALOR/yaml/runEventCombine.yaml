@@ -2,10 +2,6 @@ Parameters:
   name:         EventCombine
   comment:      "Top level calorimeter chain"
   nEvents:      $nevents
-  nEventsMax:   400
-  nRepeat:      $nrepeat
-  RunMC:        6
-  RunRaw:       329
   OutDir:       /sphenix/lustre01/sphnxpro/scratch
   nFilesPerJob: 12
   macro:        Fun4All_Combiner.C
@@ -67,17 +63,32 @@ JobCommands: |-
 
   # Link back all of the output files so that PanDA can find them / and handle
   # the transfer to rucio
+
+  echo "Scratch directory listing:"
+  ls -lh ${target}/
+
   ln -s ${target}/*.prdf .
+  echo "List the links to the scratch files:"
+  ls -l *.prdf
 
   DBTAG=${dbtag:-ptid${PanDA_TaskID}}
   BUILDTAG=${build/./}
   FILETAG=${BUILDTAG}_${DBTAG}
 
+
   for fname in *.prdf
   do
       mv ${fname} ${fname/beam_emcal/beam_emcal_${FILETAG}}
   done
-  
+
+  echo "List the transformed links:"
+  ls -l *.prdf
+
+  if [ ! -f *-0000.prdf ]; then
+  echo "================================================================"
+  echo "WARNING: Missing the 0th PRDF output"
+  echo "================================================================"
+  fi
 
 
 
