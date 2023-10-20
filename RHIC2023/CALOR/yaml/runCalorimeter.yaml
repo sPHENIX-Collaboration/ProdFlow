@@ -64,7 +64,7 @@ JobCommands: |-
      #runseq=${BASH_REMATCH[1]}
      runseq=${input#*-}
      runseq=${runseq%.*}
-     output=DST_CALOR_${FILETAG}_${runseq}.root     
+     output=DST_CALOR_${FILETAG}-${runseq}.root     
      echo root -q -b ${macro}\(\"${input}\",\"${output}\"\)
      root -q -b ${macro}\(\"${input}\",\"${output}\"\)
   else
