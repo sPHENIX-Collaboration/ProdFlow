@@ -14,7 +14,7 @@
 #
 
 nevents=0
-BUILD=ana.381
+BUILD=ana.382
 #DBTAG=TESTp001p19
 DBTAG=2023p001
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${BUILD}

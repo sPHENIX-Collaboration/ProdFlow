@@ -59,7 +59,9 @@ JobCommands: |-
   mkdir ${target}
 
   # Run fun4all
-  root -q -b ${macro}\(${nEvents},\"seb00.list\",\"seb01.list\",\"seb02.list\",\"seb03.list\",\"seb04.list\",\"seb05.list\",\"seb06.list\",\"seb07.list\",\"hcaleast.list\",\"hcalwest.list\",\"zdc.list\",\"mbd.list\",\"${target}\"\)
+  root -q -b ${macro}\(${nEvents},\"seb00.list\",\"seb01.list\",\"seb02.list\",\"seb03.list\",\"seb04.list\",\"seb05.list\",\"seb06.list\",\"seb07.list\",\"hcaleast.list\",\"hcalwest.list\",\"zdc.list\",\"mbd.list\",\"${target}\"\) >& fun4all.log
+
+  # Parse logfile and build list of outputs
 
   # Link back all of the output files so that PanDA can find them / and handle
   # the transfer to rucio
@@ -89,6 +91,26 @@ JobCommands: |-
   echo "WARNING: Missing the 0th PRDF output"
   echo "================================================================"
   fi
+
+
+  cat fun4all.log | awk '/Fun4AllRolloverFileOutStream: opening new file/{ print $5; }' > produced.log
+
+  produced=(`cat produced.log`)      
+  cataloged=( `ls beam_emcal_*.prdf` )
+  echo ${#produced[@]} ${#cataloged[@]}
+
+  addmetadata shrek_num_files_produced ${#produced[@]} 
+  addmetadata shrek_num_files_cataloged ${#cataloged[@]}
+
+  if [[ ! ${#produced[@]} -eq  ${#cataloged[@]} ]]; then
+  echo "================================================================"
+  echo "WARNING: Number of produced and cataloged files do not match."
+  echo "================================================================"
+  # Set a non zero status code to throw this to PanDA
+  shrek_status_code=1
+  fi
+
+  stash_job_log ${target}/
 
 
 

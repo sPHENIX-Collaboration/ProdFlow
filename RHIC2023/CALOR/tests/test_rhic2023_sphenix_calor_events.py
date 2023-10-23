@@ -1,6 +1,7 @@
 import pytest
 import warnings
 import statistics
+import pprint
 
 from rucio.client import Client
 client = Client()
@@ -63,8 +64,8 @@ def test_events_103_the_lowest_sequence_number_is_zero():
         files = pytest.EVENTS_files[dsname]
         seqs=[]
         for f in files:
-            seqs.append( f['match.seq'] )
-        if min(seqs)>0:
+            seqs.append( int(f['match.seq']) )
+        if int(min(seqs))>0:
             warnings.warn("%s is missing sequence 0."%dsname)
             good=False
 
@@ -78,7 +79,7 @@ def test_events_104_the_highest_sequence_equals_nfiles_minus_one():
         seqs=[]
         count=-1
         for f in files:
-            seqs.append( f['match.seq'] )
+            seqs.append( int(f['match.seq']) )
             count+=1
         if max(seqs)!=count:
             warnings.warn("%s has missing output files"%dsname)
@@ -128,7 +129,8 @@ def test_calor_203_the_lowest_sequence_number_is_zero():
         files = pytest.CALOR_files[dsname]
         seqs=[]
         for f in files:
-            seqs.append( f['match.seq'] )
+            seqs.append( int(f['match.seq']) )
+        #rint(seqs)        
         if min(seqs)>0:
             warnings.warn("%s is missing sequence 0."%dsname)
             good=False
@@ -143,10 +145,12 @@ def test_calor_204_the_highest_sequence_equals_nfiles_minus_one():
         seqs=[]
         count=-1
         for f in files:
-            seqs.append( f['match.seq'] )
+            seqs.append( int(f['match.seq']) )
             count+=1
         if max(seqs)!=count:
             warnings.warn("%s has missing output files"%dsname)
+            print("%s has misisng output files"%dsname)
+            pprint.pprint(seqs)
             good=False
 
     assert( good ), "There were missing output files"            
