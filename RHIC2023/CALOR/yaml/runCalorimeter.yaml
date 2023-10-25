@@ -37,6 +37,12 @@ JobCommands: |-
   echo Running ${name} ${runNumber} $@
   echo ..........................................................................
 
+  addmetadata sphenix_jobdef ${name}
+  addmetadata sphenix_build ${build}
+  addmetadata sphenix_runnumber ${runNumber}
+  #addmetadata spheinx_scratchdir ${target}
+  addmetadata sphenix_macro ${macro}
+
   # Strip the task ID for the matching file(s)
   strip_task_id "*.prdf.panda*" .prdf
   echo ls -l *.prdf
@@ -67,9 +73,12 @@ JobCommands: |-
      output=DST_CALOR_${FILETAG}-${runseq}.root     
      echo root -q -b ${macro}\(\"${input}\",\"${output}\"\)
      root -q -b ${macro}\(\"${input}\",\"${output}\"\)
+     shrek_status_code=*$
+     addmetadata input $input
+     addmetadata output $output
   else
      echo ${input} failed regex match to $myregex_
-  #  stash_job_log
+     shrek_status_code=1
   fi
 
 
