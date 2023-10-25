@@ -13,6 +13,7 @@
 # <debugopt> "--debug taskname" enables realtime logging for taskname
 #
 
+
 nevents=0
 BUILD=ana.382
 #DBTAG=TESTp001p19
@@ -46,6 +47,7 @@ submitopt=" --submit --group sphenix --no-uuid --no-timestamp "
 debugopt=" --debug all "
 scope="group.sphenix"
 
+
 workflows=ProdFlow/RHIC2023/CALOR/yaml
 
 if [[ $1 ]]; then
@@ -74,6 +76,7 @@ DATASET=${tag}-${DBTAG}
 echo "DATASET:   " ${DATASET}
 echo "SCOPE:     " ${scope}
 
+
 DATASET_EXISTS=`rucio ls --short ${scope}:${DATASET}`
 if [[ -z "${DATASET_EXISTS}" ]]; 
 then
@@ -95,6 +98,7 @@ if [ -e /tmp/${USER}/$run ]; then
    rm -r /tmp/${USER}/$run
 fi
 mkdir /tmp/${USER}/$run -p
+
 
 #
 # Build file lists
@@ -172,6 +176,7 @@ shrek ${submitopt} ${debugopt} --build=${BUILD} ${DBOPT} --topDir=${topDir} --ne
 
 # And cleanup the temp directory
 rm /tmp/${USER}/$run/${DATASET}.*
+
 
 
 

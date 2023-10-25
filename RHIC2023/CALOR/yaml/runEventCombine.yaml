@@ -3,6 +3,7 @@ Parameters:
   comment:      "Top level calorimeter chain"
   nEvents:      $nevents
   OutDir:       /sphenix/lustre01/sphnxpro/scratch
+  pfnList:      filelist
   nFilesPerJob: 12
   macro:        Fun4All_Combiner.C
   memory:       2048
@@ -11,10 +12,6 @@ Parameters:
 
 Resources:
   - file: /sphenix/u/sphnxpro/macros/eventcombine/Fun4All_Combiner.C
-
-InputDataSets:
-  - name: topInputDS
-    datasets: ebinputs
 
 OutputDataSets:
   - name: EventCombine/outDS
@@ -36,23 +33,8 @@ JobCommands: |-
   echo Running ${name} ${runNumber} $@
   echo ..........................................................................
 
-  # Input is a dataset of empty files... but really, we ignore it.  The sebXX.list files should be
-  # packed and ready to go.  And PanDA seems to keep losing track of where rucio stashes the input
-  # data sets...
-  ln -s __pack/*.seb00 seb00.list
-  ln -s __pack/*.seb01 seb01.list
-  ln -s __pack/*.seb02 seb02.list
-  ln -s __pack/*.seb03 seb03.list
-  ln -s __pack/*.seb04 seb04.list
-  ln -s __pack/*.seb05 seb05.list
-  ln -s __pack/*.seb06 seb06.list
-  ln -s __pack/*.seb07 seb07.list
-  ln -s __pack/*.hcaleast hcaleast.list
-  ln -s __pack/*.hcalwest hcalwest.list
-  ln -s __pack/*.zdc zdc.list
-  ln -s __pack/*.mbd mbd.list
-
-  ls -la
+  # Input is a pfnlist... but really, we ignore it.  The sebXX.list files should be
+  # packed and ready to go...
 
   # Make sure we keep each run in its own scratch space on lustre
   target=${OutDir}/${runNumber}
