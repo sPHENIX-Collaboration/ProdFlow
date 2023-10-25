@@ -14,6 +14,7 @@ Resources:
 InputDataSets:
   - name: EventCombine/outDS
     comment: Output of event combinator
+    datasets: $inputds
     nFilesPerJob: 1
 
 OutputDataSets:
