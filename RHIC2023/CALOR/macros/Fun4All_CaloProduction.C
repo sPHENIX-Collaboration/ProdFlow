@@ -3,6 +3,7 @@
 
 #include <caloreco/CaloTowerBuilder.h>
 #include <caloreco/CaloWaveformProcessing.h>
+#include <caloreco/CaloGeomMapping.h>
 
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
@@ -38,35 +39,41 @@ void Fun4All_CaloProduction(const std::string &fname = "/sphenix/user/trinn/comb
   rc->set_StringFlag("CDB_GLOBALTAG","MDC2");
   rc->set_uint64Flag("TIMESTAMP",6);
 
-  CaloTowerBuilder *ca = new CaloTowerBuilder("emcal");
+  CaloTowerBuilder *ca = new CaloTowerBuilder();
   ca->set_detector_type(CaloTowerBuilder::CEMC);
   ca->set_nsamples(31);
-  ca->set_processing_type(CaloWaveformProcessing::FAST);
+  ca->set_processing_type(CaloWaveformProcessing::TEMPLATE);
   se->registerSubsystem(ca);
 
-  CaloTowerBuilder *ca1 = new CaloTowerBuilder("hcalin");
+  CaloTowerBuilder *ca1 = new CaloTowerBuilder();
   ca1->set_detector_type(CaloTowerBuilder::HCALIN);
   ca1->set_nsamples(31);
-  ca1->set_processing_type(CaloWaveformProcessing::FAST);
+  ca1->set_processing_type(CaloWaveformProcessing::TEMPLATE);
   se->registerSubsystem(ca1);
 
-  CaloTowerBuilder *ca2 = new CaloTowerBuilder("hcalout");
+  CaloTowerBuilder *ca2 = new CaloTowerBuilder();
   ca2->set_detector_type(CaloTowerBuilder::HCALOUT);
   ca2->set_nsamples(31);
-  ca2->set_processing_type(CaloWaveformProcessing::FAST);
+  ca2->set_processing_type(CaloWaveformProcessing::TEMPLATE);
   se->registerSubsystem(ca2);
 
-  CaloTowerBuilder *ca3 = new CaloTowerBuilder("mbd");
-  ca3->set_detector_type(CaloTowerBuilder::MBD);
+  //default is FAST
+  CaloTowerBuilder *ca3 = new CaloTowerBuilder();
+  ca3->set_detector_type(CaloTowerBuilder::ZDC);
   ca3->set_nsamples(31);
-  ca3->set_processing_type(CaloWaveformProcessing::FAST);
   se->registerSubsystem(ca3);
 
-  CaloTowerBuilder *ca4 = new CaloTowerBuilder("zdc");
-  ca4->set_detector_type(CaloTowerBuilder::ZDC);
-  ca4->set_nsamples(31);
-  ca4->set_processing_type(CaloWaveformProcessing::FAST);
-  se->registerSubsystem(ca4);
+  CaloGeomMapping *cgm = new CaloGeomMapping();
+  cgm->set_detector_name("CEMC");
+  se->registerSubsystem(cgm);
+
+  CaloGeomMapping *cgm1 = new CaloGeomMapping();
+  cgm1->set_detector_name("HCALIN");
+  se->registerSubsystem(cgm1);
+
+  CaloGeomMapping *cgm2 = new CaloGeomMapping();
+  cgm2->set_detector_name("HCALOUT");
+  se->registerSubsystem(cgm2);
 
   Fun4AllInputManager *in = new Fun4AllPrdfInputManager("in");
   in->fileopen(fname);

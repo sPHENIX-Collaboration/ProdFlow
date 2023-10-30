@@ -4,12 +4,12 @@ Parameters:
   nEvents:      $nevents
   OutDir:       . 
   nFilesPerJob: 1
-  macro:        Fun4All_CaloProduction.C
+  macro:        Fun4All_Year1.C
   memory:       2048
   cpuTimePerEvent: 75000
 
 Resources:
-  - file: /sphenix/u/sphnxpro/macros/CaloProduction/Fun4All_CaloProduction.C
+  - file: ./ProdFlow/RHIC2023/CALOR/macros/Fun4All_Year1.C
 
 InputDataSets:
   - name: EventCombine/outDS
@@ -38,17 +38,22 @@ JobCommands: |-
   echo Running ${name} ${runNumber} $@
   echo ..........................................................................
 
-  # Strip the task ID for the matching file(s)
-  strip_task_id "*.prdf.panda*" .prdf
-  echo ls -l *.prdf
-  ls -l *.prdf
-  echo  readlink -f *.prdf
-  readlink -f *.prdf
-  echo readlink -e *.prdf
-  readlink -e *.prdf
 
-  # Input file is the input prdr
+
+  addmetadata shrek_nodeinfo_hostname=`uname -a`
+  addmetadata shrek_nodeinfo_cpu=`lscpu | grep \^CPU`
+  addmetadata shrek_nodeinfo_mem=`free -h --giga`
+
+  addmetadata sphenix_jobdef ${name}
+  addmetadata sphenix_build ${build}
+  addmetadata sphenix_runnumber ${runNumber}
+  #addmetadata spheinx_scratchdir ${target}
+  addmetadata sphenix_macro ${macro}
+  addmetadata sphenix_inputds ${inputds}
+
+  # Input file is the input prdf  (this should be a single input file)
   input=`ls *.prdf`
+
 
   DBTAG=${dbtag:-ptid${PanDA_TaskID}}
   BUILDTAG=${build/./}
@@ -59,18 +64,21 @@ JobCommands: |-
   # job will be failed in panda...)
 
   myregex_="*-([0-9-]+).prdf"
-  #if [[ $fname=~$regex ]]; then echo "moopsie"; fi
   if [[ $input=~$myregex_ ]]; then
      #... bash_rematch is empty for some reason ...
      #runseq=${BASH_REMATCH[1]}
      runseq=${input#*-}
      runseq=${runseq%.*}
      output=DST_CALOR_${FILETAG}-${runseq}.root     
-     echo root -q -b ${macro}\(\"${input}\",\"${output}\"\)
-     root -q -b ${macro}\(\"${input}\",\"${output}\"\)
+     #echo root -q -b ${macro}\(\"${input}\",\"${output}\"\) 
+     root -q -b ${macro}\(\"${input}\",\"${output}\"\) | tee fun4all.log
+     addmetadata sphenix_calor_input $input
+     addmetadata sphenix_calor_output $output
+     cat fun4all.log | awk '/(\w+)_TOP: accumulated time \((\w+)\)/{ print "addmetadata sphenix_accumulated_time " $1 " " $5}' | sed 's/_TOP://'
+     cat fun4all.log | awk '/(\w+)_TOP: per event time \((\w+)\)/{ print "addmetadata sphenix_per_event_time " $1 " " $5}' | sed 's/_TOP://'
   else
      echo ${input} failed regex match to $myregex_
-  #  stash_job_log
+     shrek_status_code=1
   fi
 
 
