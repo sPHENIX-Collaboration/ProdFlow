@@ -14,10 +14,11 @@
 #
 
 
-nevents=0
+nevents=1000
 BUILD=ana.382
-#DBTAG=TESTp001p19
-DBTAG=2023p001
+#DBTAG=TESTp001p23
+#DBTAG=2023p001r1
+DBTAG=TESTp001v32
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${BUILD}
 DBOPT=" --dbtag=${DBTAG} "
 #DBOPT=""

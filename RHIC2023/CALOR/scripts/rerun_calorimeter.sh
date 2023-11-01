@@ -6,8 +6,9 @@
 #________________________________________________________________
 
 nevents=0
-BUILD=ana.381
-DBTAG=TESTp001p24
+BUILD=ana.383
+#DBTAG=TESTp001p42
+DBTAG=2023p002
 scope="group.sphenix"
 INPUT_SCOPE=group.sphenix
 INPUT_CONTAINER=RHIC2023-sPHENIX-CALOR-EVENTS
@@ -52,7 +53,7 @@ else
    echo 
    return 100
 fi
-    
+
 cat <<EOF | python
 from rucio.client import Client
 import hashlib
@@ -60,13 +61,15 @@ import pprint
 import os
 import uuid
 client = Client()
+
 dataset="${DATASET}"
 client.add_dataset( "group.sphenix", dataset )
-client.set_metadata( "group.sphenix", dataset, key='run_number', value="$run")
-client.set_metadata( "group.sphenix", dataset, key='provenance', value="$RUN")
+client.set_metadata( "group.sphenix",  dataset, key='run_number', value="$run")
+
 EOF
 
-	shrek ${submitopt} --inputds=${RUN} ${debugopt} --build=${BUILD} ${DBOPT} --nevents=${nevents} --no-pause --tag ${tag}-${DBTAG} ${workflows}/rerunCalorimeter.yaml --runNumber=${run}  \
+shrek ${submitopt} --inputds=${RUN} ${debugopt} --build=${BUILD} ${DBOPT} --nevents=${nevents} --no-pause --tag ${tag}-${DBTAG} ${workflows}/rerunCalorimeter.yaml --runNumber=${run} 
+
 
     done
 
