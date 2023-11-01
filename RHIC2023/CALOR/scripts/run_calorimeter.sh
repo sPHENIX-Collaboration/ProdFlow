@@ -15,10 +15,10 @@
 
 
 nevents=1000
-BUILD=ana.382
+BUILD=ana.383
 #DBTAG=TESTp001p23
-#DBTAG=2023p001r1
-DBTAG=TESTp001v32
+DBTAG=2023p002
+#DBTAG=TESTp001v32
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${BUILD}
 DBOPT=" --dbtag=${DBTAG} "
 #DBOPT=""
@@ -161,7 +161,7 @@ for f in [ "seb00", "seb01", "seb02", "seb03", "seb04", "seb05", "seb06", "seb07
     client.set_metadata( "group.sphenix", filename, 'guid', str(uuid.uuid4()) )
 EOF
 
-shrek ${submitopt} ${debugopt} --build=${BUILD} ${DBOPT} --topDir=${topDir} --nevents=${nevents} --no-pause --tag ${tag}-${DBTAG} ${workflows}/run*.yaml --runNumber=${run} --filelist=run-${run}.filelist --ebinputs=${scope}:${DATASET} \
+shrek ${submitopt} ${debugopt} --build=${BUILD} ${DBOPT} --topDir=${topDir} --nevents=${nevents} --no-pause --tag ${tag}-${DBTAG} ${workflows}/runEvent*.yaml --runNumber=${run} --filelist=run-${run}.filelist --ebinputs=${scope}:${DATASET} \
     --pack  /tmp/${USER}/$run/${DATASET}.seb00  \
     --pack  /tmp/${USER}/$run/${DATASET}.seb01  \
     --pack  /tmp/${USER}/$run/${DATASET}.seb02  \
