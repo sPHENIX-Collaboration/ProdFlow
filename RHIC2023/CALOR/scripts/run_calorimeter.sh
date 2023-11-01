@@ -14,10 +14,10 @@
 #
 
 
-nevents=1000
+nevents=0
 BUILD=ana.383
 #DBTAG=TESTp001p23
-DBTAG=2023p002
+DBTAG=2023p002r1
 #DBTAG=TESTp001v32
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${BUILD}
 DBOPT=" --dbtag=${DBTAG} "
@@ -161,7 +161,20 @@ for f in [ "seb00", "seb01", "seb02", "seb03", "seb04", "seb05", "seb06", "seb07
     client.set_metadata( "group.sphenix", filename, 'guid', str(uuid.uuid4()) )
 EOF
 
-shrek ${submitopt} ${debugopt} --build=${BUILD} ${DBOPT} --topDir=${topDir} --nevents=${nevents} --no-pause --tag ${tag}-${DBTAG} ${workflows}/runEvent*.yaml --runNumber=${run} --filelist=run-${run}.filelist --ebinputs=${scope}:${DATASET} \
+    ls  /tmp/${USER}/$run/${DATASET}.seb00  > ${DATASET}.list
+    ls  /tmp/${USER}/$run/${DATASET}.seb01  >> ${DATASET}.list
+    ls  /tmp/${USER}/$run/${DATASET}.seb02  >> ${DATASET}.list
+    ls  /tmp/${USER}/$run/${DATASET}.seb03  >> ${DATASET}.list
+    ls  /tmp/${USER}/$run/${DATASET}.seb04  >> ${DATASET}.list
+    ls  /tmp/${USER}/$run/${DATASET}.seb05  >> ${DATASET}.list
+    ls  /tmp/${USER}/$run/${DATASET}.seb06  >> ${DATASET}.list
+    ls  /tmp/${USER}/$run/${DATASET}.seb07  >> ${DATASET}.list
+    ls  /tmp/${USER}/$run/${DATASET}.hcaleast  >> ${DATASET}.list
+    ls  /tmp/${USER}/$run/${DATASET}.hcalwest  >> ${DATASET}.list
+    ls  /tmp/${USER}/$run/${DATASET}.zdc  >> ${DATASET}.list
+    ls  /tmp/${USER}/$run/${DATASET}.mbd >> ${DATASET}.list
+
+shrek ${submitopt} ${debugopt} --build=${BUILD} ${DBOPT} --topDir=${topDir} --nevents=${nevents} --no-pause --tag ${tag}-${DBTAG} ${workflows}/runEvent*.yaml --runNumber=${run} --filelist=${DATASET}.list --ebinputs=${scope}:${DATASET} \
     --pack  /tmp/${USER}/$run/${DATASET}.seb00  \
     --pack  /tmp/${USER}/$run/${DATASET}.seb01  \
     --pack  /tmp/${USER}/$run/${DATASET}.seb02  \
