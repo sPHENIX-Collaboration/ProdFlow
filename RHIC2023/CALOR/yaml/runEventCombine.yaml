@@ -11,7 +11,7 @@ Parameters:
   maxAttempt:   3
 
 Resources:
-  - file: /sphenix/u/sphnxpro/macros/eventcombine/Fun4All_Combiner.C
+  - file: /sphenix/u/jwebb2/work/2023/shreksys/ProdFlow/RHIC2023/CALOR/macros/Fun4All_Combiner.C
 
 OutputDataSets:
   - name: EventCombine/outDS

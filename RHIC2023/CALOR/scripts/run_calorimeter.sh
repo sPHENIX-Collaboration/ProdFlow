@@ -16,13 +16,9 @@
 
 nevents=0
 BUILD=ana.385
-#DBTAG=TESTp001p23
-DBTAG=2023p003
-#DBTAG=TESTp001v32
+DBTAG=2023p003r1
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${BUILD}
 DBOPT=" --dbtag=${DBTAG} "
-#DBOPT=""
-
 
 # Re-parse from offline main (ensures that we get a valid build)
 #CHECK_BUILD=`basename ${OFFLINE_MAIN}`
