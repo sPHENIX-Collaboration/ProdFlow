@@ -46,6 +46,12 @@ JobCommands: |-
   addmetadata spheinx_scratchdir ${target}
   addmetadata sphenix_macro ${macro}
 
+  # Setup links to input filelists
+  for s in seb00 seb01 seb02 seb03 seb04 seb05 seb06 seb07 hcaleast hcalwest zdc mbd; do
+    echo ln -s __pack/*.$s $s.list
+    ln -s __pack/*.$s $s.list
+  done
+
   # Run fun4all
   root -q -b ${macro}\(${nEvents},\"seb00.list\",\"seb01.list\",\"seb02.list\",\"seb03.list\",\"seb04.list\",\"seb05.list\",\"seb06.list\",\"seb07.list\",\"hcaleast.list\",\"hcalwest.list\",\"zdc.list\",\"mbd.list\",\"${target}\"\) >& fun4all.log
   shrek_status_code=$*
