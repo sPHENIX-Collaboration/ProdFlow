@@ -29,29 +29,47 @@ void Fun4All_Combiner(int nEvents = 0,
 		      const string &input_file11 = "mbd.list",
 		      const string &outputDir = "." )
 {
+  vector<string> infile_tmp;
   vector<string> infile;
-  infile.push_back(input_file00);
-  infile.push_back(input_file01);
-  infile.push_back(input_file02);
-  infile.push_back(input_file03);
-  infile.push_back(input_file04);
-  infile.push_back(input_file05);
-  infile.push_back(input_file06);
-  infile.push_back(input_file07);
-  infile.push_back(input_file08);
-  infile.push_back(input_file09);
-  infile.push_back(input_file10);
-
+  infile_tmp.push_back(input_file00);
+  infile_tmp.push_back(input_file01);
+  infile_tmp.push_back(input_file02);
+  infile_tmp.push_back(input_file03);
+  infile_tmp.push_back(input_file04);
+  infile_tmp.push_back(input_file05);
+  infile_tmp.push_back(input_file06);
+  infile_tmp.push_back(input_file07);
+  infile_tmp.push_back(input_file08);
+  infile_tmp.push_back(input_file09);
+  infile_tmp.push_back(input_file10);
+  infile_tmp.push_back(input_file11);
+  for (int i=0; i<infile_tmp.size(); i++)
+  {
+// C++ std17 filesystem::exists does not work in our CLING version
+    ifstream in(infile_tmp[i]);
+    if (in.is_open()) // does it exist?
+    {
+      if (in.peek() != std::ifstream::traits_type::eof()) // is it non zero?
+      {
+       infile.push_back(infile_tmp[i]);
+      }
+      in.close();
+    }
+  }
   Fun4AllServer *se = Fun4AllServer::instance();
   Fun4AllPrdfInputPoolManager *in = new Fun4AllPrdfInputPoolManager("Comb");
   //in->Verbosity(10);
-  in->AddPrdfInputList(input_file11)->MakeReference(true);
   for (auto iter : infile)
   {
+    if (iter.find("mbd") != string::npos) // the mbd is the reference
+    {
+      in->AddPrdfInputList(iter)->MakeReference(true);
+    }
     in->AddPrdfInputList(iter);
   }
 
   se->registerInputManager(in);
+  gSystem->Exit(0);
 
 //  EventNumberCheck *evtchk = new EventNumberCheck();
 //  evtchk->MyPrdfNode("PRDF");
