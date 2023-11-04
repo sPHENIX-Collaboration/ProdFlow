@@ -2,7 +2,7 @@
 
 # Usage
 #
-# run_calorimeter.sh <run number> <nevents> <input directory> <out/link directory> <debugopt>
+# run_calorimeter.sh <run number> <dbtag> <input directory> <out/link directory> <debugopt>
 #
 # where 
 #
@@ -16,9 +16,8 @@
 
 nevents=0
 BUILD=ana.385
-DBTAG=2023p003r1
+DBTAG=2023p003r2
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${BUILD}
-DBOPT=" --dbtag=${DBTAG} "
 
 # Re-parse from offline main (ensures that we get a valid build)
 #CHECK_BUILD=`basename ${OFFLINE_MAIN}`
@@ -51,7 +50,8 @@ if [[ $1 ]]; then
    run=$( printf "%08d" $1 )
 fi
 if [[ $2 ]]; then
-   nevents=$2
+   #nevents=$2
+   DBTAG=$2
 fi
 if [[ $3 ]]; then
    dir=$3
@@ -63,6 +63,7 @@ if [[ $5 ]]; then
    debugopt=$5
 fi
 
+DBOPT=" --dbtag=${DBTAG} "
 tag=rn${run}-CALOR-${BUILD//./}
 ts=`date +%Y%h%d-%H%M%S`
 
@@ -170,7 +171,7 @@ EOF
     ls  /tmp/${USER}/$run/${DATASET}.zdc  >> ${DATASET}.list
     ls  /tmp/${USER}/$run/${DATASET}.mbd >> ${DATASET}.list
 
-shrek ${submitopt} ${debugopt} --build=${BUILD} ${DBOPT} --topDir=${topDir} --nevents=${nevents} --no-pause --tag ${tag}-${DBTAG} ${workflows}/runEvent*.yaml --runNumber=${run} --filelist=${DATASET}.list --ebinputs=${scope}:${DATASET} \
+shrek ${submitopt} ${debugopt} --build=${BUILD} ${DBOPT} --topDir=${topDir} --nevents=${nevents} --no-pause --tag ${tag}-${DBTAG} ${workflows}/run*.yaml --runNumber=${run} --filelist=${DATASET}.list --ebinputs=${scope}:${DATASET} \
     --pack  /tmp/${USER}/$run/${DATASET}.seb00  \
     --pack  /tmp/${USER}/$run/${DATASET}.seb01  \
     --pack  /tmp/${USER}/$run/${DATASET}.seb02  \

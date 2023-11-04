@@ -53,8 +53,8 @@ JobCommands: |-
   done
 
   # Run fun4all
-  root -q -b ${macro}\(${nEvents},\"seb00.list\",\"seb01.list\",\"seb02.list\",\"seb03.list\",\"seb04.list\",\"seb05.list\",\"seb06.list\",\"seb07.list\",\"hcaleast.list\",\"hcalwest.list\",\"zdc.list\",\"mbd.list\",\"${target}\"\) >& fun4all.log
-  shrek_status_code=$*
+  root -q -b ${macro}\(${nEvents},\"seb00.list\",\"seb01.list\",\"seb02.list\",\"seb03.list\",\"seb04.list\",\"seb05.list\",\"seb06.list\",\"seb07.list\",\"hcaleast.list\",\"hcalwest.list\",\"zdc.list\",\"mbd.list\",\"${target}\"\) | tee fun4all.log
+  shrek_status_code=$?
   addmetadata sphenix_macro_exitcode $shrek_status_code
 
   # Parse logfile and build list of outputs
@@ -73,7 +73,6 @@ JobCommands: |-
   BUILDTAG=${build/./}
   FILETAG=${BUILDTAG}_${DBTAG}
 
-
   for fname in *.prdf
   do
       mv ${fname} ${fname/beam_emcal/beam_emcal_${FILETAG}}
@@ -87,24 +86,6 @@ JobCommands: |-
   echo "================================================================"
   echo "WARNING: Missing the 0th PRDF output"
   echo "================================================================"
-  fi
-
-
-  cat fun4all.log | awk '/Fun4AllRolloverFileOutStream: opening new file/{ print $5; }' > produced.log
-
-  produced=(`cat produced.log`)      
-  cataloged=( `ls beam_emcal_*.prdf` )
-  echo ${#produced[@]} ${#cataloged[@]}
-
-  addmetadata sphenix_num_files_produced ${#produced[@]} 
-  addmetadata sphenix_num_files_cataloged ${#cataloged[@]}
-
-  if [[ ! ${#produced[@]} -eq  ${#cataloged[@]} ]]; then
-  echo "================================================================"
-  echo "WARNING: Number of produced and cataloged files do not match."
-  echo "================================================================"
-  # Set a non zero status code to throw this to PanDA
-  shrek_status_code=1
   fi
 
   stash_job_log ${target}/

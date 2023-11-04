@@ -72,6 +72,7 @@ JobCommands: |-
      output=DST_CALOR_${FILETAG}-${runseq}.root     
      #echo root -q -b ${macro}\(\"${input}\",\"${output}\"\) 
      root -q -b ${macro}\(\"${input}\",\"${output}\"\) | tee fun4all.log
+     shrek_status_code=$? 
      addmetadata sphenix_calor_input $input
      addmetadata sphenix_calor_output $output
      cat fun4all.log | awk '/(\w+)_TOP: accumulated time \((\w+)\)/{ print "addmetadata sphenix_accumulated_time " $1 " " $5}' | sed 's/_TOP://'

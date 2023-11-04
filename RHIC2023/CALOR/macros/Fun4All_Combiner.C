@@ -46,6 +46,7 @@ void Fun4All_Combiner(int nEvents = 0,
   for (int i=0; i<infile_tmp.size(); i++)
   {
 // C++ std17 filesystem::exists does not work in our CLING version
+    std::cout << infile_tmp[i] << std::endl;
     ifstream in(infile_tmp[i]);
     if (in.is_open()) // does it exist?
     {
@@ -56,9 +57,10 @@ void Fun4All_Combiner(int nEvents = 0,
       in.close();
     }
   }
+
   Fun4AllServer *se = Fun4AllServer::instance();
   Fun4AllPrdfInputPoolManager *in = new Fun4AllPrdfInputPoolManager("Comb");
-  //in->Verbosity(10);
+  in->Verbosity(10);
   for (auto iter : infile)
   {
     if (iter.find("mbd") != string::npos) // the mbd is the reference
@@ -69,16 +71,17 @@ void Fun4All_Combiner(int nEvents = 0,
   }
 
   se->registerInputManager(in);
-  gSystem->Exit(0);
+
 
 //  EventNumberCheck *evtchk = new EventNumberCheck();
 //  evtchk->MyPrdfNode("PRDF");
 //  se->registerSubsystem(evtchk);
 
-//  Fun4AllEventOutputManager *out = new Fun4AllEventOutputManager("EvtOut","/sphenix/lustre01/sphnxpro/commissioning/aligned/beam-%08d-%04d.prdf",20000);
-  //Fun4AllEventOutputManager *out = new Fun4AllEventOutputManager("EvtOut","./beam_emcal-%08d-%04d.prdf",nGB*1000.0);
-    Fun4AllEventOutputManager *out = new Fun4AllEventOutputManager("EvtOut", outputDir+"/"+"beam_emcal-%08d-%04d.prdf",20000);
-    out->DropPacket(21102);
+//Fun4AllEventOutputManager *out = new Fun4AllEventOutputManager("EvtOut","/sphenix/lustre01/sphnxpro/commissioning/aligned/beam-%08d-%04d.prdf",20000);
+//Fun4AllEventOutputManager *out = new Fun4AllEventOutputManager("EvtOut","./beam_emcal-%08d-%04d.prdf",nGB*1000.0);
+//Fun4AllEventOutputManager *out = new Fun4AllEventOutputManager("EvtOut", outputDir+"/"+"beam_emcal-%08d-%04d.prdf",20000);
+  Fun4AllEventOutputManager *out = new Fun4AllEventOutputManager("EvtOut", outputDir+"/"+"beam_emcal-%08d-%04d.prdf", 2000); // 2GB
+//out->DropPacket(21102);
   se->registerOutputManager(out);
 
   if (nEvents < 0) { return; }
