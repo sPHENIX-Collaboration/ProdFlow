@@ -22,6 +22,7 @@ PHYS_DST_STREAMING_EVENT_run2pp:
               select 43249 as firstrun,
                      53880 as lastrun
          ),
+
          fullrun as (
          select 
                 'daqdb/filelist'                                                                                    as source      , 
@@ -113,7 +114,7 @@ DST_TRKR_HIT_SET_physics:
          where
                 filename like 'DST_STREAMING_EVENT_run2pp_ana439_2024p007%'
                 {run_condition}
-                and runnumber<=48098
+                and runnumber>=43249
                 and runnumber<=53880
          order by runnumber
                 {limit_condition}
@@ -168,7 +169,7 @@ DST_TRKR_CLUSTER_SET_run2pp:
          where
                 filename like 'DST_TRKR_HIT_run2pp_ana439_2024p007%'
                 {run_condition}
-                and runnumber<=48098
+                and runnumber>=43249
                 and runnumber<=53880
          order by runnumber
                 {limit_condition}
@@ -221,7 +222,7 @@ DST_TRKR_SEED_SET_run2pp:
          where
                 filename like 'DST_TRKR_CLUSTER_run2pp_ana439_2024p007%'
                 {run_condition}
-                and runnumber<=48098
+                and runnumber>=43249
                 and runnumber<=53880
          order by runnumber
                 {limit_condition}
@@ -276,7 +277,7 @@ DST_TRKR_TRACKS_SET_run2pp:
               filename like 'DST_TRKR_CLUSTER_run2pp_ana439_2024p007%' 
            )
            {run_condition}
-           and runnumber<=48098
+           and runnumber>=43249
            and runnumber<=53880
 
          group by runnumber,segment 
