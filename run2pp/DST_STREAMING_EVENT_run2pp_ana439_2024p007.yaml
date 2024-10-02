@@ -22,7 +22,6 @@ PHYS_DST_STREAMING_EVENT_run2pp:
               select 43249 as firstrun,
                      53880 as lastrun
          ),
-
          fullrun as (
          select 
                 'daqdb/filelist'                                                                                    as source      , 
@@ -121,6 +120,7 @@ DST_TRKR_HIT_SET_run2pp:
                 and runnumber>={mnrun}
                 and runnumber<={mxrun}
 
+
          order by runnumber
                 {limit_condition}
               ;              
@@ -163,6 +163,7 @@ DST_TRKR_CLUSTER_SET_run2pp:
      mnrun   : 43249
      mxrun   : 53880
 
+
    input:
       db: fc
       query: |-
@@ -175,10 +176,12 @@ DST_TRKR_CLUSTER_SET_run2pp:
          from  
                 datasets
          where
+
                 filename like '{input}'
                 {run_condition}
                 and runnumber>={mnrun}
                 and runnumber<={mxrun}
+
          order by runnumber
                 {limit_condition}
               ;              
@@ -219,6 +222,7 @@ DST_TRKR_SEED_SET_run2pp:
      mnrun   : 43249
      mxrun   : 53880
 
+
    input:
       db: fc
       query: |-
@@ -231,10 +235,12 @@ DST_TRKR_SEED_SET_run2pp:
          from  
                 datasets
          where
+
                 filename like '{input}'
                 {run_condition}
                 and runnumber>={mnrun}
                 and runnumber<={mxrun}
+
          order by runnumber
                 {limit_condition}
               ;              
@@ -275,6 +281,7 @@ DST_TRKR_TRACKS_SET_run2pp:
 
 
 
+
    input:
       db: fc
       query: |-
@@ -282,6 +289,7 @@ DST_TRKR_TRACKS_SET_run2pp:
                'filecatalog/datasets'   as source       ,
                runnumber                                ,
                segment                                  ,
+
                string_agg( distinct split_part(filename,'/',-1), ' ' )                             as files       ,   
                string_agg( distinct split_part(filename,'/',-1) || ':' || 0 || ':' || -1, ' ' )    as fileranges  
          from
@@ -293,6 +301,7 @@ DST_TRKR_TRACKS_SET_run2pp:
            {run_condition}
            and runnumber>={mnrun}
            and runnumber<={mxrun}
+
 
          group by runnumber,segment 
 
