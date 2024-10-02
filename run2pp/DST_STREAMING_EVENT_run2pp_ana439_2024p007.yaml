@@ -86,7 +86,7 @@ PHYS_DST_STREAMING_EVENT_run2pp:
 
 
 
-DST_TRKR_HIT_SET_physics:
+DST_TRKR_HIT_SET_run2pp:
    # DST_EVENT works from a pre-built set of run lists.
    params:
      name:       DST_TRKR_HIT_run2pp
@@ -99,6 +99,9 @@ DST_TRKR_HIT_SET_physics:
      payload :   ./ProdFlow/run2pp/TrackingProduction/
      mem     :   2048MB
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
+     input   : "DST_STREAMING_EVENT_run2pp_ana439_2024p007%"
+     mnrun   : 43249
+     mxrun   : 53880
 
    input:
       db: fc
@@ -112,10 +115,12 @@ DST_TRKR_HIT_SET_physics:
          from  
                 datasets
          where
-                filename like 'DST_STREAMING_EVENT_run2pp_ana439_2024p007%'
+                filename like '{input}'
+
                 {run_condition}
-                and runnumber>=43249
-                and runnumber<=53880
+                and runnumber>={mnrun}
+                and runnumber<={mxrun}
+
          order by runnumber
                 {limit_condition}
               ;              
@@ -154,6 +159,9 @@ DST_TRKR_CLUSTER_SET_run2pp:
      mem     :   2048MB
      nevents :  0
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
+     input   : "DST_TRKR_HIT_run2pp_ana439_2024p007%"
+     mnrun   : 43249
+     mxrun   : 53880
 
    input:
       db: fc
@@ -167,10 +175,10 @@ DST_TRKR_CLUSTER_SET_run2pp:
          from  
                 datasets
          where
-                filename like 'DST_TRKR_HIT_run2pp_ana439_2024p007%'
+                filename like '{input}'
                 {run_condition}
-                and runnumber>=43249
-                and runnumber<=53880
+                and runnumber>={mnrun}
+                and runnumber<={mxrun}
          order by runnumber
                 {limit_condition}
               ;              
@@ -207,6 +215,9 @@ DST_TRKR_SEED_SET_run2pp:
      mem     :   2048MB
      nevents :  0
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
+     input   : "DST_TRKR_CLUSTER_run2pp_ana439_2024p007%"
+     mnrun   : 43249
+     mxrun   : 53880
 
    input:
       db: fc
@@ -220,10 +231,10 @@ DST_TRKR_SEED_SET_run2pp:
          from  
                 datasets
          where
-                filename like 'DST_TRKR_CLUSTER_run2pp_ana439_2024p007%'
+                filename like '{input}'
                 {run_condition}
-                and runnumber>=43249
-                and runnumber<=53880
+                and runnumber>={mnrun}
+                and runnumber<={mxrun}
          order by runnumber
                 {limit_condition}
               ;              
@@ -257,6 +268,10 @@ DST_TRKR_TRACKS_SET_run2pp:
      mem     :   2048MB
      nevents :   0
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
+     seeds   : "DST_TRKR_SEED_run2pp_ana439_2024p007%"
+     clusters: "DST_TRKR_CLUSTER_run2pp_ana439_2024p007%"
+     mnrun   : 43249
+     mxrun   : 53880
 
 
 
@@ -267,25 +282,24 @@ DST_TRKR_TRACKS_SET_run2pp:
                'filecatalog/datasets'   as source       ,
                runnumber                                ,
                segment                                  ,
-               string_agg( distinct split_part(filename,'/',-1), ' ' )                                             as files       ,   
+               string_agg( distinct split_part(filename,'/',-1), ' ' )                             as files       ,   
                string_agg( distinct split_part(filename,'/',-1) || ':' || 0 || ':' || -1, ' ' )    as fileranges  
          from
                datasets
          where
            ( 
-              filename like 'DST_TRKR_SEED_run2pp_ana439_2024p007%' or
-              filename like 'DST_TRKR_CLUSTER_run2pp_ana439_2024p007%' 
+              filename like '{seeds}' or filename like '{clusters}' 
            )
            {run_condition}
-           and runnumber>=43249
-           and runnumber<=53880
+           and runnumber>={mnrun}
+           and runnumber<={mxrun}
 
          group by runnumber,segment 
 
          having (
 
-            sum( case when filename like 'DST_TRKR_SEED_run2pp_ana439_2024p007%' then 1 else 0 end )>0    and
-            sum( case when filename like 'DST_TRKR_CLUSTER_run2pp_ana439_2024p007%' then 1 else 0 end )>0 
+            sum( case when filename like '{seeds}'    then 1 else 0 end )>0    and
+            sum( case when filename like '{clusters}' then 1 else 0 end )>0 
 
          )
 
