@@ -92,25 +92,38 @@ def main():
     df2 = pd.DataFrame(rundb_data, columns=['runnumber','sum_events'])
     df = pd.merge(pivot_df, df2, on='runnumber', how='outer')
     df = df.rename(columns={'sum_events': 'rundb'})
+
+    has_dst_triggered_event = 'dst_triggered_event' in df.columns
+    has_dst_calo = 'dst_calo' in df.columns
+    has_dst_calofitting = 'dst_calofitting' in df.columns
     
-    fdf = df[(df['rundb'] > 5) & (df['dst_triggered_event'].isna()) & (df['rundb'].notna())]
+    if has_dst_triggered_event:
+        fdf = df[(df['rundb'] > 5) & (df['dst_triggered_event'].isna()) & (df['rundb'].notna())]
+        filtered_df = df[(df['rundb'] > 10000) & (df['dst_triggered_event'].notna()) & (df['rundb'].notna())]
+    else:
+        fdf = df[(df['rundb'] > 5) & (df['rundb'].notna())]
+        filtered_df = df[(df['rundb'] > 10000) & (df['rundb'].notna())]
+    allrundf = df[(df['rundb'] > 10000) & (df['rundb'].notna())]
     NumNotProduced = len(fdf)
     EventsNotProducted = "{:.3e}".format(fdf['rundb'].sum())
     print()
-    print(f"Number of runs in RunDB not passed to production: {NumNotProduced}")
+    print(f"Number of calo physics runs in RunDB not passed to production: {NumNotProduced}")
     print(EventsNotProducted,"events not passed to production")
     print()
 
-    filtered_df = df[(df['rundb'] > 10000) & (df['dst_triggered_event'].notna()) & (df['rundb'].notna())]
-    print("Fraction of dst_calo/rundb events: {0:.3f}".format(filtered_df['dst_calo'].sum()/filtered_df['rundb'].sum()))
-    print("Fraction of dst_triggered_event/rundb events: {0:.3f}".format(filtered_df['dst_triggered_event'].sum()/filtered_df['rundb'].sum()))
-    print("Fraction of dst_calo_fitting/dst_triggered_event events: {0:.3f}".format(filtered_df['dst_calofitting'].sum()/filtered_df['dst_triggered_event'].sum()))
-    print("Fraction of dst_calo/dst_triggered_event events: {0:.3f}".format(filtered_df['dst_calo'].sum()/filtered_df['dst_triggered_event'].sum()))
-    column_sums = filtered_df[['rundb', 'dst_triggered_event', 'dst_calofitting', 'dst_calo']].sum()
+    if has_dst_triggered_event:
+        print("Fraction of dst_triggered_event/rundb events: {0:.3f}".format(filtered_df['dst_triggered_event'].sum()/filtered_df['rundb'].sum()))
+        print("Fraction of dst_triggered_event/rundb events including not produced runs: {0:.3f}".format(allrundf['dst_triggered_event'].sum()/allrundf['rundb'].sum()))
+        if has_dst_calofitting:
+            print("Fraction of dst_calo_fitting/dst_triggered_event events: {0:.3f}".format(filtered_df['dst_calofitting'].sum()/filtered_df['dst_triggered_event'].sum()))
+        if has_dst_calo:
+            print("Fraction of dst_calo/rundb events: {0:.3f}".format(filtered_df['dst_calo'].sum()/filtered_df['rundb'].sum()))
+            print("Fraction of dst_calo/dst_triggered_event events: {0:.3f}".format(filtered_df['dst_calo'].sum()/filtered_df['dst_triggered_event'].sum()))
+    column_sums = filtered_df[['rundb'] + [col for col in ['dst_triggered_event', 'dst_calofitting', 'dst_calo'] if col in df.columns]].sum()
+    allcolumn_sums = allrundf[['rundb'] + [col for col in ['dst_triggered_event', 'dst_calofitting', 'dst_calo'] if col in df.columns]].sum()
     long_runs = filtered_df[filtered_df['rundb'] > 10000000]   
 
     # first plot - number of events dropped from rundb event number through production to dst_triggered_event and eventually to dst_calo 
-    column_sums = filtered_df[['rundb', 'dst_triggered_event', 'dst_calofitting', 'dst_calo']].sum()
     plt.figure(figsize=(8, 6)) 
     ax = column_sums.plot(kind='bar', color='skyblue')
     for i, value in enumerate(column_sums):
@@ -119,7 +132,17 @@ def main():
     plt.ylabel('Events')
     plt.xticks(rotation=0, ha='center')
 
-    # second plot - number of events in runs that are not being produced 
+    # second plot - number of events dropped from rundb event number through production to dst_triggered_event and eventually to dst_calo 
+    # including runs that have not started production
+    plt.figure(figsize=(8, 6)) 
+    ax = allcolumn_sums.plot(kind='bar', color='skyblue')
+    for i, value in enumerate(allcolumn_sums):
+        ax.text(i, value + 0.01 * value, f'{int(value)}', ha='center', va='bottom')
+    plt.title(f'{tag} Calorimeter Events for All Calo Phyiscs Runs {start_run}-{end_run}')
+    plt.ylabel('Events')
+    plt.xticks(rotation=0, ha='center')
+
+    # third plot - number of events in runs that are not being produced 
     plt.figure(figsize=(10, 6))  # Create a new figure
     plt.hist(fdf['rundb'], bins=30, edgecolor='black')
     plt.title(f'Run DB event number for runs with no production events for {tag} Runs {start_run}-{end_run}')
@@ -127,7 +150,7 @@ def main():
     plt.ylabel('Frequency')
     plt.grid(True)
 
-    # third plot - production event number for long runs (tells us where we cap out in the production)
+    # fourth plot - production event number for long runs (tells us where we cap out in the production)
     plt.figure(figsize=(10, 6))
     plt.hist(long_runs['dst_triggered_event'], bins=30, edgecolor='black')
     plt.title(f'Production event number for runs with > 10M events in production tag {tag} Runs {start_run}-{end_run}')
