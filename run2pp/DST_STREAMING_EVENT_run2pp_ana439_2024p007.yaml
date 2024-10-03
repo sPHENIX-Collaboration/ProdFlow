@@ -1,5 +1,5 @@
 #________________________________________________________________________________________________________DST_PHYSICS__
-PHYS_DST_STREAMING_EVENT_run2pp:
+DST_STREAMING_EVENT_run2pp:
 
    params:
      name:       DST_STREAMING_EVENT_run2pp
@@ -85,7 +85,7 @@ PHYS_DST_STREAMING_EVENT_run2pp:
 
 
 
-DST_TRKR_HIT_SET_run2pp:
+DST_TRKR_HIT_run2pp:
    # DST_EVENT works from a pre-built set of run lists.
    params:
      name:       DST_TRKR_HIT_run2pp
@@ -145,7 +145,7 @@ DST_TRKR_HIT_SET_run2pp:
 
 
 #_________________________________________________________________________________________________________________________________________
-DST_TRKR_CLUSTER_SET_run2pp:
+DST_TRKR_CLUSTER_run2pp:
    # DST_EVENT works from a pre-built set of run lists.
    params:
      name:       DST_TRKR_CLUSTER_run2pp
@@ -204,7 +204,7 @@ DST_TRKR_CLUSTER_SET_run2pp:
 
 
 #_________________________________________________________________________________________________________________________________________
-DST_TRKR_SEED_SET_run2pp:
+DST_TRKR_SEED_run2pp:
    # DST_EVENT works from a pre-built set of run lists.
    params:
      name:       DST_TRKR_SEED_run2pp
@@ -260,7 +260,7 @@ DST_TRKR_SEED_SET_run2pp:
      priority : '3800'
 
 
-DST_TRKR_TRACKS_SET_run2pp:
+DST_TRKR_TRACKS_run2pp:
    # DST_EVENT works from a pre-built set of run lists.
    params:
      name:       DST_TRKR_TRACKS_run2pp
