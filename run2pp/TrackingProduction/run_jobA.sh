@@ -62,21 +62,22 @@ done
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
 #_________________________________________________________________________________________________
 
-
-for i in ${inputs[@]}; do
-   cp -v ${i} .
-   echo $( basename $i ) >> inlist   
-done
-
-
+if [[ "${9}" == *"dbinput"* ]]; then
+  for i in $(./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs); do
+     cp -v ${i} .
+     echo $( basename $i ) >> inlist   
+  done
+else
+  for i in ${inputs[@]}; do
+     cp -v ${i} .
+     echo $( basename $i ) >> inlist   
+  done
+fi
 
 #$$$./cups.py -r ${runnumber} -s ${segment} -d ${outbase} inputs --files "${inputs[@]}"
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
 
 dstname=${logbase%%-*}
-echo ./bachi.py --blame cups created ${dstname} ${runnumber}  --parent ${inputs[0]}
-     ./bachi.py --blame cups created ${dstname} ${runnumber}   --parent ${inputs[0]}
-
 echo root.exe -q -b Fun4All_JobA.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"inlist\"\)
      root.exe -q -b Fun4All_JobA.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"inlist\"\);  status_f4a=$?
 
@@ -88,11 +89,6 @@ for hfile in `ls HIST_*.root`; do
     echo Stageout ${hfile} to ${histdir}
     ./stageout.sh ${hfile} ${histdir}
 done
-
-if [ "${status_f4a}" -eq 0 ]; then
-  echo ./bachi.py --blame cups finalized ${dstname} ${runnumber} 
-       ./bachi.py --blame cups finalized ${dstname} ${runnumber} 
-fi
 
 ls -la
 
