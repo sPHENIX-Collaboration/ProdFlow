@@ -1,0 +1,149 @@
+#_______________________________________________________________________________________________________DST_EVENT__
+#
+# kaedama.py --rule DST_EVENT --config examples/sPHENIX/DST_EVENT_aua23.yaml --runs ...
+#
+DST_TPCCALIB_run2pp:
+ 
+   # DST_EVENT works from a pre-built set of run lists.
+   params:
+     name:       DST_TPCCALIB_run2pp
+     build:      new
+     build_name: new
+     dbtag:      2024p002
+     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)
+     script  :   run_cosmics.sh
+     payload :   ./ProdFlow/run2pp/cosmics/
+     neventsper: 100
+     mem     :   8192MB
+
+   #
+   # input query:
+   #
+   # This builds a list of all runs known to the file catalog "datasets" table.
+   # The query should return:
+   # 1. The source of the information (formatted as database name/table name)
+   # 2. The run number
+   # 3. A sequence number (a placeholder fixed at zero for event builders)
+   # 4. And a space-separated list of logical filenames 
+   #
+   # The {*_condition} parameters (run, seg, limit) are substituted by kaedama
+   # based on (optional) command line options.
+   #
+   input:
+      db: daqdb
+      direct_path: /sphenix/lustre01/sphnxpro/{mode}/tpc/calib/
+      query: |-
+         select 
+                'daqdb/filelist'                                                                                    as source      , 
+                runnumber                                                                                                          , 
+                0                                                                                                   as segment     , 
+                string_agg( distinct split_part(filename,'/',-1), ' ' )                                             as files       ,   
+                string_agg( distinct split_part(filename,'/',-1) || ':' || firstevent || ':' || lastevent, ' ' )    as fileranges  
+         from  
+                filelist
+         where 
+                filename     like '/bbox%/TPC%calib%.evt'
+                {run_condition}
+              and runnumber<=53880
+         group by runnumber
+         having
+                every(transferred_to_sdcc)                                            
+         order by runnumber
+                {limit_condition}
+              ;              
+
+   # TODO:  Need to add error checking to make sure that outdir, logdir, etc... are quoted properly.  Else, this will cause problems with argument substitution
+   filesystem:  
+     outdir : "/sphenix/lustre01/sphnxpro/physics/slurp/tpccalib/run_$(rungroup)"
+     logdir : "file:///sphenix/data/data02/sphnxpro/testlogs/run_$(rungroup)"
+     condor :        "/tmp/testlogs/run_$(rungroup)"
+
+   #
+   # Again I note the need to ensure that the arguments are properly specified given the
+   # definition of the payload script.
+   #
+   job:
+     executable            : "{payload}/run_cosmics.sh"
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) {outdir} $(build) $(tag) $(inputs) $(ranges) {neventsper} {logdir}"
+     output_destination    : '{logdir}'
+     transfer_input_files  : "{payload},cups.py,bachi.py,odbc.ini"
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '3800'
+
+
+
+
+#_______________________________________________________________________________________________________DST_EVENT__
+#
+# kaedama.py --rule DST_EVENT --config examples/sPHENIX/DST_EVENT_aua23.yaml --runs ...
+#
+DST_MBD_CALIBRATION_run2pp:
+   params:
+     name:       DST_MBD_CALIBRATION_run2pp
+     build:      new
+     build_name: new
+     dbtag:      2024p005
+     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)
+     script  :   run.sh
+     payload :   ./ProdFlow/run2pp/mbd_calib/
+     mem     :   2048MB
+     nevents:    0
+     neventsper: 20000
+     pass0dir: /sphenix/user/chiu/sphenix_bbc/CDB/PASS0/
+
+   input:
+      db: daqdb
+      direct_path: /sphenix/lustre01/sphnxpro/{mode}/mbd/physics
+      query: |-
+         select 
+                'daqdb/filelist'                                                                                    as source      , 
+                runnumber                                                                                                          , 
+                0                                                                                                   as segment     , 
+                string_agg( distinct split_part(filename,'/',-1), ' ' )                                             as files       ,   
+                string_agg( distinct split_part(filename,'/',-1) || ':' || firstevent || ':' || lastevent, ' ' )    as fileranges  
+         from  
+                filelist
+         where 
+           ( 
+             (filename  like '/bbox%/%mbd%beam%'         and lastevent>2 ) or
+             (filename  like '/bbox%/%mbd%physics%'      and lastevent>2 )
+           )
+           {run_condition}
+              and runnumber<=53880
+
+         group by runnumber
+
+         having
+                every(transferred_to_sdcc)   and
+                max(lastevent)>1000     
+
+         order by runnumber
+                {limit_condition}
+
+              ;              
+
+   # TODO:  Need to add error checking to make sure that outdir, logdir, etc... are quoted properly.  Else, this will cause problems with argument substitution
+   filesystem:  
+     outdir : "/sphenix/lustre01/sphnxpro/physics/TEST/mbdcalib/$(build)_$(tag)/run_$(rungroup)"
+     logdir : "file:///sphenix/data/data02/sphnxpro/mbdcalib/$(build)_$(tag)/run_$(rungroup)"
+     condor :        "/tmp/mbdcalib/$(build)_$(tag)/run_$(rungroup)"
+
+
+   #
+   # Again I note the need to ensure that the arguments are properly specified given the
+   # definition of the payload script.
+   #
+   job:
+     executable            : "{payload}/run.sh"
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) {outdir} $(build) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {pass0dir}"
+     output_destination    : '{logdir}'
+     transfer_input_files  : "{payload},cups.py,bachi.py,odbc.ini"
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '3800'
+
