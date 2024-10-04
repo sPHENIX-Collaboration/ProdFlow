@@ -47,6 +47,8 @@ void Fun4All_JobA(
 
   gSystem->Load("libg4dst.so");
 
+  TRACKING::pp_mode = false;
+
   auto se = Fun4AllServer::instance();
   se->Verbosity(1);
   auto rc = recoConsts::instance();
@@ -90,8 +92,8 @@ void Fun4All_JobA(
   auto silicon_Seeding = new PHActsSiliconSeeding;
   silicon_Seeding->Verbosity(0);
   silicon_Seeding->seedAnalysis(false);
-  silicon_Seeding->setinttRPhiSearchWindow(0.4);
-  silicon_Seeding->setinttZSearchWindow(2.0);
+  silicon_Seeding->setinttRPhiSearchWindow(1.0);
+  silicon_Seeding->setinttZSearchWindow(7.0);
   se->registerSubsystem(silicon_Seeding);
 
   auto merger = new PHSiliconSeedMerger;
