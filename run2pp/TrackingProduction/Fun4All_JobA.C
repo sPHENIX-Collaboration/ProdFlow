@@ -90,8 +90,8 @@ void Fun4All_JobA(
   auto silicon_Seeding = new PHActsSiliconSeeding;
   silicon_Seeding->Verbosity(0);
   silicon_Seeding->seedAnalysis(false);
-  silicon_Seeding->setinttRPhiSearchWindow(1.0);
-  silicon_Seeding->setinttZSearchWindow(7.0);
+  silicon_Seeding->setinttRPhiSearchWindow(0.4);
+  silicon_Seeding->setinttZSearchWindow(2.0);
   se->registerSubsystem(silicon_Seeding);
 
   auto merger = new PHSiliconSeedMerger;
