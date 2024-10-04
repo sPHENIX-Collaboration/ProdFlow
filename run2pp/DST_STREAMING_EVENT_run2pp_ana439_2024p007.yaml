@@ -9,11 +9,13 @@ DST_STREAMING_EVENT_run2pp:
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   run_cosmics.sh
-     payload :   ./ProdFlow/run2pp/cosmics/
-     mem     :   2048MB
-     neventsper: 1000
+     payload :   ./ProdFlow/run2pp/cosmics/     
+     neventsper: 10000
      comment :    "---"
      rsync   : "./ProdFlow/run2pp/cosmics/*,cups.py,bachi.py,odbc.ini"
+     mem     :   20000MB
+     # 20GB of memory is not a typo
+
    input:
       db: daqdb
       direct_path: /sphenix/lustre01/sphnxpro/{mode}/*/physics/
