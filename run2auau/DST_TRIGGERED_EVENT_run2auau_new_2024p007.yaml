@@ -17,6 +17,7 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
      rsync  : "ProdFlow/run2pp/TriggerProduction/*,cups.py,bachi.py,odbc.ini"
 
 
+
    #
    # input query:
    #
@@ -34,7 +35,7 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
    #
    input:
       db: daqdb
-      direct_path: /sphenix/lustre01/sphnxpro/{mode}/*/physics/
+      direct_path: /sphenix/lustre01/sphnxpro/physics/*/beam/
       query: |-
          with config as (
             select 
@@ -45,7 +46,7 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
          fullevents as (
               select runnumber,max(lastevent)    as lastevent
               from filelist, config
-              where (filename like '/bbox%/GL1_physics%.evt'        and lastevent>2 )
+              where (filename like '/bbox%/GL1_beam%.evt'        and lastevent>2 )
 
                  {run_condition}
 
@@ -53,7 +54,7 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
               having
                      every(transferred_to_sdcc)   and
                      max(lastevent)>1000          and
-                     sum( case when filename like '/bbox%/GL1_physics%' then 1 else 0 end )>0
+                     sum( case when filename like '/bbox%/GL1_beam%' then 1 else 0 end )>0
 
               order by runnumber
          ),
@@ -70,27 +71,28 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
                 filelist,config
          where 
            ( 
-             (filename  like '/bbox%/%emcal%physics%.prdf'    and lastevent>2 ) or 
-             (filename  like '/bbox%/%HCal%physics%.prdf'     and lastevent>2 ) or
-             (filename  like '/bbox%/%LL1%physics%.prdf'      and lastevent>2 ) or
-             (filename  like '/bbox%/GL1_physics%.evt'       and lastevent>2 ) or
-             (filename  like '/bbox%/%mbd%physics%.prdf'      and lastevent>2 ) or
-             (filename  like '/bbox%/%ZDC%physics%.prdf'      and lastevent>2 )
+             (filename  like '/bbox%/%emcal%beam%.prdf'    and lastevent>2 ) or 
+             (filename  like '/bbox%/%HCal%beam%.prdf'     and lastevent>2 ) or
+             (filename  like '/bbox%/%LL1%beam%.prdf'      and lastevent>2 ) or
+             (filename  like '/bbox%/GL1_beam%.evt'       and lastevent>2 ) or
+             (filename  like '/bbox%/%mbd%beam%.prdf'      and lastevent>2 ) or
+             (filename  like '/bbox%/%ZDC%beam%.prdf'      and lastevent>2 ) 
+
            )
 
            {run_condition}
 
-                 and runnumber<=53880
+                 and runnumber>53880
 
          group by runnumber
 
          having
                 every(transferred_to_sdcc)   and
                 max(lastevent)>1000          and
-                sum( case when filename like '/bbox%/GL1_physics%' then 1 else 0 end )>0 and
+                sum( case when filename like '/bbox%/GL1_beam%' then 1 else 0 end )>0 and
                 (
-                   sum( case when filename like '/bbox%/%emcal%physics%'  then 1 else 0 end )>0 or
-                   sum( case when filename like '/bbox%/%HCal%physics%'   then 1 else 0 end )>0 
+                   sum( case when filename like '/bbox%/%emcal%beam%'  then 1 else 0 end )>0 or
+                   sum( case when filename like '/bbox%/%HCal%beam%'   then 1 else 0 end )>0 
                 )
 
          order by runnumber
@@ -188,14 +190,14 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
 
                  from segmentedC
 
-                 where runnumber<=53880
+                 where runnumber>53880
 
           order by runnumber desc, segment desc;
                  
 
    # TODO:  Need to add error checking to make sure that outdir, logdir, etc... are quoted properly.  Else, this will cause problems with argument substitution
    filesystem:  
-     outdir : "/sphenix/lustre01/sphnxpro/physics/run2auau/calophysics/$(build)_$(tag)/run_$(rungroup)"
+     outdir : "/sphenix/lustre01/sphnxpro/beam/run2auau/calophysics/$(build)_$(tag)/run_$(rungroup)"
      logdir : "file:///sphenix/data/data02/sphnxpro/run2aua/calologs/$(build)_$(tag)/run_$(rungroup)"
      histdir :       "/sphenix/data/data02/sphnxpro/run2auau/calohist/$(build)_$(tag)/run_$(rungroup)"
      condor :        "/tmp/run2aua/calologs/$(build)_$(tag)/run_$(rungroup)"
@@ -213,6 +215,8 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
      accounting_group_user : "sphnxpro"
      priority : '3890'
      #request_xferslots: '1'
+
+
 
 
 
@@ -321,7 +325,7 @@ DST_CALO_run2auau_new_2024p007:
 
 
 # Downstream products
-  DST_JETS_run2auau_new_2024p007:
+DST_JETS_run2auau_new_2024p007:
    params:
      name:       DST_JETS_run2auau
      build:      new
