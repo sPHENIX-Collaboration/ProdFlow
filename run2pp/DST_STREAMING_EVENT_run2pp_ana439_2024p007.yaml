@@ -101,7 +101,7 @@ DST_TRKR_HIT_run2pp:
      mem     :   2048MB
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
      input   : "DST_STREAMING_EVENT_run2pp_ana439_2024p007%"
-     mnrun   : 43249
+     mnrun   : 51428
      mxrun   : 53880
 
    input:
