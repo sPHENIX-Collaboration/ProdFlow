@@ -10,11 +10,11 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   run.sh
-     payload :   ./ProdFlow/run2auau/TriggerProduction/
+     payload :   ./ProdFlow/run2pp/TriggerProduction/
      mem     :   2048M
      neventsper: 100000
      noverflow:   20000
-     rsync  : "ProdFlow/run2auau/TriggerProduction/*,cups.py,bachi.py,odbc.ini"
+     rsync  : "ProdFlow/run2pp/TriggerProduction/*,cups.py,bachi.py,odbc.ini"
 
 
    #
@@ -330,10 +330,10 @@ DST_CALO_run2auau_new_2024p007:
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   runjets.sh
-     payload :   ./ProdFlow/run2auau/JetProduction/
+     payload :   ./ProdFlow/run2pp/JetProduction/
      mem     :   2096MB
      neventsper: 50000
-     rsync  : "./ProdFlow/run2auau/JetProduction/*,cups.py,bachi.py,odbc.ini"
+     rsync  : "./ProdFlow/run2pp/JetProduction/*,cups.py,bachi.py,odbc.ini"
 
    input:
      db: filecatalog
