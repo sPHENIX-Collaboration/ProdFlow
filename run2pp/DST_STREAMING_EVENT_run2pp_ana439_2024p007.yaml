@@ -101,7 +101,7 @@ DST_TRKR_HIT_run2pp:
      mem     :   2048MB
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
      input   : "DST_STREAMING_EVENT_run2pp_ana439_2024p007%"
-     mnrun   : 43249
+     mnrun   : 51428
      mxrun   : 53880
 
    input:
@@ -162,7 +162,7 @@ DST_TRKR_CLUSTER_run2pp:
      nevents :  0
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
      input   : "DST_TRKR_HIT_run2pp_ana439_2024p007%"
-     mnrun   : 43249
+     mnrun   : 51428
      mxrun   : 53880
 
 
@@ -221,7 +221,7 @@ DST_TRKR_SEED_run2pp:
      nevents :  0
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
      input   : "DST_TRKR_CLUSTER_run2pp_ana439_2024p007%"
-     mnrun   : 43249
+     mnrun   : 51428
      mxrun   : 53880
 
 
@@ -278,7 +278,7 @@ DST_TRKR_TRACKS_run2pp:
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
      seeds   : "DST_TRKR_SEED_run2pp_ana439_2024p007%"
      clusters: "DST_TRKR_CLUSTER_run2pp_ana439_2024p007%"
-     mnrun   : 43249
+     mnrun   : 51428
      mxrun   : 53880
 
 

@@ -184,6 +184,12 @@ touch tpot.list
 
 ls -la *.list
 
+# If no input files are in the file lists exit with code 111 to indicate a failure
+if [ $(cat *.list|wc -l) -eq 0 ]; then
+     ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e 111 --nevents 0 --inc 
+     exit 111
+fi
+
 # Flag job as running in production status
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
 
