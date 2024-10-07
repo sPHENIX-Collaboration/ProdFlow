@@ -1,11 +1,11 @@
 #
 # Testbed for file ranges
 #
-DST_TRIGGERED_EVENT_run2auau_ana437_2024p007:
+DST_TRIGGERED_EVENT_run2auau_new_2024p007:
    params:
      name:       DST_TRIGGERED_EVENT_run2auau
-     build:      ana.437
-     build_name: ana437
+     build:      new
+     build_name: new
      dbtag:      2024p007
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
@@ -217,11 +217,11 @@ DST_TRIGGERED_EVENT_run2auau_ana437_2024p007:
 
 
 # Downstream products
-DST_CALO_Y2_FITTING:
+DST_CALOFITTING_run2auau_new_2024p007:
    params:
      name:       DST_CALOFITTING_run2auau
-     build:      ana.437
-     build_name: ana437
+     build:      new
+     build_name: new
      dbtag:      2024p007
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
@@ -243,7 +243,7 @@ DST_CALO_Y2_FITTING:
          from  
                 datasets
          where 
-                filename like 'DST_TRIGGERED_EVENT_run2auau_ana437_2024p007%'
+                filename like 'DST_TRIGGERED_EVENT_run2auau_new_2024p007%'
                 {run_condition}
 
                  and runnumber<=53880
@@ -269,11 +269,11 @@ DST_CALO_Y2_FITTING:
 
 
 # Downstream products
-DST_CALO_Y2_CALIB:
+DST_CALO_run2auau_new_2024p007:
    params:
      name:       DST_CALO_run2auau
-     build:      ana.437
-     build_name: ana437
+     build:      new
+     build_name: new
      dbtag:      2024p007
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
@@ -295,7 +295,7 @@ DST_CALO_Y2_CALIB:
          from  
                 datasets
          where 
-                filename like 'DST_CALOFITTING_run2auau_ana437_2024p007%'
+                filename like 'DST_CALOFITTING_run2auau_new_2024p007%'
                 {run_condition}
 
                  and runnumber<=53880
@@ -321,11 +321,11 @@ DST_CALO_Y2_CALIB:
 
 
 # Downstream products
-DST_CALO_Y2_JETS:
+  DST_JETS_run2auau_new_2024p007:
    params:
      name:       DST_JETS_run2auau
-     build:      ana.437
-     build_name: ana437
+     build:      new
+     build_name: new
      dbtag:      2024p007
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
@@ -347,7 +347,7 @@ DST_CALO_Y2_JETS:
          from  
                 datasets
          where 
-                filename like 'DST_CALO_run2auau_ana437_2024p007%'
+                filename like 'DST_CALO_run2auau_new_2024p007%'
                 {run_condition}
                 and runnumber<=53880
            
