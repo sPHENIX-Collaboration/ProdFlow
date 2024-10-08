@@ -13,6 +13,8 @@ ranges=(`echo ${10} | tr "," " "`)  # array of input files with ranges appended
 logdir=${11:-.}
 subdir=${13}
 payload=(`echo ${14} | tr ","  " "`) # array of files to be rsynced
+#-----
+export cupsid=${@: -1}
 
 sighandler()
 {

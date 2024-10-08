@@ -14,6 +14,8 @@ logdir=${11:-.}
 histdir=${12:-.}
 subdir=${13}
 payload=(`echo ${14} | tr ","  " "`) # array of files to be rsynced
+#----
+export cupsid=${@: -1}
 
 sighandler()
 {
