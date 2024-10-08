@@ -2,9 +2,9 @@
 PHYS_DST_STREAMING_EVENT_run2auau:
 
    params:
-     name:       DST_STREAMING_EVENT_run2auau
-     build:      ana.439
-     build_name: ana439
+     name:       DST_STREAMING_EVENT_run2auau_new_2024p007
+     build:      new
+     build_name: new
      dbtag:      2024p007
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
@@ -16,10 +16,8 @@ PHYS_DST_STREAMING_EVENT_run2auau:
      zstrig  : 150
      neventsperZS: 1000
      neventsperNoZS: 100
-     mnrun: 52076
-     mxrun: 53880
-
-#         and runnumber>=52076 and runnumber<=53880
+     mnrun: 53881
+     mxrun: 99999
 
    input:
       db: daqdb
@@ -48,11 +46,11 @@ PHYS_DST_STREAMING_EVENT_run2auau:
              filelist,run2auau
         where 
          ( 
-             (filename  like '/bbox%/TPC%physics%.evt'   and lastevent>2 ) or
-             (filename  like '/bbox%/TPOT%physics%.evt'  and lastevent>2 ) or
-             (filename  like '/bbox%/physics_intt%.evt'  and lastevent>2 ) or
-             (filename  like '/bbox%/GL1_physics%.evt'   and lastevent>2 ) or
-             (filename  like '/bbox%/physics_mvtx%.evt'  and lastevent>2 )
+             (filename  like '/bbox%/TPC%(beam|physics)%.evt'   and lastevent>2 ) or
+             (filename  like '/bbox%/TPOT%(beam|physics)%.evt'  and lastevent>2 ) or
+             (filename  like '/bbox%/(beam|physics)_intt%.evt'  and lastevent>2 ) or
+             (filename  like '/bbox%/GL1_(beam|physics)%.evt'   and lastevent>2 ) or
+             (filename  like '/bbox%/(beam|physics)_mvtx%.evt'  and lastevent>2 )
          )
 
          and runnumber>=run2auau.firstrun 
@@ -64,12 +62,12 @@ PHYS_DST_STREAMING_EVENT_run2auau:
          having
               every(transferred_to_sdcc)   and
               max(lastevent)>1000          and
-              sum( case when filename like '/bbox%/GL1_physics%' then 1 else 0 end )>0 and
+              sum( case when filename like '/bbox%/GL1_(beam|physics)%' then 1 else 0 end )>0 and
               (
-                 sum( case when filename like '/bbox%/TPC%physics%' then 1 else 0 end )>0 or
-                 sum( case when filename like '/bbox%/TPOT%physics%' then 1 else 0 end )>0 or
-                 sum( case when filename like '/bbox%/physics%intt%' then 1 else 0 end )>0 or
-                 sum( case when filename like '/bbox%/physics_mvtx%.evt' then 1 else 0 end )>0 
+                 sum( case when filename like '/bbox%/TPC%(beam|physics)%' then 1 else 0 end )>0 or
+                 sum( case when filename like '/bbox%/TPOT%(beam|physics)%' then 1 else 0 end )>0 or
+                 sum( case when filename like '/bbox%/(beam|physics)%intt%' then 1 else 0 end )>0 or
+                 sum( case when filename like '/bbox%/(beam|physics)_mvtx%.evt' then 1 else 0 end )>0 
               )
          order by runnumber
         ),
@@ -112,9 +110,9 @@ PHYS_DST_STREAMING_EVENT_run2auau:
 DST_TRKR_HIT_SET_run2auau:
    # DST_EVENT works from a pre-built set of run lists.
    params:
-     name:       DST_TRKR_HIT_run2auau
-     build:      ana.439
-     build_name: ana439
+     name:       DST_TRKR_HIT_run2auau_new_2024p007
+     build:      new
+     build_name: new
      dbtag:      2024p007
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
@@ -122,9 +120,9 @@ DST_TRKR_HIT_SET_run2auau:
      payload :   ./ProdFlow/run2pp/TrackingProduction/
      mem     :   2048MB
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
-     input   : "DST_STREAMING_EVENT_run2auau_ana439_2024p007%"
-     mnrun   : 43249
-     mxrun   : 53880
+     input   : "DST_STREAMING_EVENT_run2auau_new_2024p007%"
+     mnrun: 53881
+     mxrun: 99999
 
    input:
       db: fc
@@ -171,9 +169,9 @@ DST_TRKR_HIT_SET_run2auau:
 DST_TRKR_CLUSTER_SET_run2auau:
    # DST_EVENT works from a pre-built set of run lists.
    params:
-     name:       DST_TRKR_CLUSTER_run2auau
-     build:      ana.439
-     build_name: ana439
+     name:       DST_TRKR_CLUSTER_run2auau_new_2024p007
+     build:      new
+     build_name: new
      dbtag:      2024p007
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
@@ -182,9 +180,9 @@ DST_TRKR_CLUSTER_SET_run2auau:
      mem     :   2048MB
      nevents :  0
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
-     input   : "DST_TRKR_HIT_run2auau_ana439_2024p007%"
-     mnrun   : 43249
-     mxrun   : 53880
+     input   : "DST_TRKR_HIT_run2auau_new_2024p007%"
+     mnrun: 53881
+     mxrun: 99999
 
    input:
       db: fc
@@ -227,9 +225,9 @@ DST_TRKR_CLUSTER_SET_run2auau:
 DST_TRKR_SEED_SET_run2auau:
    # DST_EVENT works from a pre-built set of run lists.
    params:
-     name:       DST_TRKR_SEED_run2auau
-     build:      ana.439
-     build_name: ana439
+     name:       DST_TRKR_SEED_run2auau_new_2024p007
+     build:      new
+     build_name: new
      dbtag:      2024p007
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
@@ -238,9 +236,9 @@ DST_TRKR_SEED_SET_run2auau:
      mem     :   2048MB
      nevents :  0
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
-     input   : "DST_TRKR_CLUSTER_run2auau_ana439_2024p007%"
-     mnrun   : 43249
-     mxrun   : 53880
+     input   : "DST_TRKR_CLUSTER_run2auau_new_2024p007%"
+     mnrun: 53881
+     mxrun: 99999
 
    input:
       db: fc
@@ -280,9 +278,9 @@ DST_TRKR_SEED_SET_run2auau:
 DST_TRKR_TRACKS_SET_run2auau:
    # DST_EVENT works from a pre-built set of run lists.
    params:
-     name:       DST_TRKR_TRACKS_run2auau
-     build:      ana.439
-     build_name: ana439
+     name:       DST_TRKR_TRACKS_run2auau_new_2024p007
+     build:      new
+     build_name: new
      dbtag:      2024p007
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
@@ -291,10 +289,10 @@ DST_TRKR_TRACKS_SET_run2auau:
      mem     :   2048MB
      nevents :   0
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
-     seeds   : "DST_TRKR_SEED_run2auau_ana439_2024p007%"
-     clusters: "DST_TRKR_CLUSTER_run2auau_ana439_2024p007%"
-     mnrun   : 43249
-     mxrun   : 53880
+     seeds   : "DST_TRKR_SEED_run2auau_new_2024p007%"
+     clusters: "DST_TRKR_CLUSTER_run2auau_new_2024p007%"
+     mnrun: 53881
+     mxrun: 99999
 
 
 
