@@ -230,10 +230,10 @@ DST_CALOFITTING_run2auau_new_2024p007:
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   runy2fitting.sh
-     payload :   ./slurp-examples/sPHENIX/CaloProduction/
+     payload :   ./ProdFlow/run2pp/CaloProduction/
      mem     :   1024MB
      neventsper: 50000
-     rsync  : "./slurp-examples/sPHENIX/CaloProduction/*,cups.py,bachi.py,odbc.ini"
+     rsync  : "./ProdFlow/run2pp/CaloProduction/*,cups.py,bachi.py,odbc.ini"
 
    input:
      db: filecatalog
@@ -282,10 +282,10 @@ DST_CALO_run2auau_new_2024p007:
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   runy2calib.sh
-     payload :   ./slurp-examples/sPHENIX/CaloProduction/
+     payload :   ./ProdFlow/run2pp/CaloProduction/
      mem     :   4096MB
      neventsper: 50000
-     rsync  : "./slurp-examples/sPHENIX/CaloProduction/*,cups.py,bachi.py,odbc.ini"
+     rsync  : "./ProdFlow/run2pp/CaloProduction/*,cups.py,bachi.py,odbc.ini"
 
    input:
      db: filecatalog
