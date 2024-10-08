@@ -13,6 +13,8 @@ ranges=(`echo ${10} | tr "," " "`)  # array of input files with ranges appended
 neventsper=${11:-1000}
 logdir=${12:-.}
 histdir=${13:-.}
+#-----
+export cupsid=${@: -1}
 
 sighandler()
 {
