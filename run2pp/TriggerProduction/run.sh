@@ -114,6 +114,10 @@ for (( i=0; i<${leni}; i++ )); do
 
     e=( $fe $le )
 
+    echo $f $fbase $fe $le
+
+    if [[ ((${le} -ge ${firstevent}) || (${fe} -ge ${firstevent})) ]]; then
+
     #
     # The file should be included in this run IF
     #
@@ -126,13 +130,21 @@ for (( i=0; i<${leni}; i++ )); do
     #      last event of the file is unknown, we add the file to the list
     #
 
-    if [[ ((${e[0]} -ge $firstevent) && (${e[0]} -le $lastsafety))||  \
-          ((${e[1]} -ge $firstevent) && (${e[1]} -le $lastsafety))||  \
-          ((${e[0]} -le $firstevent) && (${e[1]} -ge $lastsafety))||  \
-          ((${e[0]} -eq $firstevent) || (${e[0]} -eq  $lastevent))||  \
-          ((${e[1]} -eq $firstevent) || (${e[1]} -eq  $lastevent))||  \
-          ((${e[0]} -lt $lastsafety) && (${e[1]} -le           0))    \
-       ]]; then
+    #if [[ ((${e[0]} -ge $firstevent) && (${e[0]} -le $lastsafety))||  \
+    #      ((${e[1]} -ge $firstevent) && (${e[1]} -le $lastsafety))||  \
+    #      ((${e[0]} -le $firstevent) && (${e[1]} -ge $lastsafety))||  \
+    #      ((${e[0]} -eq $firstevent) || (${e[0]} -eq  $lastevent))||  \
+    #      ((${e[1]} -eq $firstevent) || (${e[1]} -eq  $lastevent))||  \
+    #      ((${e[0]} -lt $lastsafety) && (${e[1]} -le           0))    \
+    #   ]]; then
+
+    #if [[ (( $e[0] -ge $firstevent ) || ( $e[1] -ge $firstevent ) ) ]]; then
+
+    # New condition... exclude files whose last event preceeds the first event in the run
+
+    #if [[ (($e[1] -lt ${firstevent})) ]]; then
+    #   continue
+    #fi
 
 
  
