@@ -1,8 +1,8 @@
 #________________________________________________________________________________________________________DST_PHYSICS__
-PHYS_DST_STREAMING_EVENT_run2auau:
+DST_STREAMING_EVENT_run2auau_new_2024p007:
 
    params:
-     name:       DST_STREAMING_EVENT_run2auau_new_2024p007
+     name:       DST_STREAMING_EVENT_run2auau
      build:      new
      build_name: new
      dbtag:      2024p007
@@ -107,10 +107,10 @@ PHYS_DST_STREAMING_EVENT_run2auau:
 
 
 
-DST_TRKR_HIT_SET_run2auau:
+DST_TRKR_HIT_run2auau_new_2024p007:
    # DST_EVENT works from a pre-built set of run lists.
    params:
-     name:       DST_TRKR_HIT_run2auau_new_2024p007
+     name:       DST_TRKR_HIT_run2auau
      build:      new
      build_name: new
      dbtag:      2024p007
@@ -166,10 +166,10 @@ DST_TRKR_HIT_SET_run2auau:
 
 
 #_________________________________________________________________________________________________________________________________________
-DST_TRKR_CLUSTER_SET_run2auau:
+DST_TRKR_CLUSTER_run2auau_new_2024p007:
    # DST_EVENT works from a pre-built set of run lists.
    params:
-     name:       DST_TRKR_CLUSTER_run2auau_new_2024p007
+     name:       DST_TRKR_CLUSTER_run2auau
      build:      new
      build_name: new
      dbtag:      2024p007
@@ -222,10 +222,10 @@ DST_TRKR_CLUSTER_SET_run2auau:
 
 
 #_________________________________________________________________________________________________________________________________________
-DST_TRKR_SEED_SET_run2auau:
+DST_TRKR_SEED_SET_run2auau_new_2024p007:
    # DST_EVENT works from a pre-built set of run lists.
    params:
-     name:       DST_TRKR_SEED_run2auau_new_2024p007
+     name:       DST_TRKR_SEED_run2auau
      build:      new
      build_name: new
      dbtag:      2024p007
@@ -275,10 +275,10 @@ DST_TRKR_SEED_SET_run2auau:
      priority : '3800'
 
 
-DST_TRKR_TRACKS_SET_run2auau:
+DST_TRKR_TRACKS_SET_run2auau_new_2024p007:
    # DST_EVENT works from a pre-built set of run lists.
    params:
-     name:       DST_TRKR_TRACKS_run2auau_new_2024p007
+     name:       DST_TRKR_TRACKS_run2auau
      build:      new
      build_name: new
      dbtag:      2024p007
