@@ -137,6 +137,7 @@ void Fun4All_Stream_Combiner(int nEvents = 100,
   Fun4AllStreamingInputManager *in = new Fun4AllStreamingInputManager("Comb");
   //  in->Verbosity(2);
 // create and register input managers
+  int NumInputs = 0;
   int i = 0;
 
   for (auto iter : gl1_infile)
@@ -150,9 +151,9 @@ void Fun4All_Stream_Combiner(int nEvents = 100,
       i++;
     }
   }
+  NumInputs += i;
+
   i = 0;
-
-
   for (auto iter : intt_infile)
   {
     if (isGood(iter))
@@ -166,6 +167,8 @@ void Fun4All_Stream_Combiner(int nEvents = 100,
     i++;
     }
   }
+  NumInputs += i;
+
   i = 0;
   for (auto iter : mvtx_infile)
   {
@@ -180,6 +183,8 @@ void Fun4All_Stream_Combiner(int nEvents = 100,
     i++;
     }
   }
+  NumInputs += i;
+
   i = 0;
   for (auto iter : tpc_infile)
   {
@@ -195,8 +200,9 @@ void Fun4All_Stream_Combiner(int nEvents = 100,
     i++;
     }
   }
-  i = 0;
+  NumInputs += i;
 
+  i = 0;
   for (auto iter : tpot_infile)
   {
     if (isGood(iter))
@@ -210,6 +216,14 @@ void Fun4All_Stream_Combiner(int nEvents = 100,
     in->registerStreamingInput(mm_sngl, InputManagerType::MICROMEGAS);
     i++;
     }
+  }
+  NumInputs += i;
+
+// if there is no input manager this macro will still run - so just quit here
+  if (NumInputs == 0)
+  {
+    std::cout << "no file lists no input manager registered, quitting" << std::endl;
+    gSystem->Exit(1);
   }
 
   se->registerInputManager(in);
