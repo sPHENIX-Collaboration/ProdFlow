@@ -15,7 +15,8 @@ logdir=${12:-.}
 histdir=${13:-.}
 subdir=${14}
 payload=(`echo ${15} | tr ","  " "`) # array of files to be rsynced
-
+#-----
+export cupsid=${@: -1}
 
 sighandler()
 {
@@ -118,11 +119,11 @@ echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${stat
 
 
 echo "bdee bdee bdee, That's All Folks!"
-cp ${logbase}.out ${logdir#file:/}
-cp ${logbase}.err ${logdir#file:/}
+#cp ${logbase}.out ${logdir#file:/}
+#cp ${logbase}.err ${logdir#file:/}
 
 
-} > ${logbase}.out 2>${logbase}.err
+} > ${logdir#file:/}/${logbase}.out 2> ${logdir#file:/}/${logbase}.err
 
 
 exit ${status_f4a}

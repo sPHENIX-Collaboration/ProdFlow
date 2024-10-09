@@ -12,8 +12,8 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
      script  :   run.sh
      payload :   ./ProdFlow/run2pp/TriggerProduction/
      mem     :   2048M
-     neventsper: 5000
-     noverflow:  1000
+     neventsper: 100000
+     noverflow:   20000
      rsync  : "ProdFlow/run2pp/TriggerProduction/*,cups.py,bachi.py,odbc.ini"
 
 
@@ -35,18 +35,18 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
    #
    input:
       db: daqdb
-      direct_path: /sphenix/lustre01/sphnxpro/physics/*/beam/
+      direct_path: /sphenix/lustre01/sphnxpro/physics/*/*/
       query: |-
          with config as (
             select 
-               5000 as nevents,
-               1000 as noverflow
+               100000 as nevents,
+                20000 as noverflow
          ),
 
          fullevents as (
               select runnumber,max(lastevent)    as lastevent
               from filelist, config
-              where (filename like '/bbox%/GL1_beam%.evt'        and lastevent>2 )
+              where (filename similar to '/bbox%/GL1_(beam|physics)%.evt'        and lastevent>2 )
 
                  {run_condition}
 
@@ -54,7 +54,7 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
               having
                      every(transferred_to_sdcc)   and
                      max(lastevent)>1000          and
-                     sum( case when filename like '/bbox%/GL1_beam%' then 1 else 0 end )>0
+                     sum( case when filename similar to '/bbox%/GL1_(beam|physics)%' then 1 else 0 end )>0
 
               order by runnumber
          ),
@@ -71,12 +71,12 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
                 filelist,config
          where 
            ( 
-             (filename  like '/bbox%/%emcal%beam%.prdf'    and lastevent>2 ) or 
-             (filename  like '/bbox%/%HCal%beam%.prdf'     and lastevent>2 ) or
-             (filename  like '/bbox%/%LL1%beam%.prdf'      and lastevent>2 ) or
-             (filename  like '/bbox%/GL1_beam%.evt'       and lastevent>2 ) or
-             (filename  like '/bbox%/%mbd%beam%.prdf'      and lastevent>2 ) or
-             (filename  like '/bbox%/%ZDC%beam%.prdf'      and lastevent>2 ) 
+             (filename  similar to '/bbox%/%emcal%(beam|physics)%.prdf'    and lastevent>2 ) or 
+             (filename  similar to '/bbox%/%HCal%(beam|physics)%.prdf'     and lastevent>2 ) or
+             (filename  similar to '/bbox%/%LL1%(beam|physics)%.prdf'      and lastevent>2 ) or
+             (filename  similar to '/bbox%/GL1_(beam|physics)%.evt'       and lastevent>2 ) or
+             (filename  similar to '/bbox%/%mbd%(beam|physics)%.prdf'      and lastevent>2 ) or
+             (filename  similar to '/bbox%/%ZDC%(beam|physics)%.prdf'      and lastevent>2 ) 
 
            )
 
@@ -89,10 +89,10 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
          having
                 every(transferred_to_sdcc)   and
                 max(lastevent)>1000          and
-                sum( case when filename like '/bbox%/GL1_beam%' then 1 else 0 end )>0 and
+                sum( case when filename similar to '/bbox%/GL1_(beam|physics)%' then 1 else 0 end )>0 and
                 (
-                   sum( case when filename like '/bbox%/%emcal%beam%'  then 1 else 0 end )>0 or
-                   sum( case when filename like '/bbox%/%HCal%beam%'   then 1 else 0 end )>0 
+                   sum( case when filename similar to '/bbox%/%emcal%(beam|physics)%'  then 1 else 0 end )>0 or
+                   sum( case when filename similar to '/bbox%/%HCal%(beam|physics)%'   then 1 else 0 end )>0 
                 )
 
          order by runnumber
