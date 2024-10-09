@@ -88,6 +88,7 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
   in->SetPoolDepth(50);
   in->Resync(true);
 
+  int NumInputs = 0;
   //in->Verbosity(2);
   // this one is the reference
   ifstream infile(gl1input);
@@ -102,6 +103,7 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
     gl1->LastEvent(lastevent);
     gl1->AddListFile(gl1input);
     in->registerTriggerInput(gl1, InputManagerType::GL1);
+    NumInputs++;
   }
   infile.open(mbdinput);
   if (infile.is_open())
@@ -113,6 +115,7 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
     mbd->SkipToEvent(firstevent);
     mbd->AddListFile(mbdinput);
     in->registerTriggerInput(mbd, InputManagerType::MBD);
+    NumInputs++;
   }
 
   infile.open(zdcinput);
@@ -125,6 +128,7 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
     zdc->SkipToEvent(firstevent);
     zdc->AddListFile(zdcinput);
     in->registerTriggerInput(zdc, InputManagerType::ZDC);
+    NumInputs++;
   }
 
   infile.open(ll1input);
@@ -137,6 +141,7 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
     ll1->SkipToEvent(firstevent);
     ll1->AddListFile(ll1input);
     in->registerTriggerInput(ll1, InputManagerType::LL1);
+    NumInputs++;
   }
   int inpt = 0;
   for (auto iter : hcalinfile)
@@ -152,9 +157,10 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
       hcal->enable_ddump(DDUMP);
       hcal->SkipToEvent(firstevent);
       in->registerTriggerInput(hcal, InputManagerType::HCAL);
+      inpt++;
     }
-    inpt++;
   }
+  NumInputs += inpt;
 
   inpt = 0;
   for (auto iter : cemcinfile)
@@ -171,8 +177,16 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
       cemc->enable_ddump(DDUMP);
       cemc->SkipToEvent(firstevent);
       in->registerTriggerInput(cemc, InputManagerType::CEMC);
+      inpt++;
     }
-    inpt++;
+  }
+  NumInputs += inpt;
+
+// if there is no input manager this macro will still run - so just quit here
+  if (NumInputs == 0)
+  {
+    std::cout << "no file lists no input manager registered, quitting" << std::endl;
+    gSystem->Exit(1);
   }
 
   se->registerInputManager(in);
