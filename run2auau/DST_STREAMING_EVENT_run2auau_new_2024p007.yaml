@@ -9,80 +9,86 @@ DST_STREAMING_EVENT_run2auau_new_2024p007:
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   run_cosmics.sh
-     payload :   ./ProdFlow/run2pp/cosmics/
-     mem     :   20480MB
+     payload :   ./ProdFlow/run2pp/cosmics/     
      comment :    "---"
      rsync   : "./ProdFlow/run2pp/cosmics/*,cups.py,bachi.py,odbc.ini"
+     mem     :   20000MB
+     # 20GB of memory is not a typo
      zstrig  : 150
-     neventsperZS: 1000
+     neventsperZS: 10000
      neventsperNoZS: 100
-     mnrun: 53881
-     mxrun: 99999
+
 
    input:
       db: daqdb
-      direct_path: /sphenix/lustre01/sphnxpro/{mode}/*/physics/
+      direct_path: /sphenix/lustre01/sphnxpro/{mode}/*/*/
       query: |-
-        with run2auau as (
-             select {mnrun} as firstrun,
-                    {mxrun} as lastrun
-        ),
+         with run2auau as (
+              select 53881 as firstrun,
+                     99999 as lastrun
+         ),
 
-        zero as (
+         zero as (
              select lastrun, min(zsthr) as zsthr, max(zsthr) as zstrh2 
              from tpc_sampa_config group by lastrun order by lastrun desc
-        ),
-  
-        fullrun as (
-            select 
-               'daqdb/filelist'                as source      , 
-                runnumber                                     , 
-                0                              as segment     , 
-                string_agg( distinct split_part(filename,'/',-1), ' ' )
-                                               as files       ,   
-                string_agg( distinct split_part(filename,'/',-1) || ':' || firstevent || ':' || lastevent, ' ' )    
-                                               as fileranges  
-        from  
-             filelist,run2auau
-        where 
-         ( 
-             (filename  like '/bbox%/TPC%(beam|physics)%.evt'   and lastevent>2 ) or
-             (filename  like '/bbox%/TPOT%(beam|physics)%.evt'  and lastevent>2 ) or
-             (filename  like '/bbox%/(beam|physics)_intt%.evt'  and lastevent>2 ) or
-             (filename  like '/bbox%/GL1_(beam|physics)%.evt'   and lastevent>2 ) or
-             (filename  like '/bbox%/(beam|physics)_mvtx%.evt'  and lastevent>2 )
-         )
+         ),
 
-         and runnumber>=run2auau.firstrun 
-         and runnumber<=run2auau.lastrun
+         fullrun as (
+         select 
+                'daqdb/filelist'                                                                                    as source      , 
+                runnumber                                                                                                          , 
+                0                                                                                                   as segment     , 
+                string_agg( distinct split_part(filename,'/',-1), ' ' )                                             as files       ,   
+                string_agg( distinct split_part(filename,'/',-1) || ':' || firstevent || ':' || lastevent, ' ' )    as fileranges  
+         from  
+                filelist,run2auau
+         where 
+           ( 
+             (filename  similar to '/bbox%/TPC%(beam|physics)%.evt'   and lastevent>2 ) or
+             (filename  similar to '/bbox%/TPOT%(beam|physics)%.evt'  and lastevent>2 ) or
+             (filename  similar to '/bbox%/(beam|physics)_intt%.evt'  and lastevent>2 ) or
+             (filename  similar to '/bbox%/GL1_(beam|physics)%.evt'   and lastevent>2 ) or
+             (filename  similar to '/bbox%/(beam|physics)_mvtx%.evt'  and lastevent>2 )
+           )
+
+         and runnumber>=run2auau.firstrun and runnumber<=run2auau.lastrun
 
          {run_condition}
 
          group by runnumber
          having
-              every(transferred_to_sdcc)   and
-              max(lastevent)>1000          and
-              sum( case when filename like '/bbox%/GL1_(beam|physics)%' then 1 else 0 end )>0 and
-              (
-                 sum( case when filename like '/bbox%/TPC%(beam|physics)%' then 1 else 0 end )>0 or
-                 sum( case when filename like '/bbox%/TPOT%(beam|physics)%' then 1 else 0 end )>0 or
-                 sum( case when filename like '/bbox%/(beam|physics)%intt%' then 1 else 0 end )>0 or
-                 sum( case when filename like '/bbox%/(beam|physics)_mvtx%.evt' then 1 else 0 end )>0 
-              )
+                every(transferred_to_sdcc)   and
+                max(lastevent)>1000          and
+                sum( case when filename similar to '/bbox%/GL1_(beam|physics)%' then 1 else 0 end )>0 and
+                (
+                   sum( case when filename similar to '/bbox%/TPC%(beam|physics)%' then 1 else 0 end )>0 or
+                   sum( case when filename similar to '/bbox%/TPOT%(beam|physics)%' then 1 else 0 end )>0 or
+                   sum( case when filename similar to '/bbox%/(beam|physics)%intt%' then 1 else 0 end )>0 or
+                   sum( case when filename similar to '/bbox%/(beam|physics)_mvtx%.evt' then 1 else 0 end )>0 
+                )
          order by runnumber
-        ),
+         ),
 
-        fullrunzeros as (
+         fullrunzeros as (
 
-          select source,runnumber,segment,files,fileranges,lastrun,runnumber-lastrun as rundiff,zsthr,(case when zsthr<350 then {neventsperZS} else {neventsperNoZS} end) as neventsper
+            select source,
+                   runnumber,
+                   segment,
+                   files,
+                   fileranges,
+                   lastrun,
+                   runnumber-lastrun as rundiff,
+                   zsthr,
+                   (case when zsthr>{zstrig} then {neventsperZS} else {neventsperNoZS} end) as neventsper
 
-          from fullrun cross join zero order by runnumber desc
+            from fullrun cross join zero order by runnumber desc
 
-        )
+         )
 
-        select distinct on (runnumber) source,runnumber,segment,files,fileranges,neventsper from fullrunzeros 
+         select distinct on (runnumber) source,runnumber,segment,files,fileranges,neventsper from fullrunzeros 
              where rundiff>0 order by runnumber desc,rundiff
 
+              ;
 
    # TODO:  Need to add error checking to make sure that outdir, logdir, etc... are quoted properly.  Else, this will cause problems with argument substitution
    filesystem:  
@@ -121,8 +127,8 @@ DST_TRKR_HIT_run2auau_new_2024p007:
      mem     :   2048MB
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
      input   : "DST_STREAMING_EVENT_run2auau_new_2024p007%"
-     mnrun: 53881
-     mxrun: 99999
+     mnrun   : 53881
+     mxrun   : 99999
 
    input:
       db: fc
@@ -141,6 +147,7 @@ DST_TRKR_HIT_run2auau_new_2024p007:
                 {run_condition}
                 and runnumber>={mnrun}
                 and runnumber<={mxrun}
+
 
          order by runnumber
                 {limit_condition}
@@ -181,8 +188,9 @@ DST_TRKR_CLUSTER_run2auau_new_2024p007:
      nevents :  0
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
      input   : "DST_TRKR_HIT_run2auau_new_2024p007%"
-     mnrun: 53881
-     mxrun: 99999
+     mnrun   : 53881
+     mxrun   : 99999
+
 
    input:
       db: fc
@@ -196,10 +204,12 @@ DST_TRKR_CLUSTER_run2auau_new_2024p007:
          from  
                 datasets
          where
+
                 filename like '{input}'
                 {run_condition}
                 and runnumber>={mnrun}
                 and runnumber<={mxrun}
+
          order by runnumber
                 {limit_condition}
               ;              
@@ -222,7 +232,7 @@ DST_TRKR_CLUSTER_run2auau_new_2024p007:
 
 
 #_________________________________________________________________________________________________________________________________________
-DST_TRKR_SEED_SET_run2auau_new_2024p007:
+DST_TRKR_SEED_run2auau_new_2024p007:
    # DST_EVENT works from a pre-built set of run lists.
    params:
      name:       DST_TRKR_SEED_run2auau
@@ -237,8 +247,9 @@ DST_TRKR_SEED_SET_run2auau_new_2024p007:
      nevents :  0
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
      input   : "DST_TRKR_CLUSTER_run2auau_new_2024p007%"
-     mnrun: 53881
-     mxrun: 99999
+     mnrun   : 53881
+     mxrun   : 99999
+
 
    input:
       db: fc
@@ -252,10 +263,12 @@ DST_TRKR_SEED_SET_run2auau_new_2024p007:
          from  
                 datasets
          where
+
                 filename like '{input}'
                 {run_condition}
                 and runnumber>={mnrun}
                 and runnumber<={mxrun}
+
          order by runnumber
                 {limit_condition}
               ;              
@@ -275,7 +288,7 @@ DST_TRKR_SEED_SET_run2auau_new_2024p007:
      priority : '3800'
 
 
-DST_TRKR_TRACKS_SET_run2auau_new_2024p007:
+DST_TRKR_TRACKS_run2auau_new_2024p007:
    # DST_EVENT works from a pre-built set of run lists.
    params:
      name:       DST_TRKR_TRACKS_run2auau
@@ -291,8 +304,9 @@ DST_TRKR_TRACKS_SET_run2auau_new_2024p007:
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
      seeds   : "DST_TRKR_SEED_run2auau_new_2024p007%"
      clusters: "DST_TRKR_CLUSTER_run2auau_new_2024p007%"
-     mnrun: 53881
-     mxrun: 99999
+     mnrun   : 53881
+     mxrun   : 99999
+
 
 
 
@@ -303,6 +317,7 @@ DST_TRKR_TRACKS_SET_run2auau_new_2024p007:
                'filecatalog/datasets'   as source       ,
                runnumber                                ,
                segment                                  ,
+
                string_agg( distinct split_part(filename,'/',-1), ' ' )                             as files       ,   
                string_agg( distinct split_part(filename,'/',-1) || ':' || 0 || ':' || -1, ' ' )    as fileranges  
          from
@@ -314,6 +329,7 @@ DST_TRKR_TRACKS_SET_run2auau_new_2024p007:
            {run_condition}
            and runnumber>={mnrun}
            and runnumber<={mxrun}
+
 
          group by runnumber,segment 
 
