@@ -197,7 +197,7 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
 
    # TODO:  Need to add error checking to make sure that outdir, logdir, etc... are quoted properly.  Else, this will cause problems with argument substitution
    filesystem:  
-     outdir : "/sphenix/lustre01/sphnxpro/physics/run2auau/calophysics/$(build)_$(tag)/run_$(rungroup)"
+     outdir : "/sphenix/lustre01/sphnxpro/{runtype}/run2auau/calophysics/$(build)_$(tag)/run_$(rungroup)"
      logdir : "file:///sphenix/data/data02/sphnxpro/run2aua/calologs/$(build)_$(tag)/run_$(rungroup)"
      histdir :       "/sphenix/data/data02/sphnxpro/run2auau/calohist/$(build)_$(tag)/run_$(rungroup)"
      condor :        "/tmp/run2aua/calologs/$(build)_$(tag)/run_$(rungroup)"
@@ -208,7 +208,7 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
    #
    job:
      executable            : "{payload}/run.sh"
-     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) {outdir} $(build) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync} $(firstevent) $(lastevent) $(runs_last_event)"
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(build) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync} $(firstevent) $(lastevent) $(runs_last_event)"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
@@ -258,7 +258,7 @@ DST_CALOFITTING_run2auau_new_2024p007:
          ;
    job:
      executable            : "{payload}/runy2fitting.sh"
-     arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) {outdir} $(build) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
+     arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) $(outdir) $(build) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
@@ -267,7 +267,7 @@ DST_CALOFITTING_run2auau_new_2024p007:
 
 
    filesystem:  
-     outdir : "/sphenix/lustre01/sphnxpro/physics/run2auau/caloy2fitting/$(build)_$(tag)/run_$(rungroup)"
+     outdir : "/sphenix/lustre01/sphnxpro/{runtype}/run2auau/caloy2fitting/$(build)_$(tag)/run_$(rungroup)"
      logdir : "file:///sphenix/data/data02/sphnxpro/run2aua/caloy2fitting/$(build)_$(tag)/run_$(rungroup)"
      histdir :       "/sphenix/data/data02/sphnxpro/run2aua/calohist/$(build)_$(tag)/run_$(rungroup)"
      condor :        "/tmp/run2auau/caloy2fitting/run_$(rungroup)"
@@ -310,7 +310,7 @@ DST_CALO_run2auau_new_2024p007:
          ;
    job:
      executable            : "{payload}/runy2calib.sh"
-     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) {outdir} $(build) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(build) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
@@ -318,7 +318,7 @@ DST_CALO_run2auau_new_2024p007:
      priority : '3800'
 
    filesystem:  
-     outdir : "/sphenix/lustre01/sphnxpro/physics/run2auau/caloy2calib/$(build)_$(tag)/run_$(rungroup)"
+     outdir : "/sphenix/lustre01/sphnxpro/{runtype}/run2auau/caloy2calib/$(build)_$(tag)/run_$(rungroup)"
      logdir : "file:///sphenix/data/data02/sphnxpro/run2auau/caloy2calib/$(build)_$(tag)/run_$(rungroup)"
      histdir :       "/sphenix/data/data02/sphnxpro/run2auau/calohist/$(build)_$(tag)/run_$(rungroup)"
      condor :        "/tmp/run2auau/caloy2calib/run_$(rungroup)"
@@ -361,7 +361,7 @@ DST_JETS_run2auau_new_2024p007:
          ;
    job:
      executable            : "{payload}/runjets.sh"
-     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) {outdir} $(build) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(build) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
@@ -369,7 +369,7 @@ DST_JETS_run2auau_new_2024p007:
      priority : '3800'
 
    filesystem:  
-     outdir : "/sphenix/lustre01/sphnxpro/physics/run2auau/jetproduction/$(build)_$(tag)/run_$(rungroup)"
+     outdir : "/sphenix/lustre01/sphnxpro/{runtype}/run2auau/jetproduction/$(build)_$(tag)/run_$(rungroup)"
      logdir : "file:///sphenix/data/data02/sphnxpro/run2auau/jetlogs/$(build)_$(tag)/run_$(rungroup)"
      histdir :       "/sphenix/data/data02/sphnxpro/run2auau/jethistos/$(build)_$(tag)/run_$(rungroup)"
      condor :        "/tmp/run2auau/jetproduction/run_$(rungroup)"
