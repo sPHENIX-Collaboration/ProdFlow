@@ -213,7 +213,7 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
      accounting_group_user : "sphnxpro"
-     priority : '3890'
+     priority : '3900'
      #request_xferslots: '1'
 
 
@@ -263,7 +263,7 @@ DST_CALOFITTING_run2auau_new_2024p007:
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
      accounting_group_user : "sphnxpro"
-     priority : '3810'
+     priority : '3900'
 
 
    filesystem:  
@@ -315,7 +315,7 @@ DST_CALO_run2auau_new_2024p007:
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
      accounting_group_user : "sphnxpro"
-     priority : '3800'
+     priority : '3900'
 
    filesystem:  
      outdir : "/sphenix/lustre01/sphnxpro/{runtype}/run2auau/caloy2calib/$(build)_$(tag)/run_$(rungroup)"
@@ -366,7 +366,7 @@ DST_JETS_run2auau_new_2024p007:
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
      accounting_group_user : "sphnxpro"
-     priority : '3800'
+     priority : '3900'
 
    filesystem:  
      outdir : "/sphenix/lustre01/sphnxpro/{runtype}/run2auau/jetproduction/$(build)_$(tag)/run_$(rungroup)"
