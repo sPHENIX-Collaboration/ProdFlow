@@ -35,7 +35,7 @@ DST_MBD_CALIBRATION_run2auau:
              (filename  like '/bbox%/%mbd%physics%'      and lastevent>2 )
            )
            {run_condition}
-              and runnumber<=53880
+              and runnumber>53880
 
          group by runnumber
 
