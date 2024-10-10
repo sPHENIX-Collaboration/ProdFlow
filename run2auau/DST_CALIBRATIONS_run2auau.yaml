@@ -19,7 +19,7 @@ DST_MBD_CALIBRATION_run2auau:
 
    input:
       db: daqdb
-      direct_path: /sphenix/lustre01/sphnxpro/{mode}/mbd/physics
+      direct_path: /sphenix/lustre01/sphnxpro/{mode}/mbd/*/
       query: |-
          select 
                 'daqdb/filelist'                                                                                    as source      , 
