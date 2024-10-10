@@ -50,7 +50,7 @@ DST_MBD_CALIBRATION_run2auau:
 
    # TODO:  Need to add error checking to make sure that outdir, logdir, etc... are quoted properly.  Else, this will cause problems with argument substitution
    filesystem:  
-     outdir : "/sphenix/lustre01/sphnxpro/physics/TEST/mbdcalib/$(build)_$(tag)/run_$(rungroup)"
+     outdir : "/sphenix/lustre01/sphnxpro/{runtype}/mbdcalib/$(build)_$(tag)/run_$(rungroup)"
      logdir : "file:///sphenix/data/data02/sphnxpro/mbdcalib/$(build)_$(tag)/run_$(rungroup)"
      condor :        "/tmp/mbdcalib/$(build)_$(tag)/run_$(rungroup)"
 
