@@ -17,6 +17,7 @@ DST_STREAMING_EVENT_run2auau_new_2024p007:
      zstrig  : 150
      neventsperZS: 10000
      neventsperNoZS: 100
+     myruntypes: beam|physics|calib|cosmics
 
 
    input:
@@ -44,11 +45,11 @@ DST_STREAMING_EVENT_run2auau_new_2024p007:
                 filelist,run2auau
          where 
            ( 
-             (filename  similar to '/bbox%/TPC%(beam|physics)%.evt'   and lastevent>2 ) or
-             (filename  similar to '/bbox%/TPOT%(beam|physics)%.evt'  and lastevent>2 ) or
-             (filename  similar to '/bbox%/(beam|physics)_intt%.evt'  and lastevent>2 ) or
-             (filename  similar to '/bbox%/GL1_(beam|physics)%.evt'   and lastevent>2 ) or
-             (filename  similar to '/bbox%/(beam|physics)_mvtx%.evt'  and lastevent>2 )
+             (filename  similar to '/bbox%/TPC%({myruntypes})%.evt'   and lastevent>2 ) or
+             (filename  similar to '/bbox%/TPOT%({myruntypes})%.evt'  and lastevent>2 ) or
+             (filename  similar to '/bbox%/({myruntypes})_intt%.evt'  and lastevent>2 ) or
+             (filename  similar to '/bbox%/GL1_({myruntypes})%.evt'   and lastevent>2 ) or
+             (filename  similar to '/bbox%/({myruntypes})_mvtx%.evt'  and lastevent>2 )
            )
 
          and runnumber>=run2auau.firstrun and runnumber<=run2auau.lastrun
@@ -59,12 +60,12 @@ DST_STREAMING_EVENT_run2auau_new_2024p007:
          having
                 every(transferred_to_sdcc)   and
                 max(lastevent)>1000          and
-                sum( case when filename similar to '/bbox%/GL1_(beam|physics)%' then 1 else 0 end )>0 and
+                sum( case when filename similar to '/bbox%/GL1_({myruntypes})%' then 1 else 0 end )>0 and
                 (
-                   sum( case when filename similar to '/bbox%/TPC%(beam|physics)%' then 1 else 0 end )>0 or
-                   sum( case when filename similar to '/bbox%/TPOT%(beam|physics)%' then 1 else 0 end )>0 or
-                   sum( case when filename similar to '/bbox%/(beam|physics)%intt%' then 1 else 0 end )>0 or
-                   sum( case when filename similar to '/bbox%/(beam|physics)_mvtx%.evt' then 1 else 0 end )>0 
+                   sum( case when filename similar to '/bbox%/TPC%({myruntypes})%' then 1 else 0 end )>0 or
+                   sum( case when filename similar to '/bbox%/TPOT%({myruntypes})%' then 1 else 0 end )>0 or
+                   sum( case when filename similar to '/bbox%/({myruntypes})%intt%' then 1 else 0 end )>0 or
+                   sum( case when filename similar to '/bbox%/({myruntypes})_mvtx%.evt' then 1 else 0 end )>0 
                 )
          order by runnumber
          ),
@@ -165,7 +166,7 @@ DST_TRKR_HIT_run2auau_new_2024p007:
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
      accounting_group_user : "sphnxpro"
-     priority : '3800'
+     priority : '3900'
 
 
 
@@ -226,7 +227,7 @@ DST_TRKR_CLUSTER_run2auau_new_2024p007:
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
      accounting_group_user : "sphnxpro"
-     priority : '3800'
+     priority : '3900'
 
 
 
@@ -285,7 +286,7 @@ DST_TRKR_SEED_run2auau_new_2024p007:
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
      accounting_group_user : "sphnxpro"
-     priority : '3800'
+     priority : '3900'
 
 
 DST_TRKR_TRACKS_run2auau_new_2024p007:
@@ -358,7 +359,7 @@ DST_TRKR_TRACKS_run2auau_new_2024p007:
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
      accounting_group_user : "sphnxpro"
-     priority : '3800'
+     priority : '3900'
 
 
 
