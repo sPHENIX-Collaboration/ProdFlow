@@ -10,11 +10,11 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   run.sh
-     payload :   ./ProdFlow/run2pp/TriggerProduction/
+     payload :   ./ProdFlow/run2auau/TriggerProduction/
      mem     :   2048M
      neventsper: 5000
      noverflow:  1000
-     rsync  : "ProdFlow/run2pp/TriggerProduction/*,cups.py,bachi.py,odbc.ini"
+     rsync  : "ProdFlow/run2auau/TriggerProduction/*,cups.py,bachi.py,odbc.ini"
 
 
 
@@ -231,10 +231,10 @@ DST_CALOFITTING_run2auau_new_2024p007:
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   runy2fitting.sh
-     payload :   ./ProdFlow/run2pp/CaloProduction/
+     payload :   ./ProdFlow/run2auau/CaloProduction/
      mem     :   1024MB
      neventsper: 50000
-     rsync  : "./ProdFlow/run2pp/CaloProduction/*,cups.py,bachi.py,odbc.ini"
+     rsync  : "./ProdFlow/run2auau/CaloProduction/*,cups.py,bachi.py,odbc.ini"
 
    input:
      db: filecatalog
@@ -283,10 +283,10 @@ DST_CALO_run2auau_new_2024p007:
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   runy2calib.sh
-     payload :   ./ProdFlow/run2pp/CaloProduction/
+     payload :   ./ProdFlow/run2auau/CaloProduction/
      mem     :   4096MB
      neventsper: 50000
-     rsync  : "./ProdFlow/run2pp/CaloProduction/*,cups.py,bachi.py,odbc.ini"
+     rsync  : "./ProdFlow/run2auau/CaloProduction/*,cups.py,bachi.py,odbc.ini"
 
    input:
      db: filecatalog
@@ -335,10 +335,10 @@ DST_JETS_run2auau_new_2024p007:
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   runjets.sh
-     payload :   ./ProdFlow/run2pp/JetProduction/
+     payload :   ./ProdFlow/run2auau/JetProduction/
      mem     :   2096MB
      neventsper: 50000
-     rsync  : "./ProdFlow/run2pp/JetProduction/*,cups.py,bachi.py,odbc.ini"
+     rsync  : "./ProdFlow/run2auau/JetProduction/*,cups.py,bachi.py,odbc.ini"
 
    input:
      db: filecatalog
