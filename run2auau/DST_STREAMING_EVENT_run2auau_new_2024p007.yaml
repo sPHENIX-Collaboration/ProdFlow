@@ -125,7 +125,7 @@ DST_TRKR_HIT_run2auau_new_2024p007:
      outbase :   $(name)_$(build)_$(tag)
      script  :   run.sh
      payload :   ./ProdFlow/run2pp/TrackingProduction/
-     mem     :   2048MB
+     mem     :   4096MB
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
      input   : "DST_STREAMING_EVENT_run2auau_new_2024p007%"
      mnrun   : 53881
