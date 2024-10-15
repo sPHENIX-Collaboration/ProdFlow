@@ -15,7 +15,8 @@ logdir=${12:-.}
 histdir=${13:-.}
 subdir=${14}
 payload=(`echo ${15} | tr ","  " "`) # array of files to be rsynced
-#-----
+#--
+#export cupsid=${16}
 export cupsid=${@: -1}
 
 sighandler()
@@ -48,7 +49,7 @@ done
 
 #______________________________________________________________________________________ started __
 #
-# $$$ ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
 #_________________________________________________________________________________________________
 
 echo ..............................................................................................
@@ -70,7 +71,7 @@ echo ...........................................................................
 
 #______________________________________________________________________________________ running __
 #
-#./cups.py -r ${runnumber} -s ${segment} -d ${outbase} inputs --files ${inputs[@]}
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} inputs --files ${inputs[@]}
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
 #_________________________________________________________________________________________________
 
@@ -80,30 +81,34 @@ echo ./bachi.py --blame cups created ${dstname} ${runnumber} --parent ${inputs[0
      ./bachi.py --blame cups created ${dstname} ${runnumber} --parent ${inputs[0]}
 
 out0=${logbase}.root
-out1=HIST_${logbase#DST_}.root
 
 nevents=-1
 status_f4a=0
-
+#
+# CODE BELOW ASSUMES ONLY ONE !!!
+#
 for infile_ in ${inputs[@]}; do
     infile=$( basename ${infile_} )
     cp -v ${infile_} .
-    outfile=${infile/CALOFITTING/CALO}
-    outhist=${outfile/DST_CALO/HIST_CALOQA}
-    root.exe -q -b Fun4All_Year2_Calib.C\(${nevents},\"${infile}\",\"${outfile}\",\"${outhist}\",\"${dbtag}\"\);  status_f4a=$?
 
-    # Stageout the (single) DST created in the macro run
-    #for rfile in ${outfile}; do 
-    #    #nevents_=$( root.exe -q -b GetEntries.C\(\"${filename}\"\) | awk '/Number of Entries/{ print $4; }' )
-        nevents=${nevents_:--1}
-	echo Stageout ${outfile} to ${outdir}
-        ./stageout.sh ${outfile} ${outdir}
-    #done
+    outfile=${out0}
+    outhist=${out0/DST/HIST}
+
+    echo ${infile} > input.list
+    echo root.exe -q -b Fun4All_JetProductionYear2.C\(${nevents},\"input.list\",\"${outfile}\",\"${outhist}\",\"${dbtag}\"\)
+         root.exe -q -b Fun4All_JetProductionYear2.C\(${nevents},\"input.list\",\"${outfile}\",\"${outhist}\",\"${dbtag}\"\);  status_f4a=$?
+
+    ls -l
+
+    nevents=${nevents_:--1}
+    echo Stageout ${outfile} to ${outdir}
+    ./stageout.sh ${outfile} ${outdir}
+
     for hfile in `ls HIST_*.root`; do
 	echo Stageout ${hfile} to ${histdir}
         ./stageout.sh ${hfile} ${histdir}
-	#mv --verbose ${hfile} ${histdir}
     done
+
 done
 
 if [ "${status_f4a}" -eq 0 ]; then
@@ -125,8 +130,5 @@ echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${stat
 
 echo "bdee bdee bdee, That's All Folks!"
 } >  ${logdir#file:/}/${logbase}.out 2> ${logdir#file:/}/${logbase}.err
-
-#mv ${logbase}.out ${logdir#file:/}
-#mv ${logbase}.err ${logdir#file:/}
 
 exit $status_f4a

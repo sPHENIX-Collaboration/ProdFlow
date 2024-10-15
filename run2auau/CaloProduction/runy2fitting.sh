@@ -41,16 +41,6 @@ source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
 
 export ODBCINI=./odbc.ini
 
-# Stagein
-for i in ${payload[@]}; do
-    cp --verbose ${subdir}/${i} .
-done
-
-#______________________________________________________________________________________ started __
-#
-# $$$ ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
-#_________________________________________________________________________________________________
-
 echo ..............................................................................................
 echo $@
 echo .............................................................................................. 
@@ -68,9 +58,20 @@ echo logdir:  $logdir
 echo histdir: $histdir
 echo .............................................................................................. 
 
+# Stagein
+for i in ${payload[@]}; do
+    cp --verbose ${subdir}/${i} .
+done
+
+#______________________________________________________________________________________ started __
+#
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
+#_________________________________________________________________________________________________
+
+
 #______________________________________________________________________________________ running __
 #
-#./cups.py -r ${runnumber} -s ${segment} -d ${outbase} inputs --files ${inputs[@]}
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} inputs --files ${inputs[@]}
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
 #_________________________________________________________________________________________________
 
@@ -86,33 +87,27 @@ nevents=-1
 status_f4a=0
 
 for infile_ in ${inputs[@]}; do
+
     infile=$( basename ${infile_} )
     cp -v ${infile_} .
-    outfile=${infile/CALOFITTING/CALO}
-    outhist=${outfile/DST_CALO/HIST_CALOQA}
-    root.exe -q -b Fun4All_Year2_Calib.C\(${nevents},\"${infile}\",\"${outfile}\",\"${outhist}\",\"${dbtag}\"\);  status_f4a=$?
+    outfile=${logbase}.root
+    root.exe -q -b Fun4All_Year2_Fitting.C\(${nevents},\"${infile}\",\"${outfile}\",\"${dbtag}\"\);  status_f4a=$?
 
-    # Stageout the (single) DST created in the macro run
-    #for rfile in ${outfile}; do 
-    #    #nevents_=$( root.exe -q -b GetEntries.C\(\"${filename}\"\) | awk '/Number of Entries/{ print $4; }' )
-        nevents=${nevents_:--1}
-	echo Stageout ${outfile} to ${outdir}
+    nevents=${nevents_:--1}
+    echo Stageout ${outfile} to ${outdir}
         ./stageout.sh ${outfile} ${outdir}
-    #done
+ 
     for hfile in `ls HIST_*.root`; do
 	echo Stageout ${hfile} to ${histdir}
         ./stageout.sh ${hfile} ${histdir}
-	#mv --verbose ${hfile} ${histdir}
     done
+
 done
 
 if [ "${status_f4a}" -eq 0 ]; then
   echo ./bachi.py --blame cups finalized ${dstname} ${runnumber}  
        ./bachi.py --blame cups finalized ${dstname} ${runnumber} 
 fi
-
-# In principle, stageout should have moved the files to their final location
-#rm *.root
 
 ls -lah
 
@@ -124,9 +119,11 @@ echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${stat
 
 
 echo "bdee bdee bdee, That's All Folks!"
-} >  ${logdir#file:/}/${logbase}.out 2> ${logdir#file:/}/${logbase}.err
+#cp ${logbase}.out ${logdir#file:/}
+#cp ${logbase}.err ${logdir#file:/}
 
-#mv ${logbase}.out ${logdir#file:/}
-#mv ${logbase}.err ${logdir#file:/}
 
-exit $status_f4a
+} > ${logdir#file:/}/${logbase}.out 2> ${logdir#file:/}/${logbase}.err
+
+
+exit ${status_f4a}

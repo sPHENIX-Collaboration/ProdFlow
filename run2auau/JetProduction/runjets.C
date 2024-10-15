@@ -13,10 +13,6 @@ ranges=(`echo ${10} | tr "," " "`)  # array of input files with ranges appended
 neventsper=${11:-1000}
 logdir=${12:-.}
 histdir=${13:-.}
-subdir=${14}
-payload=(`echo ${15} | tr ","  " "`) # array of files to be rsynced
-#-----
-export cupsid=${@: -1}
 
 sighandler()
 {
@@ -41,14 +37,9 @@ source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
 
 export ODBCINI=./odbc.ini
 
-# Stagein
-for i in ${payload[@]}; do
-    cp --verbose ${subdir}/${i} .
-done
-
 #______________________________________________________________________________________ started __
 #
-# $$$ ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
 #_________________________________________________________________________________________________
 
 echo ..............................................................................................
@@ -70,7 +61,7 @@ echo ...........................................................................
 
 #______________________________________________________________________________________ running __
 #
-#./cups.py -r ${runnumber} -s ${segment} -d ${outbase} inputs --files ${inputs[@]}
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} inputs --files ${inputs[@]}
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
 #_________________________________________________________________________________________________
 
@@ -124,9 +115,9 @@ echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${stat
 
 
 echo "bdee bdee bdee, That's All Folks!"
-} >  ${logdir#file:/}/${logbase}.out 2> ${logdir#file:/}/${logbase}.err
+} > ${logbase}.out 2>${logbase}.err
 
-#mv ${logbase}.out ${logdir#file:/}
-#mv ${logbase}.err ${logdir#file:/}
+mv ${logbase}.out ${logdir#file:/}
+mv ${logbase}.err ${logdir#file:/}
 
 exit $status_f4a

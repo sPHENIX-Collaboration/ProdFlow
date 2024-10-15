@@ -48,7 +48,7 @@ done
 
 #______________________________________________________________________________________ started __
 #
-# $$$ ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
 #_________________________________________________________________________________________________
 
 echo ..............................................................................................
@@ -70,7 +70,7 @@ echo ...........................................................................
 
 #______________________________________________________________________________________ running __
 #
-#./cups.py -r ${runnumber} -s ${segment} -d ${outbase} inputs --files ${inputs[@]}
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} inputs --files ${inputs[@]}
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
 #_________________________________________________________________________________________________
 
@@ -124,9 +124,7 @@ echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${stat
 
 
 echo "bdee bdee bdee, That's All Folks!"
-} >  ${logdir#file:/}/${logbase}.out 2> ${logdir#file:/}/${logbase}.err
 
-#mv ${logbase}.out ${logdir#file:/}
-#mv ${logbase}.err ${logdir#file:/}
+} >  ${logdir#file:/}/${logbase}.out 2>  ${logdir#file:/}/${logbase}.err
 
 exit $status_f4a

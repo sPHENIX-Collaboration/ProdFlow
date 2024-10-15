@@ -9,14 +9,15 @@ DST_STREAMING_EVENT_run2auau_new_2024p007:
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   run_cosmics.sh
-     payload :   ./ProdFlow/run2pp/cosmics/     
+     payload :   ./ProdFlow/run2auau/cosmics/     
      comment :    "---"
-     rsync   : "./ProdFlow/run2pp/cosmics/*,cups.py,bachi.py,odbc.ini"
+     rsync   : "./ProdFlow/run2auau/cosmics/*,cups.py,bachi.py,odbc.ini"
      mem     :   20000MB
      # 20GB of memory is not a typo
      zstrig  : 150
      neventsperZS: 10000
      neventsperNoZS: 100
+     myruntypes: beam|physics|calib|cosmics
 
 
    input:
@@ -44,11 +45,11 @@ DST_STREAMING_EVENT_run2auau_new_2024p007:
                 filelist,run2auau
          where 
            ( 
-             (filename  similar to '/bbox%/TPC%(beam|physics)%.evt'   and lastevent>2 ) or
-             (filename  similar to '/bbox%/TPOT%(beam|physics)%.evt'  and lastevent>2 ) or
-             (filename  similar to '/bbox%/(beam|physics)_intt%.evt'  and lastevent>2 ) or
-             (filename  similar to '/bbox%/GL1_(beam|physics)%.evt'   and lastevent>2 ) or
-             (filename  similar to '/bbox%/(beam|physics)_mvtx%.evt'  and lastevent>2 )
+             (filename  similar to '/bbox%/TPC%({myruntypes})%.evt'   and lastevent>2 ) or
+             (filename  similar to '/bbox%/TPOT%({myruntypes})%.evt'  and lastevent>2 ) or
+             (filename  similar to '/bbox%/({myruntypes})_intt%.evt'  and lastevent>2 ) or
+             (filename  similar to '/bbox%/GL1_({myruntypes})%.evt'   and lastevent>2 ) or
+             (filename  similar to '/bbox%/({myruntypes})_mvtx%.evt'  and lastevent>2 )
            )
 
          and runnumber>=run2auau.firstrun and runnumber<=run2auau.lastrun
@@ -59,12 +60,12 @@ DST_STREAMING_EVENT_run2auau_new_2024p007:
          having
                 every(transferred_to_sdcc)   and
                 max(lastevent)>1000          and
-                sum( case when filename similar to '/bbox%/GL1_(beam|physics)%' then 1 else 0 end )>0 and
+                sum( case when filename similar to '/bbox%/GL1_({myruntypes})%' then 1 else 0 end )>0 and
                 (
-                   sum( case when filename similar to '/bbox%/TPC%(beam|physics)%' then 1 else 0 end )>0 or
-                   sum( case when filename similar to '/bbox%/TPOT%(beam|physics)%' then 1 else 0 end )>0 or
-                   sum( case when filename similar to '/bbox%/(beam|physics)%intt%' then 1 else 0 end )>0 or
-                   sum( case when filename similar to '/bbox%/(beam|physics)_mvtx%.evt' then 1 else 0 end )>0 
+                   sum( case when filename similar to '/bbox%/TPC%({myruntypes})%' then 1 else 0 end )>0 or
+                   sum( case when filename similar to '/bbox%/TPOT%({myruntypes})%' then 1 else 0 end )>0 or
+                   sum( case when filename similar to '/bbox%/({myruntypes})%intt%' then 1 else 0 end )>0 or
+                   sum( case when filename similar to '/bbox%/({myruntypes})_mvtx%.evt' then 1 else 0 end )>0 
                 )
          order by runnumber
          ),
@@ -123,9 +124,9 @@ DST_TRKR_HIT_run2auau_new_2024p007:
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   run.sh
-     payload :   ./ProdFlow/run2pp/TrackingProduction/
-     mem     :   2048MB
-     rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
+     payload :   ./ProdFlow/run2auau/TrackingProduction/
+     mem     :   4096MB
+     rsync   : "./ProdFlow/run2auau/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
      input   : "DST_STREAMING_EVENT_run2auau_new_2024p007%"
      mnrun   : 53881
      mxrun   : 99999
@@ -165,7 +166,7 @@ DST_TRKR_HIT_run2auau_new_2024p007:
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
      accounting_group_user : "sphnxpro"
-     priority : '3800'
+     priority : '3900'
 
 
 
@@ -183,10 +184,10 @@ DST_TRKR_CLUSTER_run2auau_new_2024p007:
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   run_job0.sh
-     payload :   ./ProdFlow/run2pp/TrackingProduction/
+     payload :   ./ProdFlow/run2auau/TrackingProduction/
      mem     :   2048MB
      nevents :  0
-     rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
+     rsync   : "./ProdFlow/run2auau/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
      input   : "DST_TRKR_HIT_run2auau_new_2024p007%"
      mnrun   : 53881
      mxrun   : 99999
@@ -226,7 +227,7 @@ DST_TRKR_CLUSTER_run2auau_new_2024p007:
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
      accounting_group_user : "sphnxpro"
-     priority : '3800'
+     priority : '3900'
 
 
 
@@ -242,10 +243,10 @@ DST_TRKR_SEED_run2auau_new_2024p007:
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   run_jobA.sh
-     payload :   ./ProdFlow/run2pp/TrackingProduction/
+     payload :   ./ProdFlow/run2auau/TrackingProduction/
      mem     :   2048MB
      nevents :  0
-     rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
+     rsync   : "./ProdFlow/run2auau/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
      input   : "DST_TRKR_CLUSTER_run2auau_new_2024p007%"
      mnrun   : 53881
      mxrun   : 99999
@@ -285,7 +286,7 @@ DST_TRKR_SEED_run2auau_new_2024p007:
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
      accounting_group_user : "sphnxpro"
-     priority : '3800'
+     priority : '3900'
 
 
 DST_TRKR_TRACKS_run2auau_new_2024p007:
@@ -298,10 +299,10 @@ DST_TRKR_TRACKS_run2auau_new_2024p007:
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   run_jobC.sh
-     payload :   ./ProdFlow/run2pp/TrackingProduction/
+     payload :   ./ProdFlow/run2auau/TrackingProduction/
      mem     :   2048MB
      nevents :   0
-     rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
+     rsync   : "./ProdFlow/run2auau/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
      seeds   : "DST_TRKR_SEED_run2auau_new_2024p007%"
      clusters: "DST_TRKR_CLUSTER_run2auau_new_2024p007%"
      mnrun   : 53881
@@ -358,7 +359,7 @@ DST_TRKR_TRACKS_run2auau_new_2024p007:
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
      accounting_group_user : "sphnxpro"
-     priority : '3800'
+     priority : '3900'
 
 
 
