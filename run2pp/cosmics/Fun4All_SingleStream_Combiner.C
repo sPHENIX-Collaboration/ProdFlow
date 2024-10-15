@@ -196,7 +196,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 
 
   char outfile[500];
-  sprintf(outfile,"./%s-%s.root",type.c_str(),readoutNumber.c_str());
+  sprintf(outfile,"./%s.root",type.c_str());
   
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("out",outfile);
   out->UseFileRule();
@@ -216,7 +216,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   se->End();
 
   char histoutfile[500];
-  sprintf(histoutfile,"./HIST_%s-%s-%08i-%05i.root",type.c_str(),readoutNumber.c_str(),runnumber,0);
+  sprintf(histoutfile,"./HIST_%s-%s-%08i-%05i.root",type.c_str(),runnumber,0);
   QAHistManagerDef::saveQARootFile(histoutfile);
 
   delete se;
