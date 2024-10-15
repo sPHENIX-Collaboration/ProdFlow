@@ -16,6 +16,7 @@ DST_MBD_CALIBRATION_run2auau:
      nevents:    0
      neventsper: 20000
      pass0dir: /sphenix/user/chiu/sphenix_bbc/CDB/PASS0/
+     rsync  : "ProdFlow/calibrations/intt/*,cups.py,bachi.py,odbc.ini"
 
    input:
       db: daqdb
@@ -62,10 +63,11 @@ DST_MBD_CALIBRATION_run2auau:
    job:
      executable            : "{payload}/run.sh"
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(build) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {pass0dir}"
-     output_destination    : '{logdir}'
-     transfer_input_files  : "{payload},cups.py,bachi.py,odbc.ini"
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
      accounting_group_user : "sphnxpro"
      priority : '3800'
+
+
+
 
