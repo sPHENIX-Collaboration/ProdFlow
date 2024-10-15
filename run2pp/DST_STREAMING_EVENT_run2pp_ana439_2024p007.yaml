@@ -337,6 +337,92 @@ DST_TRKR_TRACKS_run2pp:
 
 
 
+#==========================================================================================================================================================================
+#
+# Single stream workflows
+#
+#==========================================================================================================================================================================
+DST_STREAMING_EVENT_run2pp_streams:
+
+   params:
+     name:       DST_STREAMING_EVENT_{streamname}_run2pp
+     build:      ana.439
+     build_name: ana439
+     dbtag:      2024p007
+     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)
+     script  :   run_cosmics_streams.sh
+     payload :   ./ProdFlow/run2pp/cosmics/     
+     neventsper: 10000
+     comment :    "---"
+     rsync   : "./ProdFlow/run2pp/cosmics/*,cups.py,bachi.py,odbc.ini"
+     mem     :   20000MB
+     # 20GB of memory is not a typo
+
+   input:
+      db: daqdb
+      direct_path: /sphenix/lustre01/sphnxpro/{mode}/*/physics/
+      query: |-
+         with run2pp as (
+              select 43249 as firstrun,
+                     53880 as lastrun
+         ),
+         fullrun as (
+         select 
+                'daqdb/filelist'                                                                                    as source      , 
+                runnumber                                                                                                          , 
+                0                                                                                                   as segment     , 
+                string_agg( distinct split_part(filename,'/',-1), ' ' )                                             as files       ,   
+                string_agg( distinct split_part(filename,'/',-1) || ':' || firstevent || ':' || lastevent, ' ' )    as fileranges  
+         from  
+                filelist,run2pp
+         where 
+           ( 
+             (filename  like '/bbox%/{streamfile}%-0000.evt'   and lastevent>2 ) or
+             (filename  like '/bbox%/GL1_physics%-0000.evt'    and lastevent>2 ) 
+           )
+
+         and runnumber>=run2pp.firstrun and runnumber<=run2pp.lastrun
+
+         {run_condition}
+
+         group by runnumber
+         having
+                every(transferred_to_sdcc)   and
+                max(lastevent)>1000          and
+
+                sum( case when filename like '/bbox%/GL1_physics%'  then 1 else 0 end )>0 and
+                sum( case when filename like '/bbox%/{streamfile}%' then 1 else 0 end )>0
+
+         order by runnumber
+         )
+
+         select *,'single streams' as runtype from fullrun
+
+              ;
+
+   # TODO:  Need to add error checking to make sure that outdir, logdir, etc... are quoted properly.  Else, this will cause problems with argument substitution
+   filesystem:  
+     outdir  : "/sphenix/lustre01/sphnxpro/physics/slurp/single_streaming/physics/$(build)_$(tag)/run_$(rungroup)"
+     logdir  : "file:///sphenix/data/data02/sphnxpro/single_streaminglogs/$(build)_$(tag)/run_$(rungroup)"
+     histdir :       "/sphenix/data/data02/sphnxpro/single_streamhist/$(build)_$(tag)/run_$(rungroup)"
+     condor :        "/tmp/single_stream/$(build)_$(tag)/run_$(rungroup)"
+
+   #
+   # Again I note the need to ensure that the arguments are properly specified given the
+   # definition of the payload script.
+   #
+   job:
+     executable            : "{payload}/run_cosmics_streams.sh"
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(build) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '4000'
+     request_xferslots: '0'
+
+
 
 
 

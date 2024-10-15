@@ -34,10 +34,10 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 				   const string &outdir = "/sphenix/lustre01/sphnxpro/commissioning/slurp/tpccosmics/",
 				   const string &type = "beam",
 				   const int neventsper = 100,
-				   const string &input_gl1file = "gl1daq.list",
-				   const string &input_tpcfile00 = "tpc00.list",
-				   const string &input_inttfile00 = "intt0.list",
-				   const string &input_mvtxfile00 = "mvtx0.list",
+				   const string &input_gl1file = "gl1.list",
+				   const string &input_tpcfile00 = "tpcinputs.list",
+				   const string &input_inttfile00 = "inttinputs.list",
+				   const string &input_mvtxfile00 = "mvtxinputs.list",
 				   const string &input_tpotfile = "tpot.list")
 {
 // GL1 which provides the beam clock reference (if we ran with GL1)
