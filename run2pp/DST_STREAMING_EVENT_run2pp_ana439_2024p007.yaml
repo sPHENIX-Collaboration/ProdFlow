@@ -14,15 +14,19 @@ DST_STREAMING_EVENT_run2pp:
      comment :    "---"
      rsync   : "./ProdFlow/run2pp/cosmics/*,cups.py,bachi.py,odbc.ini"
      mem     :   20000MB
+     mnrun   : 51428
+     mxrun   : 53880
      # 20GB of memory is not a typo
+     # PHYSICS declared for the streaming detectors from run 51428
+     # ... earlier runs not suitable for the mass production workflows ...
 
    input:
       db: daqdb
       direct_path: /sphenix/lustre01/sphnxpro/{mode}/*/physics/
       query: |-
          with run2pp as (
-              select 43249 as firstrun,
-                     53880 as lastrun
+              select {mnrun} as firstrun,
+                     {mxrun} as lastrun
          ),
          fullrun as (
          select 
