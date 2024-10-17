@@ -3,8 +3,8 @@ DST_STREAMING_EVENT_run2pp:
 
    params:
      name:       DST_STREAMING_EVENT_run2pp
-     build:      ana.439
-     build_name: ana439
+     build:      ana.441
+     build_name: ana441
      dbtag:      2024p007
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
@@ -14,19 +14,16 @@ DST_STREAMING_EVENT_run2pp:
      comment :    "---"
      rsync   : "./ProdFlow/run2pp/cosmics/*,cups.py,bachi.py,odbc.ini"
      mem     :   20000MB
-     mnrun   : 51428
-     mxrun   : 53880
      # 20GB of memory is not a typo
-     # PHYSICS declared for the streaming detectors from run 51428
-     # ... earlier runs not suitable for the mass production workflows ...
 
+   # NOTE:  Should have run event builder from 51428 to 53880
    input:
       db: daqdb
       direct_path: /sphenix/lustre01/sphnxpro/{mode}/*/physics/
       query: |-
          with run2pp as (
-              select {mnrun} as firstrun,
-                     {mxrun} as lastrun
+              select 43249 as firstrun,
+                     53880 as lastrun
          ),
          fullrun as (
          select 
@@ -95,8 +92,8 @@ DST_TRKR_HIT_run2pp:
    # DST_EVENT works from a pre-built set of run lists.
    params:
      name:       DST_TRKR_HIT_run2pp
-     build:      ana.439
-     build_name: ana439
+     build:      ana.441
+     build_name: ana441
      dbtag:      2024p007
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
@@ -104,7 +101,7 @@ DST_TRKR_HIT_run2pp:
      payload :   ./ProdFlow/run2pp/TrackingProduction/
      mem     :   2048MB
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
-     input   : "DST_STREAMING_EVENT_run2pp_ana439_2024p007%"
+     input   : "DST_STREAMING_EVENT_run2pp_ana441_2024p007%"
      mnrun   : 51428
      mxrun   : 53880
 
@@ -155,8 +152,8 @@ DST_TRKR_CLUSTER_run2pp:
    # DST_EVENT works from a pre-built set of run lists.
    params:
      name:       DST_TRKR_CLUSTER_run2pp
-     build:      ana.439
-     build_name: ana439
+     build:      ana.441
+     build_name: ana441
      dbtag:      2024p007
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
@@ -165,7 +162,7 @@ DST_TRKR_CLUSTER_run2pp:
      mem     :   2048MB
      nevents :  0
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
-     input   : "DST_TRKR_HIT_run2pp_ana439_2024p007%"
+     input   : "DST_TRKR_HIT_run2pp_ana441_2024p007%"
      mnrun   : 51428
      mxrun   : 53880
 
@@ -214,8 +211,8 @@ DST_TRKR_SEED_run2pp:
    # DST_EVENT works from a pre-built set of run lists.
    params:
      name:       DST_TRKR_SEED_run2pp
-     build:      ana.439
-     build_name: ana439
+     build:      ana.441
+     build_name: ana441
      dbtag:      2024p007
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
@@ -224,7 +221,7 @@ DST_TRKR_SEED_run2pp:
      mem     :   2048MB
      nevents :  0
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
-     input   : "DST_TRKR_CLUSTER_run2pp_ana439_2024p007%"
+     input   : "DST_TRKR_CLUSTER_run2pp_ana441_2024p007%"
      mnrun   : 51428
      mxrun   : 53880
 
@@ -270,8 +267,8 @@ DST_TRKR_TRACKS_run2pp:
    # DST_EVENT works from a pre-built set of run lists.
    params:
      name:       DST_TRKR_TRACKS_run2pp
-     build:      ana.439
-     build_name: ana439
+     build:      ana.441
+     build_name: ana441
      dbtag:      2024p007
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
@@ -280,8 +277,8 @@ DST_TRKR_TRACKS_run2pp:
      mem     :   2048MB
      nevents :   0
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
-     seeds   : "DST_TRKR_SEED_run2pp_ana439_2024p007%"
-     clusters: "DST_TRKR_CLUSTER_run2pp_ana439_2024p007%"
+     seeds   : "DST_TRKR_SEED_run2pp_ana441_2024p007%"
+     clusters: "DST_TRKR_CLUSTER_run2pp_ana441_2024p007%"
      mnrun   : 51428
      mxrun   : 53880
 
