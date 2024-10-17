@@ -9,7 +9,7 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
      dbtag:      2024p007
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
-     script  :   run.sh
+     script  :   runvs.sh
      payload :   ./ProdFlow/run2auau/TriggerProduction/
      mem     :   2048M
      neventsper: 5000
@@ -39,8 +39,8 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
       query: |-
          with config as (
             select 
-               {neventsper} as nevents,
-               {noverflow} as noverflow
+               100000 as nevents,
+                20000 as noverflow
          ),
 
          fullevents as (
@@ -48,7 +48,7 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
               from filelist, config
               where (filename similar to '/bbox%/GL1_(beam|physics)%.evt'        and lastevent>2 )
 
-                 {run_condition} and runnumber>54748
+                 {run_condition}
 
               group by runnumber
               having
@@ -91,8 +91,8 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
                 max(lastevent)>1000          and
                 sum( case when filename similar to '/bbox%/GL1_(beam|physics)%' then 1 else 0 end )>0 and
                 (
-                   sum( case when filename similar to '/bbox%/%emcal%(beam|physics)%'  then 1 else 0 end )>0 or
-                   sum( case when filename similar to '/bbox%/%HCal%(beam|physics)%'   then 1 else 0 end )>0 
+                   sum( case when filename similar to '/bbox%/%mbd%(beam|physics)%'  then 1 else 0 end )>0 or
+                   sum( case when filename similar to '/bbox%/%ZDC%(beam|physics)%'   then 1 else 0 end )>0 
                 )
 
          order by runnumber
@@ -207,7 +207,7 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
    # definition of the payload script.
    #
    job:
-     executable            : "{payload}/run.sh"
+     executable            : "{payload}/runvs.sh"
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(build) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync} $(firstevent) $(lastevent) $(runs_last_event)"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
