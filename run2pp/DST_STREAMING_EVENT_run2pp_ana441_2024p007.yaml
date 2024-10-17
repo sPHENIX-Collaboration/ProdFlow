@@ -16,6 +16,7 @@ DST_STREAMING_EVENT_run2pp:
      mem     :   20000MB
      # 20GB of memory is not a typo
 
+   # NOTE:  Should have run event builder from 51428 to 53880
    input:
       db: daqdb
       direct_path: /sphenix/lustre01/sphnxpro/{mode}/*/physics/
