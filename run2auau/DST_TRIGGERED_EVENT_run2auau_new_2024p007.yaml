@@ -39,8 +39,8 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
       query: |-
          with config as (
             select 
-               100000 as nevents,
-                20000 as noverflow
+               5000 as nevents,
+               1000 as noverflow
          ),
 
          fullevents as (
