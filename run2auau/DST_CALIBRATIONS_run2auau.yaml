@@ -11,12 +11,12 @@ DST_MBD_CALIBRATION_run2auau:
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   run.sh
-     payload :   ./ProdFlow/run2pp/mbd_calib/
+     payload :   ./ProdFlow/run2auau/mbd_calib/
      mem     :   2048MB
      nevents:    0
      neventsper: 20000
      pass0dir: /sphenix/user/chiu/sphenix_bbc/CDB/PASS0/
-     rsync  : "ProdFlow/calibrations/intt/*,cups.py,bachi.py,odbc.ini"
+     rsync  : "./ProdFlow/run2auau/mbd_calib/*,cups.py,bachi.py,odbc.ini"
 
    input:
       db: daqdb
@@ -62,12 +62,9 @@ DST_MBD_CALIBRATION_run2auau:
    #
    job:
      executable            : "{payload}/run.sh"
-     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(build) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {pass0dir}"
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(build) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {pass0dir} {PWD} {rsync}"
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
      accounting_group_user : "sphnxpro"
      priority : '3800'
-
-
-
 
