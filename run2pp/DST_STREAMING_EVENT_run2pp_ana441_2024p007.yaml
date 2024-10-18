@@ -47,6 +47,8 @@ DST_STREAMING_EVENT_run2pp:
 
          {run_condition}
 
+         and runnumber not in ( 52104, 53068, 53256, 53257, 53260, 53705, 53707, 53709, 53710, 53712, 53713, 53714, 53717, 53719, 53722, 53724 )
+
          group by runnumber
          having
                 every(transferred_to_sdcc)   and
