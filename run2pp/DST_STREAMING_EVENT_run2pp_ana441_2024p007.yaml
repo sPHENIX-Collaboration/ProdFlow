@@ -220,7 +220,7 @@ DST_TRKR_SEED_run2pp:
      outbase :   $(name)_$(build)_$(tag)
      script  :   run_jobA.sh
      payload :   ./ProdFlow/run2pp/TrackingProduction/
-     mem     :   2048MB
+     mem     :   4096MB
      nevents :  0
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
      input   : "DST_TRKR_CLUSTER_run2pp_ana441_2024p007%"
