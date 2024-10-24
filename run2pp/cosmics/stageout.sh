@@ -48,9 +48,6 @@ nevents=${nevents_:--1}
 echo ./cups.py -r ${runnumber} -s ${segment} -d ${dstname}  stageout ${filename} ${destination} --dsttype ${dsttype} --dataset ${build}_${dbtag} --nevents ${nevents} --inc --prodtype many
      ./cups.py -r ${runnumber} -s ${segment} -d ${dstname}  stageout ${filename} ${destination} --dsttype ${dsttype} --dataset ${build}_${dbtag} --nevents ${nevents} --inc --prodtype many
 
-echo ./bachi.py --blame cups updated ${dstname} ${runnumber} 
-     ./bachi.py --blame cups updated ${dstname} ${runnumber} 
-
 
 echo stageout ${filename} ${destination} finish `date`
 

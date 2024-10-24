@@ -199,12 +199,6 @@ fi
 # Flag job as running in production status
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
 
-# Flag the creation of a new dataset in dataset_status
-dstname=${logbase%%-*}
-echo ./bachi.py --blame cups created ${dstname} ${runnumber} 
-     ./bachi.py --blame cups created ${dstname} ${runnumber} 
-
-
 echo root.exe -q -b Fun4All_SingleStream_Combiner.C\(${nevents},${runnumber},\"${outdir}\",\"${outbase}\",${neventsper}\);
      root.exe -q -b Fun4All_SingleStream_Combiner.C\(${nevents},${runnumber},\"${outdir}\",\"${outbase}\",${neventsper}\); status_f4a=$?
 
@@ -215,13 +209,11 @@ ls -la
 echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents 0 --inc 
      ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents 0 --inc 
 
+# Close the dataset
 
-if [ "${status_f4a}" -eq 0 ]; then
-  echo ./bachi.py --blame cups finalized ${dstname} ${runnumber} 
-       ./bachi.py --blame cups finalized ${dstname} ${runnumber} 
-fi
+dstname=${logbase%%-*} # dstname is needed for production status, but not related to the dataset we are registering
+./cups.py -r ${runnumber} -s ${segment} -d ${dstname} closeout ${dstname}-${runnumber} ${destination} --dsttype ${dsttype} --dataset ${build}_${dbtag}
 
-#???outputname="cosmics-${runnumber}-${segment}";
 
 echo $outbase
 echo $logbase
