@@ -76,6 +76,8 @@ void Fun4All_JobC(
 
   TrackingInit();
 
+  // reject laser events if G4TPC::REJECT_LASER_EVENTS is true 
+  Reject_Laser_Events();
 
   auto deltazcorr = new PHTpcDeltaZCorrection;
   deltazcorr->Verbosity(0);

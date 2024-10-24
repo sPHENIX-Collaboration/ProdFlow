@@ -83,6 +83,9 @@ void Fun4All_JobA(
   se->registerInputManager(ingeo);
 
   TrackingInit();
+  
+  // reject laser events if G4TPC::REJECT_LASER_EVENTS is true
+  Reject_Laser_Events();
 
 /*
    * Silicon Seeding
