@@ -88,15 +88,16 @@ void Fun4All_Job0(
 
   Intt_Clustering();
 
+  Tpc_LaserEventIdentifying();
+
+  TPC_LaserClustering();
+
   auto tpcclusterizer = new TpcClusterizer;
   tpcclusterizer->Verbosity(0);
   tpcclusterizer->set_do_hit_association(G4TPC::DO_HIT_ASSOCIATION);
   tpcclusterizer->set_rawdata_reco();
+  tpcclusterizer->set_reject_event(G4TPC::REJECT_LASER_EVENTS);
   se->registerSubsystem(tpcclusterizer);
-
-  Tpc_LaserEventIdentifying();
-
-  TPC_LaserClustering();
 
   Micromegas_Clustering();
 
