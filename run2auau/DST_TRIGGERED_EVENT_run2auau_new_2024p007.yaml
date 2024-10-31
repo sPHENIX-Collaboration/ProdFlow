@@ -214,7 +214,7 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
      accounting_group      : "group_sphenix.mdc2"
      accounting_group_user : "sphnxpro"
      priority : '3900'
-     #request_xferslots: '1'
+     request_xferslots: '1'
 
 
 

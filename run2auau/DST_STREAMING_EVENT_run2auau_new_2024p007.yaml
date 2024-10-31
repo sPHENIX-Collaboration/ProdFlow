@@ -110,7 +110,7 @@ DST_STREAMING_EVENT_run2auau_new_2024p007:
      accounting_group      : "group_sphenix.mdc2"
      accounting_group_user : "sphnxpro"
      priority : '4000'
-     request_xferslots: '0'
+     request_xferslots: '1'
 
 
 
