@@ -121,8 +121,6 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       readoutNumber = "MVTX"+felix;
       SingleMvtxPoolInput *mvtx_sngl = new SingleMvtxPoolInput("MVTX_" + to_string(i));
 //    mvtx_sngl->Verbosity(5);
-      mvtx_sngl->SetBcoRange(100);
-      mvtx_sngl->SetNegativeBco(500);
     
       mvtx_sngl->setHitContainerName("MVTXRAWHIT_" + felix);
       mvtx_sngl->setRawEventHeaderName("MVTXRAWEVTHEADER_" + felix);

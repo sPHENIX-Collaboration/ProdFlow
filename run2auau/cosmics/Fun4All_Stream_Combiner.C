@@ -176,8 +176,6 @@ void Fun4All_Stream_Combiner(int nEvents = 100,
     {
     SingleMvtxPoolInput *mvtx_sngl = new SingleMvtxPoolInput("MVTX_" + to_string(i));
     //    mvtx_sngl->Verbosity(3);
-    mvtx_sngl->SetBcoRange(100);
-    mvtx_sngl->SetNegativeBco(100);
     mvtx_sngl->AddListFile(iter);
     in->registerStreamingInput(mvtx_sngl, InputManagerType::MVTX);
     i++;
