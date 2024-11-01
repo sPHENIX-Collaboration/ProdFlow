@@ -9,6 +9,7 @@
 #include <Trkr_Clustering.C>
 #include <Trkr_RecoInit.C>
 #include <Trkr_Reco.C>
+#include <Trkr_TpcReadoutInit.C>
 
 #include <fun4all/Fun4AllUtils.h>
 #include <fun4all/Fun4AllDstInputManager.h>
@@ -77,6 +78,14 @@ void Fun4All_JobA(
       se->registerInputManager(hitsin);
       i++;
     }
+
+  TpcReadoutInit(runnumber);
+  std::cout<< " run: " << runnumber
+	   << " samples: " << TRACKING::reco_tpc_maxtime_sample
+	   << " pre: " << TRACKING::reco_tpc_time_presample
+	   << " vdrift: " << G4TPC::tpc_drift_velocity_reco
+	   << std::endl;
+
   std::string geofile = CDBInterface::instance()->getUrl("Tracking_Geometry");
   Fun4AllRunNodeInputManager *ingeo = new Fun4AllRunNodeInputManager("GeoIn");
   ingeo->AddFile(geofile);
