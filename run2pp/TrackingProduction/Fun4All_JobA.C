@@ -91,6 +91,35 @@ void Fun4All_JobA(
   ingeo->AddFile(geofile);
   se->registerInputManager(ingeo);
 
+  std::string tpc_dv_calib_dir = CDBInterface::instance()->getUrl("TPC_DRIFT_VELOCITY");
+  if (tpc_dv_calib_dir.empty())
+  {
+    std::cout << "No calibrated TPC drift velocity for Run " << runnumber << ". Use default value " << G4TPC::tpc_drift_velocity_reco << " cm/ns" << std::endl;
+  }
+  else
+  {
+    CDBTTree *cdbttree = new CDBTTree(tpc_dv_calib_dir);
+    cdbttree->LoadCalibrations();
+    G4TPC::tpc_drift_velocity_reco = cdbttree->GetSingleFloatValue("tpc_drift_velocity");
+    std::cout << "Use calibrated TPC drift velocity for Run " << runnumber << ": " << G4TPC::tpc_drift_velocity_reco << " cm/ns" << std::endl;
+  }
+
+  /*
+   * Flags for seeding macro
+   */
+  G4TPC::ENABLE_MODULE_EDGE_CORRECTIONS = true;
+  TRACKING::pp_mode = true;
+  G4TRACKING::SC_CALIBMODE = false;
+    //to turn on the default static corrections, enable the two lines below
+  //G4TPC::ENABLE_STATIC_CORRECTIONS = true;
+  //G4TPC::USE_PHI_AS_RAD_STATIC_CORRECTIONS = false;
+
+  //to turn on the average corrections derived from simulation, enable the three lines below
+  //note: these are designed to be used only if static corrections are also applied
+  //G4TPC::ENABLE_AVERAGE_CORRECTIONS = true;
+  //G4TPC::USE_PHI_AS_RAD_AVERAGE_CORRECTIONS = false;
+  //G4TPC:average_correction_filename = std::string(getenv("CALIBRATIONROOT")) + "/distortion_maps/average_minus_static_distortion_inverted_10-new.root";
+
   TrackingInit();
   
   // reject laser events if G4TPC::REJECT_LASER_EVENTS is true
@@ -134,7 +163,7 @@ void Fun4All_JobA(
   seeder->SetClusAdd_delta_window(3.0,0.06);
   seeder->SetMinClustersPerTrack(3);
   seeder->useFixedClusterError(true);
-  seeder->set_pp_mode(TRACKING::pp_mode);
+  seeder->set_pp_mode(true);
   se->registerSubsystem(seeder);
 
   // expand stubs in the TPC using simple kalman filter
@@ -153,19 +182,17 @@ void Fun4All_JobA(
   cprop->useFixedClusterError(true);
   cprop->set_max_window(5.);
   cprop->Verbosity(0);
-  cprop->set_pp_mode(TRACKING::pp_mode);
+  cprop->set_pp_mode(true);
   se->registerSubsystem(cprop);
 
 
-  if (TRACKING::pp_mode)
-  {
-    // for pp mode, apply preliminary distortion corrections to TPC clusters before crossing is known
-    // and refit the trackseeds. Replace KFProp fits with the new fit parameters in the TPC seeds.
-    auto prelim_distcorr = new PrelimDistortionCorrection;
-    prelim_distcorr->set_pp_mode(TRACKING::pp_mode);
-    prelim_distcorr->Verbosity(0);
-    se->registerSubsystem(prelim_distcorr);
-  }
+  // apply preliminary distortion corrections to TPC clusters before crossing is known
+  // and refit the trackseeds. Replace KFProp fits with the new fit parameters in the TPC seeds.
+  auto prelim_distcorr = new PrelimDistortionCorrection;
+  prelim_distcorr->set_pp_mode(true);
+  prelim_distcorr->Verbosity(0);
+  se->registerSubsystem(prelim_distcorr);
+  
 
   /*
    * Track Matching between silicon and TPC
@@ -186,10 +213,10 @@ void Fun4All_JobA(
   // Match TPC track stubs from CA seeder to clusters in the micromegas layers
   auto mm_match = new PHMicromegasTpcTrackMatching;
   mm_match->Verbosity(0);
-  mm_match->set_rphi_search_window_lyr1(0.4);
-  mm_match->set_rphi_search_window_lyr2(13.0);
-  mm_match->set_z_search_window_lyr1(26.0);
-  mm_match->set_z_search_window_lyr2(0.4);
+  mm_match->set_rphi_search_window_lyr1(3.);
+  mm_match->set_rphi_search_window_lyr2(15.0);
+  mm_match->set_z_search_window_lyr1(30.0);
+  mm_match->set_z_search_window_lyr2(3.);
 
   mm_match->set_min_tpc_layer(38);             // layer in TPC to start projection fit
   mm_match->set_test_windows_printout(false);  // used for tuning search windows only
