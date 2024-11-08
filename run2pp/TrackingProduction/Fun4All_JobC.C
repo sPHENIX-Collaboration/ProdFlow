@@ -83,6 +83,11 @@ void Fun4All_JobC(
   ingeo->AddFile(geofile);
   se->registerInputManager(ingeo);
 
+  /*
+   * flags for tracking
+   */
+
+  TRACKING::pp_mode = true;
   TrackingInit();
 
   // reject laser events if G4TPC::REJECT_LASER_EVENTS is true 
@@ -109,6 +114,7 @@ void Fun4All_JobC(
   
   auto cleaner = new PHTrackCleaner();
   cleaner->Verbosity(0);
+  cleaner->set_pp_mode(TRACKING::pp_mode);
   se->registerSubsystem(cleaner);
 
   PHSimpleVertexFinder *finder = new PHSimpleVertexFinder;
