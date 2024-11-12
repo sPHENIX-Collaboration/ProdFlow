@@ -62,9 +62,8 @@ fi
 
 #______________________________________________________________________________________________
 # Map TPC input files into filelists
-# TPC_ebdc23_cosmics-00030117-0009.evt test%%_cosmics*
+neventsperintt=$(( 10 * neventsper ))
 inputlist=""
-#for f in "${inputs[@]}"; do
 cat inputfiles.list | while read -r f; do
     b=$( basename $f )
     # TPC files
@@ -94,6 +93,7 @@ cat inputfiles.list | while read -r f; do
        echo ${f} >> ${l}.list
        echo Add ${f} to ${l}.list
        inputlist="${f} ${inputlist}"
+       neventsper=$(neventsperintt)
     fi
     if [[ $b =~ "cosmics_mvtx" ]]; then
        l=${b#*cosmics_}
@@ -114,6 +114,7 @@ cat inputfiles.list | while read -r f; do
        echo ${f} >> ${l}.list
        echo Add ${f} to ${l}.list
        inputlist="${f} ${inputlist}"
+       neventsper=$(neventsperintt)
     fi
     if [[ $b =~ "beam_mvtx" ]]; then
        l=${b#*beam_}
@@ -134,6 +135,7 @@ cat inputfiles.list | while read -r f; do
        echo ${f} >> ${l}.list
        echo Add ${f} to ${l}.list
        inputlist="${f} ${inputlist}"
+       neventsper=$(neventsperintt)
     fi
     if [[ $b =~ "calib_mvtx" ]]; then
        l=${b#*calib_}
@@ -154,6 +156,7 @@ cat inputfiles.list | while read -r f; do
        echo ${f} >> ${l}.list
        echo Add ${f} to ${l}.list
        inputlist="${f} ${inputlist}"
+       neventsper=$(neventsperintt)
     fi
     if [[ $b =~ "physics_mvtx" ]]; then
        l=${b#*physics_}
@@ -198,6 +201,8 @@ fi
 
 # Flag job as running in production status
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
+
+
 
 echo root.exe -q -b Fun4All_SingleStream_Combiner.C\(${nevents},${runnumber},\"${outdir}\",\"${outbase}\",${neventsper}\);
      root.exe -q -b Fun4All_SingleStream_Combiner.C\(${nevents},${runnumber},\"${outdir}\",\"${outbase}\",${neventsper}\); status_f4a=$?
