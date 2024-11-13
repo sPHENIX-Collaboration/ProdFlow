@@ -91,8 +91,10 @@ for infile_ in ${inputs[@]}; do
     infile=$( basename ${infile_} )
     cp -v ${infile_} .
     outfile=${logbase}.root
-    outhist=${outfile/DST_CALOFITTING/HIST_CALOFITTINGQA}
-    root.exe -q -b Fun4All_Year2_Fitting.C\(${nevents},\"${infile}\",\"${outfile}\",\"${outhist}\",\"${dbtag}\"\);  status_f4a=$?
+    outhist1=${outfile/DST_CALOFITTING/HIST_HCALOUT}
+    outhist2=${outfile/DST_CALOFITTING/HIST_HCALIN}
+
+    root.exe -q -b Fun4All_HCalCosmics.C\(${nevents},\"${infile}\",\"${outfile}\",\"${outhist1}\",\"${outhist2}\",\"${dbtag}\"\);  status_f4a=$?
 
     nevents=${nevents_:--1}
     echo Stageout ${outfile} to ${outdir}
