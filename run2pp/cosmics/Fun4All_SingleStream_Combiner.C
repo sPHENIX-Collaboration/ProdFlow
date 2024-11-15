@@ -92,12 +92,17 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       //intt_sngl->Verbosity(3);
       intt_sngl->SetNegativeBco(120-23);
       intt_sngl->SetBcoRange(500);
-    
-      auto pos = iter.find("intt");
-      std::string num = iter.substr(pos+4, 1);
-      readoutNumber = "INTT"+num;
-      intt_sngl->setHitContainerName("INTTRAWHIT_" + num);
-    
+    /// find the ebdc number from the filename
+      std::string filepath, felix;
+      std::ifstream ifs(iter);
+      while(std::getline(ifs, filepath))
+      {
+	auto pos = filepath.find("intt");
+	felix = filepath.substr(pos+4, 1);
+	break;
+      }
+      intt_sngl->setHitContainerName("INTTRAWHIT_" + felix);
+      readoutNumber = "INTT"+felix;
       intt_sngl->AddListFile(iter);
       in->registerStreamingInput(intt_sngl, InputManagerType::INTT);
       i++;
@@ -118,10 +123,10 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 	felix = filepath.substr(pos+4, 1);
 	break;
       }
-      readoutNumber = "MVTX"+felix;
+
       SingleMvtxPoolInput *mvtx_sngl = new SingleMvtxPoolInput("MVTX_" + to_string(i));
 //    mvtx_sngl->Verbosity(5);
-    
+      readoutNumber = "MVTX"+felix;
       mvtx_sngl->setHitContainerName("MVTXRAWHIT_" + felix);
       mvtx_sngl->setRawEventHeaderName("MVTXRAWEVTHEADER_" + felix);
       mvtx_sngl->AddListFile(iter);
