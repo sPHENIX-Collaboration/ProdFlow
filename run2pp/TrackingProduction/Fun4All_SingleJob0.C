@@ -63,10 +63,9 @@ void Fun4All_SingleJob0(
   std::string filepath;
 
 
-  if(runnumber>51428)
-    {
-      TRACKING::tpc_zero_supp = true;
-    }
+
+  TRACKING::tpc_zero_supp = true;
+    
 
   CDBInterface::instance()->Verbosity(1);
 
