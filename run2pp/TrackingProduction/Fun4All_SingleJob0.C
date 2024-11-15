@@ -42,7 +42,7 @@ R__LOAD_LIBRARY(libinttrawhitqa.so)
 R__LOAD_LIBRARY(libmvtxrawhitqa.so)
 R__LOAD_LIBRARY(libtpcqa.so)
 R__LOAD_LIBRARY(libtrackingqa.so)
-void Fun4All_SingleTrkrHitSet_Unpacker(
+void Fun4All_SingleJob0(
     const int nEvents = 2,
     const int runnumber = 41626,
     const std::string outfilename = "cosmics",
@@ -58,12 +58,12 @@ void Fun4All_SingleTrkrHitSet_Unpacker(
   auto se = Fun4AllServer::instance();
   se->Verbosity(1);
   auto rc = recoConsts::instance();
-
+  
   std::ifstream ifs(filelist);
   std::string filepath;
 
 
-  if(runNumber>51428)
+  if(runnumber>51428)
     {
       TRACKING::tpc_zero_supp = true;
     }
@@ -127,12 +127,18 @@ void Fun4All_SingleTrkrHitSet_Unpacker(
     }
   for(int server = 0; server < 8; server++)
     {
-      Intt_HitUnpacking(std::to_string(filenum));
+      Intt_HitUnpacking(std::to_string(server));
     }
-  char buff[10];
+  ostringstream ebdcname;
   for(int ebdc = 0; ebdc < 24; ebdc++)
     {
-      Tpc_HitUnpacking(std::string(sprintf(buff,"%02i", ebdc)));
+      ebdcname.str("");
+      if(ebdc < 10)
+	{
+	  ebdcname<<"0";
+	}
+      ebdcname<<ebdc;
+      Tpc_HitUnpacking(ebdcname.str());
     }
 
   Micromegas_HitUnpacking();
