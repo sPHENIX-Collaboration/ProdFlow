@@ -11,6 +11,7 @@
 #include <fun4allraw/SingleMicromegasPoolInput.h>
 #include <fun4allraw/SingleMvtxPoolInput.h>
 #include <fun4allraw/SingleTpcPoolInput.h>
+#include <fun4allraw/SingleTpcTimeFrameInput.h>
 
 #include <phool/recoConsts.h>
 
@@ -150,12 +151,10 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 	break;
       }
 
-      SingleTpcPoolInput *tpc_sngl = new SingleTpcPoolInput("TPC_" + to_string(i));
+      SingleTpcTimeFrameInput *tpc_sngl = new SingleTpcTimeFrameInput("TPC_" + to_string(i));
 //    tpc_sngl->Verbosity(2);
       //   tpc_sngl->DryRun();
       readoutNumber = "TPC"+ebdc;
-      tpc_sngl->SetBcoRange(5);
-      tpc_sngl->SetMaxTpcTimeSamples(1024);
       tpc_sngl->setHitContainerName("TPCRAWHIT_" + ebdc);
       tpc_sngl->AddListFile(iter);
       in->registerStreamingInput(tpc_sngl, InputManagerType::TPC);
