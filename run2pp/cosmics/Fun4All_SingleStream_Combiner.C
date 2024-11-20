@@ -69,8 +69,6 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 // create and register input managers
   int i = 0;
 
-  std::string readoutNumber = "";
-
   for (auto iter : gl1_infile)
   {
     if (isGood(iter))
@@ -103,7 +101,6 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 	break;
       }
       intt_sngl->setHitContainerName("INTTRAWHIT_" + felix);
-      readoutNumber = "INTT"+felix;
       intt_sngl->AddListFile(iter);
       in->registerStreamingInput(intt_sngl, InputManagerType::INTT);
       i++;
@@ -127,7 +124,6 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 
       SingleMvtxPoolInput *mvtx_sngl = new SingleMvtxPoolInput("MVTX_" + to_string(i));
 //    mvtx_sngl->Verbosity(5);
-      readoutNumber = "MVTX"+felix;
       mvtx_sngl->setHitContainerName("MVTXRAWHIT_" + felix);
       mvtx_sngl->setRawEventHeaderName("MVTXRAWEVTHEADER_" + felix);
       mvtx_sngl->AddListFile(iter);
@@ -154,7 +150,6 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       SingleTpcTimeFrameInput *tpc_sngl = new SingleTpcTimeFrameInput("TPC_" + to_string(i));
 //    tpc_sngl->Verbosity(2);
       //   tpc_sngl->DryRun();
-      readoutNumber = "TPC"+ebdc;
       tpc_sngl->setHitContainerName("TPCRAWHIT_" + ebdc);
       tpc_sngl->AddListFile(iter);
       in->registerStreamingInput(tpc_sngl, InputManagerType::TPC);
@@ -174,7 +169,6 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       mm_sngl->SetBcoPoolSize(50);
       mm_sngl->AddListFile(iter);
       in->registerStreamingInput(mm_sngl, InputManagerType::MICROMEGAS);
-      readoutNumber = "TPOT";
       i++;
     }
   }
@@ -198,7 +192,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 
 
   char outfile[500];
-  sprintf(outfile,"./%s-%s.root",type.c_str(),readoutNumber.c_str());
+  sprintf(outfile,"./%s.root",type.c_str());
   
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("out",outfile);
   out->UseFileRule();
@@ -218,7 +212,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   se->End();
 
   char histoutfile[500];
-  sprintf(histoutfile,"./HIST_%s-%s-%08i-%05i.root",type.c_str(),readoutNumber.c_str(),runnumber,0);
+  sprintf(histoutfile,"./HIST_%s-%08i-%05i.root",type.c_str(),runnumber,0);
   QAHistManagerDef::saveQARootFile(histoutfile);
 
   delete se;
