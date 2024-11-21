@@ -22,9 +22,10 @@
 #include <ffamodules/HeadReco.h>
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/SyncReco.h>
+#include <ffamodules/CDBInterface.h>
 
 R__LOAD_LIBRARY(libfun4all.so)
-  R__LOAD_LIBRARY(libffamodules.so)
+R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4allraw.so)
 R__LOAD_LIBRARY(libffarawmodules.so)
 
@@ -35,6 +36,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 				   const string &outdir = "/sphenix/lustre01/sphnxpro/commissioning/slurp/tpccosmics/",
 				   const string &type = "beam",
 				   const int neventsper = 100,
+				   const string &dbtag = "ProdA_2024",
 				   const string &input_gl1file = "gl1daq.list",
 				   const string &input_tpcfile00 = "tpc00.list",
 				   const string &input_inttfile00 = "intt0.list",
@@ -63,6 +65,8 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
   recoConsts *rc = recoConsts::instance();
+  CDBInterface::instance()->Verbosity(1);
+  rc->set_StringFlag("CDB_GLOBALTAG", dbtag );
   Fun4AllStreamingInputManager *in = new Fun4AllStreamingInputManager("Comb");
 //  in->Verbosity(3);
 
