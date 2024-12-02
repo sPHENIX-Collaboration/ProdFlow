@@ -36,8 +36,8 @@ export HOME=/sphenix/u/${USER}
 hostname
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
-
-export ODBCINI=./odbc.ini
+echo OFFLINE_MAIN: $OFFLINE_MAIN
+#export ODBCINI=./odbc.ini
 
 #______________________________________________________________________________________ started __
 #
