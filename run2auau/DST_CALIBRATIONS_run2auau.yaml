@@ -62,7 +62,7 @@ DST_MBD_CALIBRATION_run2auau:
    #
    job:
      executable            : "{payload}/run.sh"
-     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(build) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {pass0dir} {PWD} {rsync}"
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {pass0dir} {PWD} {rsync}"
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
      accounting_group_user : "sphnxpro"
