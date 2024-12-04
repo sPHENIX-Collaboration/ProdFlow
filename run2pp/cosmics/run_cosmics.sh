@@ -18,6 +18,7 @@ subdir=${15}
 payload=(`echo ${16} | tr ","  " "`) # array of files to be rsynced
 #-----
 export cupsid=${@: -1}
+echo cupsid = $cupsid
 
 sighandler()
 {
@@ -50,6 +51,11 @@ echo export ODBCINI=./odbc.ini
 else
      echo No odbc.ini file detected.  Using system odbc.ini
 fi
+
+echo "CUPS configuration"
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
+
+
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
 
 echo "INPUTS" 
