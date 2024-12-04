@@ -60,7 +60,8 @@ echo "CUPS configuration"
 
 echo "INPUTS" 
 if [[ "${9}" == *"dbinput"* ]]; then
-   ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs >> inputfiles.list
+   echo   ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs
+          ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs >> inputfiles.list
 else
    for i in ${inputs[@]}; do
       echo $i >> inputfiles.list
