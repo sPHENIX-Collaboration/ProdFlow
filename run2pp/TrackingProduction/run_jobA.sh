@@ -36,6 +36,7 @@ hostname
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
 
+echo OFFLINE_MAIN: $OFFLINE_MAIN
 
 echo ..............................................................................................
 echo $@

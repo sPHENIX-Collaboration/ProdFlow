@@ -35,8 +35,8 @@ export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
-
-export ODBCINI=./odbc.ini
+echo OFFLINE_MAIN: $OFFLINE_MAIN
+#export ODBCINI=./odbc.ini
 
 # Stagein
 for i in ${payload[@]}; do
