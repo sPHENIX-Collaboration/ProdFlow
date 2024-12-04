@@ -191,13 +191,6 @@ DST_TRIGGERED_EVENT_run2cosmics_ana444_2024p007:
           order by runnumber desc, segment desc;
                  
 
-   # TODO:  Need to add error checking to make sure that outdir, logdir, etc... are quoted properly.  Else, this will cause problems with argument substitution
-   filesystem:  
-     outdir : "/sphenix/lustre01/sphnxpro/production/{runtype}/run2cosmics/calophysics/$(build)_$(tag)/run_$(rungroup)"
-     logdir : "file:///sphenix/data/data02/sphnxpro/run2cosmics/calologs/$(build)_$(tag)/run_$(rungroup)"
-     histdir :       "/sphenix/data/data02/sphnxpro/run2cosmics/calohist/$(build)_$(tag)/run_$(rungroup)"
-     condor :        "/tmp/run2pp/calologs/$(build)_$(tag)/run_$(rungroup)"
-
    #
    # Again I note the need to ensure that the arguments are properly specified given the
    # definition of the payload script.
@@ -262,11 +255,6 @@ DST_CALOFITTING_run2cosmics_ana444_2024p007:
      priority : '3900'
 
 
-   filesystem:  
-     outdir : "/sphenix/lustre01/sphnxpro/production/{runtype}/run2cosmics/caloy2cosmics/$(build)_$(tag)/run_$(rungroup)"
-     logdir : "file:///sphenix/data/data02/sphnxpro/run2cosmics/caloy2cosmics/$(build)_$(tag)/run_$(rungroup)"
-     histdir :       "/sphenix/data/data02/sphnxpro/run2cosmics/calohist/$(build)_$(tag)/run_$(rungroup)"
-     condor :        "/tmp/run2pp/caloy2fitting/run_$(rungroup)"
 
 
 

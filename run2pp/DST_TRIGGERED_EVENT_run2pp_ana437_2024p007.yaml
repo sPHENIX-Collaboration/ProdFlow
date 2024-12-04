@@ -193,13 +193,6 @@ DST_TRIGGERED_EVENT_run2pp_ana437_2024p007:
           order by runnumber desc, segment desc;
                  
 
-   # TODO:  Need to add error checking to make sure that outdir, logdir, etc... are quoted properly.  Else, this will cause problems with argument substitution
-   filesystem:  
-     outdir : "/sphenix/lustre01/sphnxpro/physics/slurp/calophysics/$(build)_$(tag)/run_$(rungroup)"
-     logdir : "file:///sphenix/data/data02/sphnxpro/calologs/$(build)_$(tag)/run_$(rungroup)"
-     histdir :       "/sphenix/data/data02/sphnxpro/calohist/$(build)_$(tag)/run_$(rungroup)"
-     condor :        "/tmp/calologs/$(build)_$(tag)/run_$(rungroup)"
-
    #
    # Again I note the need to ensure that the arguments are properly specified given the
    # definition of the payload script.
@@ -261,12 +254,6 @@ DST_CALO_Y2_FITTING:
      priority : '3810'
 
 
-   filesystem:  
-     outdir : "/sphenix/lustre01/sphnxpro/physics/slurp/caloy2fitting/$(build)_$(tag)/run_$(rungroup)"
-     logdir : "file:///sphenix/data/data02/sphnxpro/caloy2fitting/$(build)_$(tag)/run_$(rungroup)"
-     histdir :       "/sphenix/data/data02/sphnxpro/calohist/$(build)_$(tag)/run_$(rungroup)"
-     condor :        "/tmp/caloy2fitting/run_$(rungroup)"
-
 
 # Downstream products
 DST_CALO_Y2_CALIB:
@@ -312,14 +299,6 @@ DST_CALO_Y2_CALIB:
      accounting_group_user : "sphnxpro"
      priority : '3800'
 
-   filesystem:  
-     outdir : "/sphenix/lustre01/sphnxpro/physics/slurp/caloy2calib/$(build)_$(tag)/run_$(rungroup)"
-     logdir : "file:///sphenix/data/data02/sphnxpro/caloy2calib/$(build)_$(tag)/run_$(rungroup)"
-     histdir :       "/sphenix/data/data02/sphnxpro/calohist/$(build)_$(tag)/run_$(rungroup)"
-     condor :        "/tmp/caloy2calib/run_$(rungroup)"
-
-
-
 # Downstream products
 DST_CALO_Y2_JETS:
    params:
@@ -364,8 +343,3 @@ DST_CALO_Y2_JETS:
      accounting_group_user : "sphnxpro"
      priority : '3800'
 
-   filesystem:  
-     outdir : "/sphenix/lustre01/sphnxpro/physics/slurp/jetproduction/$(build)_$(tag)/run_$(rungroup)"
-     logdir : "file:///sphenix/data/data02/sphnxpro/jetlogs/$(build)_$(tag)/run_$(rungroup)"
-     histdir :       "/sphenix/data/data02/sphnxpro/jethistos/$(build)_$(tag)/run_$(rungroup)"
-     condor :        "/tmp/jetproduction/run_$(rungroup)"
