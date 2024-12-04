@@ -36,9 +36,9 @@ export USER="$(id -u -n)"
 export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n ${5}
 
 export ODBCINI=./odbc.ini
+source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
 
 echo "PAYLOAD"
 for i in ${payload[@]}; do
