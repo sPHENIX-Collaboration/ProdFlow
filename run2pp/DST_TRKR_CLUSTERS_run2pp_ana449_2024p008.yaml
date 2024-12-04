@@ -1,0 +1,110 @@
+#_________________________________________________________________________________________________________________________________________
+DST_TRKR_CLUSTER_run2pp:
+   # DST_EVENT works from a pre-built set of run lists.
+   params:
+     name:       DST_TRKR_CLUSTER_run2pp
+     build:      ana.449
+     build_name: ana449
+     dbtag:      2024p008
+     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)
+     script  :   run_job0.sh
+     payload :   ./ProdFlow/run2pp/TrackingProduction/
+     mem     :   2048MB
+     nevents :  0
+     rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
+     input   : "DST_TRKR_HIT_run2pp_ana441_2024p007%"
+     mnrun   : 51428
+     mxrun   : 53880
+     runtype : 'physics'
+
+
+   input:
+      db: fc
+      direct_path: /sphenix/lustre01/sphnxpro/testbed/physics/slurp/tracking/ana441_2024p007/run_00053800_00053900
+      query: |-
+         select 
+                'filecatalog/datasets'   as source       ,
+                runnumber                                ,
+                segment                                  ,
+                filename                    as files     ,
+                filename || ':0:' || events as fileranges
+         from  
+                datasets
+         where
+
+                filename like '{input}'
+                {run_condition}
+                and runnumber>={mnrun}
+                and runnumber<={mxrun}
+
+         order by runnumber
+                {limit_condition}
+              ;              
+
+
+   job:
+     executable            : "{payload}/run_job0.sh"
+     arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {logdir} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '3800'
+
+
+
+
+#_________________________________________________________________________________________________________________________________________
+DST_TRKR_SEED_run2pp:
+   # DST_EVENT works from a pre-built set of run lists.
+   params:
+     name:       DST_TRKR_SEED_run2pp
+     build:      ana.449
+     build_name: ana449
+     dbtag:      2024p008
+     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)
+     script  :   run_jobA.sh
+     payload :   ./ProdFlow/run2pp/TrackingProduction/
+     mem     :   2048MB
+     nevents :  0
+     rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
+     input   : "DST_TRKR_CLUSTER_run2pp_ana449_2024p008%"
+     mnrun   : 51428
+     mxrun   : 53880
+
+
+   input:
+      db: fc
+      query: |-
+         select 
+                'filecatalog/datasets'   as source       ,
+                runnumber                                ,
+                segment                                  ,
+                filename                    as files     ,
+                filename || ':0:' || events as fileranges
+         from  
+                datasets
+         where
+
+                filename like '{input}'
+                {run_condition}
+                and runnumber>={mnrun}
+                and runnumber<={mxrun}
+
+         order by runnumber
+                {limit_condition}
+              ;              
+
+
+   job:
+     executable            : "{payload}/run_jobA.sh"
+     arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {logdir} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '3800'
+
+
