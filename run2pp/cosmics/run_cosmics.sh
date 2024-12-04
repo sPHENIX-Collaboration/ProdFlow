@@ -18,6 +18,7 @@ subdir=${15}
 payload=(`echo ${16} | tr ","  " "`) # array of files to be rsynced
 #-----
 export cupsid=${@: -1}
+echo cupsid = $cupsid
 
 sighandler()
 {
@@ -36,20 +37,32 @@ export USER="$(id -u -n)"
 export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n ${5}
+source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
+
 echo OFFLINE_MAIN: $OFFLINE_MAIN
-#export ODBCINI=./odbc.ini
 
 echo "PAYLOAD"
 for i in ${payload[@]}; do
     cp --verbose ${subdir}/${i} .
 done
 
+if [ -e odbc.ini ]; then
+echo export ODBCINI=./odbc.ini
+     export ODBCINI=./odbc.ini
+else
+     echo No odbc.ini file detected.  Using system odbc.ini
+fi
+
+echo "CUPS configuration"
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
+
+
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
 
 echo "INPUTS" 
 if [[ "${9}" == *"dbinput"* ]]; then
-   ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs >> inputfiles.list
+   echo   ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs
+          ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs >> inputfiles.list
 else
    for i in ${inputs[@]}; do
       echo $i >> inputfiles.list

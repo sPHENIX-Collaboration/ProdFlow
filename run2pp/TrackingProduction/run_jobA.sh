@@ -35,8 +35,8 @@ export HOME=/sphenix/u/${USER}
 hostname
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
+
 echo OFFLINE_MAIN: $OFFLINE_MAIN
-#export ODBCINI=./odbc.ini
 
 echo ..............................................................................................
 echo $@
@@ -59,8 +59,14 @@ for i in ${payload[@]}; do
     cp --verbose ${subdir}/${i} .
 done
 
+if [ -e odbc.ini ]; then
+echo export ODBCINI=./odbc.ini
+     export ODBCINI=./odbc.ini
+fi
+
 #______________________________________________________________________________________ started __
 #
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
 #_________________________________________________________________________________________________
 

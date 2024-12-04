@@ -53,12 +53,6 @@ DST_TPCCALIB_run2pp:
                 {limit_condition}
               ;              
 
-   # TODO:  Need to add error checking to make sure that outdir, logdir, etc... are quoted properly.  Else, this will cause problems with argument substitution
-   filesystem:  
-     outdir : "/sphenix/lustre01/sphnxpro/physics/slurp/tpccalib/run_$(rungroup)"
-     logdir : "file:///sphenix/data/data02/sphnxpro/testlogs/run_$(rungroup)"
-     condor :        "/tmp/testlogs/run_$(rungroup)"
-
    #
    # Again I note the need to ensure that the arguments are properly specified given the
    # definition of the payload script.
@@ -125,12 +119,6 @@ DST_MBD_CALIBRATION_run2pp:
                 {limit_condition}
 
               ;              
-
-   # TODO:  Need to add error checking to make sure that outdir, logdir, etc... are quoted properly.  Else, this will cause problems with argument substitution
-   filesystem:  
-     outdir : "/sphenix/lustre01/sphnxpro/physics/TEST/mbdcalib/$(build)_$(tag)/run_$(rungroup)"
-     logdir : "file:///sphenix/data/data02/sphnxpro/mbdcalib/$(build)_$(tag)/run_$(rungroup)"
-     condor :        "/tmp/mbdcalib/$(build)_$(tag)/run_$(rungroup)"
 
 
    #

@@ -195,13 +195,6 @@ DST_TRIGGERED_EVENT_run2pp_new_2024p007:
           order by runnumber desc, segment desc;
                  
 
-   # TODO:  Need to add error checking to make sure that outdir, logdir, etc... are quoted properly.  Else, this will cause problems with argument substitution
-   filesystem:  
-     outdir : "/sphenix/lustre01/sphnxpro/{runtype}/run2pp/calophysics/$(build)_$(tag)/run_$(rungroup)"
-     logdir : "file:///sphenix/data/data02/sphnxpro/run2aua/calologs/$(build)_$(tag)/run_$(rungroup)"
-     histdir :       "/sphenix/data/data02/sphnxpro/run2pp/calohist/$(build)_$(tag)/run_$(rungroup)"
-     condor :        "/tmp/run2aua/calologs/$(build)_$(tag)/run_$(rungroup)"
-
    #
    # Again I note the need to ensure that the arguments are properly specified given the
    # definition of the payload script.
@@ -266,13 +259,6 @@ DST_CALOFITTING_run2pp_new_2024p007:
      priority : '3900'
 
 
-   filesystem:  
-     outdir : "/sphenix/lustre01/sphnxpro/{runtype}/run2pp/caloy2fitting/$(build)_$(tag)/run_$(rungroup)"
-     logdir : "file:///sphenix/data/data02/sphnxpro/run2aua/caloy2fitting/$(build)_$(tag)/run_$(rungroup)"
-     histdir :       "/sphenix/data/data02/sphnxpro/run2aua/calohist/$(build)_$(tag)/run_$(rungroup)"
-     condor :        "/tmp/run2pp/caloy2fitting/run_$(rungroup)"
-
-
 # Downstream products
 DST_CALO_run2pp_new_2024p007:
    params:
@@ -316,13 +302,6 @@ DST_CALO_run2pp_new_2024p007:
      accounting_group      : "group_sphenix.mdc2"
      accounting_group_user : "sphnxpro"
      priority : '3900'
-
-   filesystem:  
-     outdir : "/sphenix/lustre01/sphnxpro/{runtype}/run2pp/caloy2calib/$(build)_$(tag)/run_$(rungroup)"
-     logdir : "file:///sphenix/data/data02/sphnxpro/run2pp/caloy2calib/$(build)_$(tag)/run_$(rungroup)"
-     histdir :       "/sphenix/data/data02/sphnxpro/run2pp/calohist/$(build)_$(tag)/run_$(rungroup)"
-     condor :        "/tmp/run2pp/caloy2calib/run_$(rungroup)"
-
 
 
 # Downstream products
@@ -368,8 +347,3 @@ DST_JETS_run2pp_new_2024p007:
      accounting_group_user : "sphnxpro"
      priority : '3900'
 
-   filesystem:  
-     outdir : "/sphenix/lustre01/sphnxpro/{runtype}/run2pp/jetproduction/$(build)_$(tag)/run_$(rungroup)"
-     logdir : "file:///sphenix/data/data02/sphnxpro/run2pp/jetlogs/$(build)_$(tag)/run_$(rungroup)"
-     histdir :       "/sphenix/data/data02/sphnxpro/run2pp/jethistos/$(build)_$(tag)/run_$(rungroup)"
-     condor :        "/tmp/run2pp/jetproduction/run_$(rungroup)"
