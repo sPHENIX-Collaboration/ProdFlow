@@ -37,7 +37,6 @@ export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 
 
-export ODBCINI=./odbc.ini
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
 
 echo "PAYLOAD"
@@ -45,6 +44,12 @@ for i in ${payload[@]}; do
     cp --verbose ${subdir}/${i} .
 done
 
+if [ -e odbc.ini ]; then
+echo export ODBCINI=./odbc.ini
+     export ODBCINI=./odbc.ini
+else
+     echo No odbc.ini file detected.  Using system odbc.ini
+fi
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
 
 echo "INPUTS" 
