@@ -63,7 +63,7 @@ void Fun4All_Job0(
   while(std::getline(ifs,filepath))
     {
       if(i==0)
-	{
+      {
 	   std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(filepath);
 	   int runNumber = runseg.first;
 	   int segment = runseg.second;
@@ -92,6 +92,12 @@ void Fun4All_Job0(
 
   TPC_LaserClustering();
 
+  std::cout << "outfilename: " << outfilename << std::endl;
+  G4TPC::LaminationOutputName = "Laminations_" + outfilename;
+  std::cout << "lamination name: " << G4TPC::LaminationOutputName << std::endl;
+
+  TPC_LaminationFitting();
+
   auto tpcclusterizer = new TpcClusterizer;
   tpcclusterizer->Verbosity(0);
   tpcclusterizer->set_do_hit_association(G4TPC::DO_HIT_ASSOCIATION);
@@ -117,6 +123,7 @@ void Fun4All_Job0(
   if(G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING)
   {
     out->AddNode("LASER_CLUSTER");
+    out->AddNode("LAMINATION_CLUSTER");
   }
   se->registerOutputManager(out);
 
