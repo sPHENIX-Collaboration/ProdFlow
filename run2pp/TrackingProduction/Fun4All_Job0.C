@@ -92,9 +92,7 @@ void Fun4All_Job0(
 
   TPC_LaserClustering();
 
-  std::cout << "outfilename: " << outfilename << std::endl;
   G4TPC::LaminationOutputName = "Laminations_" + outfilename;
-  std::cout << "lamination name: " << G4TPC::LaminationOutputName << std::endl;
 
   TPC_LaminationFitting();
 

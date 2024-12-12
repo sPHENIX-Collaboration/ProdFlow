@@ -92,6 +92,10 @@ void Fun4All_Job0(
 
   TPC_LaserClustering();
 
+  G4TPC::LaminationOutputName = "Laminations_" + outfilename;
+
+  TPC_LaminationFitting();
+
   auto tpcclusterizer = new TpcClusterizer;
   tpcclusterizer->Verbosity(0);
   tpcclusterizer->set_do_hit_association(G4TPC::DO_HIT_ASSOCIATION);
