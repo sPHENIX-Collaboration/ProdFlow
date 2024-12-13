@@ -36,7 +36,7 @@ export USER="$(id -u -n)"
 export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n ${5}
+source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
 
 export ODBCINI=./odbc.ini
 
