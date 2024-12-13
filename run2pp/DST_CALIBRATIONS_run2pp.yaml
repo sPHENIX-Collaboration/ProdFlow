@@ -58,7 +58,7 @@ DST_TPCCALIB_run2pp:
    # definition of the payload script.
    #
    job:
-     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir}"
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      transfer_input_files  : "{payload},cups.py,bachi.py,odbc.ini"
      log                   : '{condor}/{logbase}.condor'
@@ -125,7 +125,7 @@ DST_MBD_CALIBRATION_run2pp:
    # definition of the payload script.
    #
    job:
-     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {pass0dir}"
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {pass0dir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      transfer_input_files  : "{payload},cups.py,bachi.py,odbc.ini"
      log                   : '{condor}/{logbase}.condor'
