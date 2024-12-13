@@ -196,7 +196,6 @@ DST_TRIGGERED_EVENT_run2cosmics_ana444_2024p007:
    # definition of the payload script.
    #
    job:
-     executable            : "{payload}/run.sh"
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync} $(firstevent) $(lastevent) $(runs_last_event)"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
@@ -246,7 +245,6 @@ DST_CALOFITTING_run2cosmics_ana444_2024p007:
 
          ;
    job:
-     executable            : "{payload}/runhcalcosmics.sh"
      arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'

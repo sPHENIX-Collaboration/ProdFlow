@@ -58,7 +58,6 @@ DST_TPCCALIB_run2pp:
    # definition of the payload script.
    #
    job:
-     executable            : "{payload}/run_cosmics.sh"
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir}"
      output_destination    : '{logdir}'
      transfer_input_files  : "{payload},cups.py,bachi.py,odbc.ini"
@@ -126,7 +125,6 @@ DST_MBD_CALIBRATION_run2pp:
    # definition of the payload script.
    #
    job:
-     executable            : "{payload}/run.sh"
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {pass0dir}"
      output_destination    : '{logdir}'
      transfer_input_files  : "{payload},cups.py,bachi.py,odbc.ini"
