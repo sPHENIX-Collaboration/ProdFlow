@@ -200,8 +200,7 @@ DST_TRIGGERED_EVENT_run2auau_new_2024p007:
    # definition of the payload script.
    #
    job:
-     executable            : "{payload}/run.sh"
-     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync} $(firstevent) $(lastevent) $(runs_last_event)"
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync} $(firstevent) $(lastevent) $(runs_last_event) {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
@@ -250,8 +249,7 @@ DST_CALOFITTING_run2auau_new_2024p007:
 
          ;
    job:
-     executable            : "{payload}/runy2fitting.sh"
-     arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
+     arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
@@ -296,7 +294,6 @@ DST_CALO_run2auau_new_2024p007:
 
          ;
    job:
-     executable            : "{payload}/runy2calib.sh"
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
@@ -340,7 +337,6 @@ DST_JETS_run2auau_new_2024p007:
 
          ;
    job:
-     executable            : "{payload}/runjets.sh"
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'

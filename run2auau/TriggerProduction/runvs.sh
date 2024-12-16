@@ -18,8 +18,10 @@ payload=(`echo ${15} | tr ","  " "`) # array of files to be rsynced
 firstevent=${16}
 lastevent=${17}
 lasteventinrun=${18}
-#-- Must always be last + 1
-export cupsid=${19}
+
+#-- Must always be last 
+export cupsid=${@: -1}
+
 
 sighandler()
 {
