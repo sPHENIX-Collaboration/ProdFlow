@@ -44,6 +44,13 @@ for i in ${payload[@]}; do
     cp --verbose ${subdir}/${i} .
 done
 
+if [ -e odbc.ini ]; then
+echo export ODBCINI=./odbc.ini
+     export ODBCINI=./odbc.ini
+else
+     echo No odbc.ini file detected.  Using system odbc.ini
+fi
+
 # Set state to started
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
 
@@ -88,6 +95,8 @@ for events in ${ranges[@]}; do
    fname=${e[2]}
    first=${e[0]}
    last=${e[1]}
+
+   echo $fname $first $last
 
    if [[ $string == *"GL1"* ]]; then
       FE["${fname}"]=$first

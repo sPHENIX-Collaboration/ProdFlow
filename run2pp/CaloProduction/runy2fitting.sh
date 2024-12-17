@@ -68,6 +68,13 @@ if [[ "${inputs}" == *"dbinput"* ]]; then
     inputs=( $(./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs) )
 fi
 
+if [ -e odbc.ini ]; then
+echo export ODBCINI=./odbc.ini
+     export ODBCINI=./odbc.ini
+else
+     echo No odbc.ini file detected.  Using system odbc.ini
+fi
+
 #______________________________________________________________________________________ started __
 #
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
