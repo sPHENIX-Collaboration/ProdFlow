@@ -46,10 +46,17 @@ for i in ${payload[@]}; do
     cp --verbose ${subdir}/${i} .
 done
 
-#______________________________________________________________________________________ started __
-#
-# $$$ ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
-#_________________________________________________________________________________________________
+if [[ "${inputs}" == *"dbinput"* ]]; then
+    echo "Getting inputs via cups.  ranges is not set."
+    inputs=( $(./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs) )
+fi
+
+if [ -e odbc.ini ]; then
+echo export ODBCINI=./odbc.ini
+     export ODBCINI=./odbc.ini
+else
+     echo No odbc.ini file detected.  Using system odbc.ini
+fi
 
 echo ..............................................................................................
 echo $@
@@ -70,7 +77,6 @@ echo ...........................................................................
 
 #______________________________________________________________________________________ running __
 #
-#./cups.py -r ${runnumber} -s ${segment} -d ${outbase} inputs --files ${inputs[@]}
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
 #_________________________________________________________________________________________________
 

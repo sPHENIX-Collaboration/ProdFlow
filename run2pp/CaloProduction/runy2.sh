@@ -8,13 +8,19 @@ segment=${5}
 outdir=${6}
 build=${7/./}
 dbtag=${8}
-inputs=(`echo ${9} | tr "," " "`)  # array of input files 
+inputs=(`echo ${9} | tr "," " "`)  # array of input files
 ranges=(`echo ${10} | tr "," " "`)  # array of input files with ranges appended
 neventsper=${11:-1000}
 logdir=${12:-.}
 histdir=${13:-.}
 #-----
 export cupsid=${@: -1}
+
+echo =================================================================================================
+echo
+echo production script is deprecated
+echo 
+echo =================================================================================================
 
 sighandler()
 {
@@ -63,7 +69,6 @@ echo ...........................................................................
 
 #______________________________________________________________________________________ running __
 #
-./cups.py -r ${runnumber} -s ${segment} -d ${outbase} inputs --files ${inputs[@]}
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
 #_________________________________________________________________________________________________
 

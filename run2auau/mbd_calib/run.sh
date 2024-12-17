@@ -48,6 +48,11 @@ echo "PAYLOAD"
 for i in ${payload[@]}; do
     cp --verbose ${subdir}/${i} .
 done
+
+if [[ "${inputs}" == *"dbinput"* ]]; then
+    echo "Getting inputs via cups.  ranges is not set."
+    inputs=( $(./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs) )
+fi
  
 # There ought to be just one here... but ymmv...
 echo ${inputs[@]}
