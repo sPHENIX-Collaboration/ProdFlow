@@ -16,6 +16,12 @@ histdir=${13:-.}
 #-----
 export cupsid=${@: -1}
 
+echo ==============================================================================
+echo
+echo production script deprecated
+echo
+echo ==============================================================================
+
 sighandler()
 {
 echo "signal handler"
