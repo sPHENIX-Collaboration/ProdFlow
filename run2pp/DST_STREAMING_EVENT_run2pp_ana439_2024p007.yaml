@@ -8,7 +8,7 @@ DST_STREAMING_EVENT_run2pp:
      dbtag:      2024p007
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
-     script  :   run_cosmics.sh
+     script  :   run_streaming.sh
      payload :   ./ProdFlow/run2pp/streaming/     
      neventsper: 10000
      comment :    "---"

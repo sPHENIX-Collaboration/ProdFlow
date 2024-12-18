@@ -8,7 +8,7 @@ DST_STREAMING_EVENT_run2auau_new_2024p007:
      dbtag:      2024p007
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
-     script  :   run_cosmics.sh
+     script  :   run_streaming.sh
      payload :   ./ProdFlow/run2auau/streaming/     
      comment :    "---"
      rsync   : "./ProdFlow/run2auau/streaming/*,cups.py,bachi.py,odbc.ini"
