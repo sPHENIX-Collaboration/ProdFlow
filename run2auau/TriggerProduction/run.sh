@@ -52,8 +52,8 @@ else
      echo No odbc.ini file detected.  Using system odbc.ini
 fi
 
-# Set state to started
-./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
+# Debugging info
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
 
 echo ..............................................................................................
 echo $@

@@ -74,15 +74,12 @@ echo export ODBCINI=./odbc.ini
 else
      echo No odbc.ini file detected.  Using system odbc.ini
 fi
-#______________________________________________________________________________________ started __
-#
-./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
-#_________________________________________________________________________________________________
 
+# Debugging info
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
 
 #______________________________________________________________________________________ running __
 #
-./cups.py -r ${runnumber} -s ${segment} -d ${outbase} inputs --files ${inputs[@]}
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
 #_________________________________________________________________________________________________
 
