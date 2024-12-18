@@ -6,7 +6,7 @@ DST_TRIGGERED_EVENT_run2pp_ana444_2024p007:
      name:       DST_TRIGGERED_EVENT_run2pp
      build:      ana.444
      build_name: ana444
-     dbtag:      2024p007
+     dbtag:      nocdbtag
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   run.sh
@@ -34,7 +34,7 @@ DST_TRIGGERED_EVENT_run2pp_ana444_2024p007:
    # For now, require GL1 files...
    #
    input:
-      db: daqdb
+      db: rawdr
       direct_path: /sphenix/lustre01/sphnxpro/physics/*/*/
       query: |-
          with config as (
@@ -240,7 +240,7 @@ DST_CALOFITTING_run2pp_ana444_2024p007:
          from  
                 datasets
          where 
-                filename like 'DST_TRIGGERED_EVENT_run2pp_ana444_2024p007%'
+                filename like 'DST_TRIGGERED_EVENT_run2pp_ana444_nocdbtag%'
                 {run_condition}
 
                  and runnumber<=53880

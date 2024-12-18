@@ -13,7 +13,7 @@ DST_TPCCALIB_run2pp:
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   run_cosmics.sh
-     payload :   ./ProdFlow/run2pp/cosmics/
+     payload :   ./ProdFlow/run2pp/streaming/
      neventsper: 100
      mem     :   8192MB
 
