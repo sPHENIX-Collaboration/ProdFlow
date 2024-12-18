@@ -51,6 +51,11 @@ else
      echo No odbc.ini file detected.  Using system odbc.ini
 fi
 
+# Debugging info
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
+
+
+
 # Set state to started
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
 
@@ -207,8 +212,6 @@ fi
 
 # Flag the creation of a new dataset in dataset_status
 dstname=${logbase%%-*}
-#echo ./bachi.py --blame cups created ${dstname} ${runnumber} 
-#     ./bachi.py --blame cups created ${dstname} ${runnumber}
 
 # Write local
 echo root.exe -q -b Fun4All_Prdf_Combiner.C\(${nevents},${firstevent},${lastevent},\"${logbase}.root\"\)
@@ -222,9 +225,6 @@ if [ "${status_f4a}" -eq 0 ]; then
 
    echo   stageout.sh ${logbase}.root ${outdir}
           stageout.sh ${logbase}.root ${outdir}
-
-#   echo   ./bachi.py --blame cups finalized ${dstname} ${runnumber}
-#          ./bachi.py --blame cups finalized ${dstname} ${runnumber}
 
 else
 

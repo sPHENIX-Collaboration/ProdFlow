@@ -58,10 +58,9 @@ else
      echo No odbc.ini file detected.  Using system odbc.ini
 fi
 
-#______________________________________________________________________________________ started __
-#
-./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
-#_________________________________________________________________________________________________
+# Debugging info
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
+
 
 echo ..............................................................................................
 echo $@
@@ -82,14 +81,11 @@ echo ...........................................................................
 
 #______________________________________________________________________________________ running __
 #
-./cups.py -r ${runnumber} -s ${segment} -d ${outbase} inputs --files ${inputs[@]}
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
 #_________________________________________________________________________________________________
 
 
 dstname=${logbase%%-*}
-echo ./bachi.py --blame cups created ${dstname} ${runnumber} --parent ${inputs[0]}
-     ./bachi.py --blame cups created ${dstname} ${runnumber} --parent ${inputs[0]}
 
 out0=${logbase}.root
 out1=HIST_${logbase#DST_}.root
@@ -117,14 +113,6 @@ for infile_ in ${inputs[@]}; do
 	#mv --verbose ${hfile} ${histdir}
     done
 done
-
-if [ "${status_f4a}" -eq 0 ]; then
-  echo ./bachi.py --blame cups finalized ${dstname} ${runnumber}  
-       ./bachi.py --blame cups finalized ${dstname} ${runnumber} 
-fi
-
-# In principle, stageout should have moved the files to their final location
-#rm *.root
 
 ls -lah
 

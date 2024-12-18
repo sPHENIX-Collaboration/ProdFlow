@@ -210,9 +210,6 @@ fi
 
 # Flag the creation of a new dataset in dataset_status
 dstname=${logbase%%-*}
-echo ./bachi.py --blame cups created ${dstname} ${runnumber} 
-     ./bachi.py --blame cups created ${dstname} ${runnumber} 
-
 
 echo root.exe -q -b Fun4All_Stream_Combiner.C\(${nevents},${runnumber},\"${outbase}\",\"${outdir}\",${neventsper}\);
      root.exe -q -b Fun4All_Stream_Combiner.C\(${nevents},${runnumber},\"${outbase}\",\"${outdir}\",${neventsper}\); status_f4a=$?
@@ -225,18 +222,8 @@ echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${stat
      ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents 0 --inc 
 
 
-if [ "${status_f4a}" -eq 0 ]; then
-  echo ./bachi.py --blame cups finalized ${dstname} ${runnumber} 
-       ./bachi.py --blame cups finalized ${dstname} ${runnumber} 
-fi
-
-#???outputname="cosmics-${runnumber}-${segment}";
-
 echo $outbase
 echo $logbase
-
-#cp stderr.log ${logbase}.err
-#cp stdout.log ${logbase}.out
 
 for hfile in `ls HIST_*.root`; do
     echo Stageout ${hfile} to ${histdir}
