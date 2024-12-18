@@ -88,8 +88,6 @@ echo ...........................................................................
 
 
 dstname=${logbase%%-*}
-echo ./bachi.py --blame cups created ${dstname} ${runnumber} --parent ${inputs[0]}
-     ./bachi.py --blame cups created ${dstname} ${runnumber} --parent ${inputs[0]}
 
 out0=${logbase}.root
 
@@ -121,14 +119,6 @@ for infile_ in ${inputs[@]}; do
     done
 
 done
-
-if [ "${status_f4a}" -eq 0 ]; then
-  echo ./bachi.py --blame cups finalized ${dstname} ${runnumber}  
-       ./bachi.py --blame cups finalized ${dstname} ${runnumber} 
-fi
-
-# In principle, stageout should have moved the files to their final location
-#rm *.root
 
 ls -lah
 
