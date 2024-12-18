@@ -78,6 +78,7 @@ fi
 # Debugging info
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
 
+
 #______________________________________________________________________________________ running __
 #
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
@@ -97,7 +98,8 @@ for infile_ in ${inputs[@]}; do
     infile=$( basename ${infile_} )
     cp -v ${infile_} .
     outfile=${logbase}.root
-    root.exe -q -b Fun4All_Year2_Fitting.C\(${nevents},\"${infile}\",\"${outfile}\",\"${dbtag}\"\);  status_f4a=$?
+    outhist=${outfile/DST_CALOFITTING/HIST_CALOFITTINGQA}
+    root.exe -q -b Fun4All_Year2_Fitting.C\(${nevents},\"${infile}\",\"${outfile}\",\"${outhist}\",\"${dbtag}\"\);  status_f4a=$?
 
     nevents=${nevents_:--1}
     echo Stageout ${outfile} to ${outdir}
@@ -110,7 +112,6 @@ for infile_ in ${inputs[@]}; do
 
 done
 
-
 ls -lah
 
 #______________________________________________________________________________________ finished __
@@ -121,7 +122,6 @@ echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${stat
 
 
 echo "bdee bdee bdee, That's All Folks!"
-
 
 } > ${logdir#file:/}/${logbase}.out 2> ${logdir#file:/}/${logbase}.err
 
