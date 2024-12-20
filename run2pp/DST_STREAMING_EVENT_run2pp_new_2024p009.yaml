@@ -262,6 +262,7 @@ DST_TRKR_TRACKS_run2pp:
      nevents :   0
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
      seeds     : "DST_TRKR_SEED_run2pp_new_2024p009%"
+     clusters     : "DST_TRKR_CLUSTER_run2pp_new_2024p009%"
      seedDS    : "new_2024p009"
      seedDST   : "DST_TRKR_SEED_run2pp"     
      clusterDS : "new_2024p009"
