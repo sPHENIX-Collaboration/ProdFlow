@@ -1,0 +1,339 @@
+#________________________________________________________________________________________________________DST_PHYSICS__
+DST_STREAMING_EVENT_run2auau:
+
+   params:
+     name:       DST_STREAMING_EVENT_run2auau
+     build:      new
+     build_name: new
+     dbtag:      nocdbtag
+     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)
+     script  :   run_cosmics.sh
+     payload :   ./ProdFlow/run2auau/cosmics/     
+     comment :    "---"
+     rsync   : "./ProdFlow/run2auau/cosmics/*,cups.py,bachi.py,odbc.ini"
+     mem     :   20000MB
+     # 20GB of memory is not a typo
+     zstrig  : 150
+     neventsperZS: 10000
+     neventsperNoZS: 100
+     myruntypes: beam|physics|calib|cosmics
+
+
+   input:
+      db: daqdb
+      direct_path: /sphenix/lustre01/sphnxpro/{mode}/*/*/
+      query: |-
+         with run2auau as (
+              select 53881 as firstrun,
+                     99999 as lastrun
+         ),
+
+         zero as (
+             select lastrun, min(zsthr) as zsthr, max(zsthr) as zstrh2 
+             from tpc_sampa_config group by lastrun order by lastrun desc
+         ),
+
+         fullrun as (
+         select 
+                'daqdb/filelist'                                                                                    as source      , 
+                runnumber                                                                                                          , 
+                0                                                                                                   as segment     , 
+                string_agg( distinct split_part(filename,'/',-1), ' ' )                                             as files       ,   
+                string_agg( distinct split_part(filename,'/',-1) || ':' || firstevent || ':' || lastevent, ' ' )    as fileranges  
+         from  
+                filelist,run2auau
+         where 
+           ( 
+             (filename  similar to '/bbox%/TPC%({myruntypes})%.evt'   and lastevent>2 ) or
+             (filename  similar to '/bbox%/TPOT%({myruntypes})%.evt'  and lastevent>2 ) or
+             (filename  similar to '/bbox%/({myruntypes})_intt%.evt'  and lastevent>2 ) or
+             (filename  similar to '/bbox%/GL1_({myruntypes})%.evt'   and lastevent>2 ) or
+             (filename  similar to '/bbox%/({myruntypes})_mvtx%.evt'  and lastevent>2 )
+           )
+
+         and runnumber>=run2auau.firstrun and runnumber<=run2auau.lastrun
+
+         {run_condition}
+
+         group by runnumber
+         having
+                every(transferred_to_sdcc)   and
+                max(lastevent)>1000          and
+                sum( case when filename similar to '/bbox%/GL1_({myruntypes})%' then 1 else 0 end )>0 and
+                (
+                   sum( case when filename similar to '/bbox%/TPC%({myruntypes})%' then 1 else 0 end )>0 or
+                   sum( case when filename similar to '/bbox%/TPOT%({myruntypes})%' then 1 else 0 end )>0 or
+                   sum( case when filename similar to '/bbox%/({myruntypes})%intt%' then 1 else 0 end )>0 or
+                   sum( case when filename similar to '/bbox%/({myruntypes})_mvtx%.evt' then 1 else 0 end )>0 
+                )
+         order by runnumber
+         ),
+
+         fullrunzeros as (
+
+            select source,
+                   runnumber,
+                   segment,
+                   files,
+                   fileranges,
+                   lastrun,
+                   runnumber-lastrun as rundiff,
+                   zsthr,
+                   (case when zsthr>{zstrig} then {neventsperZS} else {neventsperNoZS} end) as neventsper
+
+            from fullrun cross join zero order by runnumber desc
+
+         )
+
+         select distinct on (runnumber) source,runnumber,segment,files,fileranges,neventsper from fullrunzeros 
+             where rundiff>0 order by runnumber desc,rundiff
+
+              ;
+
+
+   #
+   # Again I note the need to ensure that the arguments are properly specified given the
+   # definition of the payload script.
+   #
+   job:
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) $(neventsper) {logdir} {comment} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '4000'
+     request_xferslots: '1'
+
+
+
+DST_TRKR_HIT_run2auau:
+   # DST_EVENT works from a pre-built set of run lists.
+   params:
+     name:       DST_TRKR_HIT_run2auau
+     build:      new
+     build_name: new
+     dbtag:      2024p009
+     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)
+     script  :   run.sh
+     payload :   ./ProdFlow/run2auau/TrackingProduction/
+     mem     :   4096MB
+     rsync   : "./ProdFlow/run2auau/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
+     input   : "DST_STREAMING_EVENT_run2auau_new_nocdbtag%"
+     mnrun   : 53881
+     mxrun   : 99999
+
+   input:
+      db: fc
+      query: |-
+         select 
+                'filecatalog/datasets'   as source       ,
+                runnumber                                ,
+                segment                                  ,
+                filename                    as files     ,
+                filename || ':0:' || events as fileranges
+         from  
+                datasets
+         where
+                filename like '{input}'
+
+                {run_condition}
+                and runnumber>={mnrun}
+                and runnumber<={mxrun}
+
+
+         order by runnumber
+                {limit_condition}
+              ;              
+
+
+   job:
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {logdir} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '3900'
+
+
+
+
+
+
+#_________________________________________________________________________________________________________________________________________
+DST_TRKR_CLUSTER_run2auau:
+   # DST_EVENT works from a pre-built set of run lists.
+   params:
+     name:       DST_TRKR_CLUSTER_run2auau
+     build:      new
+     build_name: new
+     dbtag:      2024p009
+     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)
+     script  :   run_job0.sh
+     payload :   ./ProdFlow/run2auau/TrackingProduction/
+     mem     :   2048MB
+     nevents :  0
+     rsync   : "./ProdFlow/run2auau/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
+     input   : "DST_TRKR_HIT_run2auau_new_2024p009%"
+     mnrun   : 53881
+     mxrun   : 99999
+
+
+   input:
+      db: fc
+      query: |-
+         select 
+                'filecatalog/datasets'   as source       ,
+                runnumber                                ,
+                segment                                  ,
+                filename                    as files     ,
+                filename || ':0:' || events as fileranges
+         from  
+                datasets
+         where
+
+                filename like '{input}'
+                {run_condition}
+                and runnumber>={mnrun}
+                and runnumber<={mxrun}
+
+         order by runnumber
+                {limit_condition}
+              ;              
+
+   job:
+     arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {logdir} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '3900'
+
+
+
+
+#_________________________________________________________________________________________________________________________________________
+DST_TRKR_SEED_run2auau:
+   # DST_EVENT works from a pre-built set of run lists.
+   params:
+     name:       DST_TRKR_SEED_run2auau
+     build:      new
+     build_name: new
+     dbtag:      2024p009
+     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)
+     script  :   run_jobA.sh
+     payload :   ./ProdFlow/run2auau/TrackingProduction/
+     mem     :   2048MB
+     nevents :  0
+     rsync   : "./ProdFlow/run2auau/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
+     input   : "DST_TRKR_CLUSTER_run2auau_new_2024p009%"
+     mnrun   : 53881
+     mxrun   : 99999
+
+
+   input:
+      db: fc
+      query: |-
+         select 
+                'filecatalog/datasets'   as source       ,
+                runnumber                                ,
+                segment                                  ,
+                filename                    as files     ,
+                filename || ':0:' || events as fileranges
+         from  
+                datasets
+         where
+
+                filename like '{input}'
+                {run_condition}
+                and runnumber>={mnrun}
+                and runnumber<={mxrun}
+
+         order by runnumber
+                {limit_condition}
+              ;              
+
+   job:
+     arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {logdir} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '3900'
+
+
+DST_TRKR_TRACKS_run2auau:
+   # DST_EVENT works from a pre-built set of run lists.
+   params:
+     name:       DST_TRKR_TRACKS_run2auau
+     build:      new
+     build_name: new
+     dbtag:      2024p009
+     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)
+     script  :   run_jobC.sh
+     payload :   ./ProdFlow/run2auau/TrackingProduction/
+     mem     :   2048MB
+     nevents :   0
+     rsync   : "./ProdFlow/run2auau/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
+     seeds   : "DST_TRKR_SEED_run2auau_new_2024p009%"
+     clusters: "DST_TRKR_CLUSTER_run2auau_new_2024p009%"
+     mnrun   : 53881
+     mxrun   : 99999
+
+
+
+
+   input:
+      db: fc
+      query: |-
+         select
+               'filecatalog/datasets'   as source       ,
+               runnumber                                ,
+               segment                                  ,
+
+               string_agg( distinct split_part(filename,'/',-1), ' ' )                             as files       ,   
+               string_agg( distinct split_part(filename,'/',-1) || ':' || 0 || ':' || -1, ' ' )    as fileranges  
+         from
+               datasets
+         where
+           ( 
+              filename like '{seeds}' or filename like '{clusters}' 
+           )
+           {run_condition}
+           and runnumber>={mnrun}
+           and runnumber<={mxrun}
+
+
+         group by runnumber,segment 
+
+         having (
+
+            sum( case when filename like '{seeds}'    then 1 else 0 end )>0    and
+            sum( case when filename like '{clusters}' then 1 else 0 end )>0 
+
+         )
+
+         order by runnumber
+ 
+         {limit_condition}
+         ;
+
+   job:
+     arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {logdir} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '3900'
+
+
+
+
+
+
+
+
