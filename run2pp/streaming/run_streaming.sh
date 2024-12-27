@@ -54,10 +54,12 @@ else
 fi
 
 echo "CUPS configuration"
-./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
+echo ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
+     ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
 
 
-./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
+echo ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
+     ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started     
 
 echo "INPUTS" 
 if [[ "${9}" == *"dbinput"* ]]; then
@@ -244,13 +246,17 @@ else
 fi
 
 echo "script done"
-} >& ${logdir#file:/}/${logbase}.out 
+} | tee ${logdir#file:/}/${logbase}.out 
 
 echo "Job termination with logsize= " ${logsize} "kB"
 
 
 #mv ${logbase}.out ${logdir#file:/}
 #mv ${logbase}.err ${logdir#file:/}
+
+if [ -e cups.stat ]; then
+    cp cups.stat ${logdir#file:/}/${logbase}.dbstat
+fi
 
 exit $status_f4a
 

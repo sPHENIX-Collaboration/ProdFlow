@@ -231,6 +231,10 @@ echo "Job termination with logsize= " ${logsize} "kB"
 #mv ${logbase}.out ${logdir#file:/}
 #mv ${logbase}.err ${logdir#file:/}
 
+if [ -e cups.stat ]; then
+    cp cups.stat ${logdir#file:/}/${logbase}.dbstat
+fi
+
 exit $status_f4a
 
 
