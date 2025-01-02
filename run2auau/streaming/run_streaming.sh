@@ -16,6 +16,9 @@ comment=${13}
 histdir=${14:-.}
 subdir=${15}
 payload=(`echo ${16} | tr ","  " "`) # array of files to be rsynced
+#-----
+export cupsid=${@: -1}
+echo cupsid = $cupsid
 
 sighandler()
 {
@@ -35,19 +38,33 @@ export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
+
 echo OFFLINE_MAIN: $OFFLINE_MAIN
-#export ODBCINI=./odbc.ini
 
 echo "PAYLOAD"
 for i in ${payload[@]}; do
     cp --verbose ${subdir}/${i} .
 done
 
-./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
+if [ -e odbc.ini ]; then
+echo export ODBCINI=./odbc.ini
+     export ODBCINI=./odbc.ini
+else
+     echo No odbc.ini file detected.  Using system odbc.ini
+fi
+
+echo "CUPS configuration"
+echo ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
+     ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
+
+
+echo ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
+     ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started     
 
 echo "INPUTS" 
 if [[ "${9}" == *"dbinput"* ]]; then
-   ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs >> inputfiles.list
+   echo   ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs
+          ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs >> inputfiles.list
 else
    for i in ${inputs[@]}; do
       echo $i >> inputfiles.list
@@ -184,6 +201,12 @@ touch tpot.list
 
 ls -la *.list
 
+# If no input files are in the file lists exit with code 111 to indicate a failure
+if [ $(cat *.list|wc -l) -eq 0 ]; then
+     ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e 111 --nevents 0 --inc 
+     exit 111
+fi
+
 # Flag job as running in production status
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
 
@@ -223,13 +246,17 @@ else
 fi
 
 echo "script done"
-} >& ${logdir#file:/}/${logbase}.out 
+} | tee ${logdir#file:/}/${logbase}.out 
 
 echo "Job termination with logsize= " ${logsize} "kB"
 
 
 #mv ${logbase}.out ${logdir#file:/}
 #mv ${logbase}.err ${logdir#file:/}
+
+if [ -e cups.stat ]; then
+    cp cups.stat ${logdir#file:/}/${logbase}.dbstat
+fi
 
 exit $status_f4a
 

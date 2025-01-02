@@ -158,7 +158,11 @@ for r in *.root; do
     ./stageout.sh ${r} ${outdir} ${outbase}-$(printf "%08d" ${runnumber})-$(printf "%05d" ${segment}).root
 done
 
-exit
+if [ -e cups.stat ]; then
+    cp cups.stat ${logdir#file:/}/${logbase}.dbstat
+fi
+
+exit  #?????????
 
 
 ################################################

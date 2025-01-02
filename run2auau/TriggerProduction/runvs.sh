@@ -210,7 +210,11 @@ else
 fi
 
 echo "script done"
-} >& ${logdir#file:/}/${logbase}.out 
+} >& ${logdir#file:/}/${logbase}.out
+
+if [ -e cups.stat ]; then
+    cp cups.stat ${logdir#file:/}/${logbase}.dbstat
+fi
 
 exit ${status_f4a}
 
