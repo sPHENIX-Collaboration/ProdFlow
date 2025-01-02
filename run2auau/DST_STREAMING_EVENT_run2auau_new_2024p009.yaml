@@ -8,8 +8,6 @@ DST_STREAMING_EVENT_run2auau:
      dbtag:      nocdbtag
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
-     script  :   run_cosmics.sh
-     payload :   ./ProdFlow/run2auau/cosmics/     
      script  :   run_streaming.sh
      payload :   ./ProdFlow/run2auau/streaming/     
      comment :    "---"
