@@ -34,9 +34,11 @@ export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 hostname
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
+#source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
+source sPHENIX_INIT ${7}
 
 echo OFFLINE_MAIN: $OFFLINE_MAIN
+echo NOPAYLOADCLIENT_CONF: $NOPAYLOADCLIENT_CONF
 
 echo ..............................................................................................
 echo $@
@@ -93,7 +95,8 @@ ls -la
 
 ./stageout.sh ${logbase}.root ${outdir}
 
-./stageout.sh Laminations_${logbase}.root ${outdir}
+# Not sure how the stageout script even manages this... the filename does not satisfy the naming convention...
+./stageout.sh Laminations_${logbase}.root ${outdir} 
 
 for hfile in `ls HIST_*.root`; do
     echo Stageout ${hfile} to ${histdir}

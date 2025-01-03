@@ -38,8 +38,10 @@ export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 hostname
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
+#source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
+source sPHENIX_INIT ${7}
 echo OFFLINE_MAIN: $OFFLINE_MAIN
+echo NOPAYLOADCLIENT_CONF: $NOPAYLOADCLIENT_CONF
 #export ODBCINI=./odbc.ini
 
 # Stagein
