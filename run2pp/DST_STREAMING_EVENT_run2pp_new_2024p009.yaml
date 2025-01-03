@@ -228,7 +228,7 @@ DST_TRKR_SEED_run2pp:
                 datasets
          where
 
-                dataset='{inputds}' and dsttype='{dsttype}'
+                dataset='{inputds}' and dsttype='{dsttype}' and events>0
                 and runnumber>={mnrun}
                 and runnumber<={mxrun}
                 {run_condition}                
