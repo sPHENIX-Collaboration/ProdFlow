@@ -36,7 +36,7 @@ hostname
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
 
-export ODBCINI=./odbc.ini
+echo OFFLINE_MAIN: $OFFLINE_MAIN
 
 echo ..............................................................................................
 echo $@
@@ -59,8 +59,14 @@ for i in ${payload[@]}; do
     cp --verbose ${subdir}/${i} .
 done
 
+if [ -e odbc.ini ]; then
+echo export ODBCINI=./odbc.ini
+     export ODBCINI=./odbc.ini
+fi
+
 #______________________________________________________________________________________ started __
 #
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
 #_________________________________________________________________________________________________
 
@@ -87,6 +93,8 @@ ls -la
 
 ./stageout.sh ${logbase}.root ${outdir}
 
+./stageout.sh Laminations_${logbase}.root ${outdir}
+
 for hfile in `ls HIST_*.root`; do
     echo Stageout ${hfile} to ${histdir}
     ./stageout.sh ${hfile} ${histdir}
@@ -102,6 +110,9 @@ echo "bdee bdee bdee, That's All Folks!"
 
 } >${logdir#file:/}/${logbase}.out  2>${logdir#file:/}/${logbase}.err 
 
+if [ -e cups.stat ]; then
+    cp cups.stat ${logdir#file:/}/${logbase}.dbstat
+fi
 
 exit $status_f4a
 

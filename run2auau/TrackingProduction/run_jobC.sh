@@ -13,6 +13,8 @@ ranges=(`echo ${10} | tr "," " "`)  # array of input files with ranges appended
 logdir=${11:-.}
 subdir=${13}
 payload=(`echo ${14} | tr ","  " "`) # array of files to be rsynced
+#-----
+export cupsid=${@: -1}
 
 sighandler()
 {
@@ -33,7 +35,8 @@ hostname
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
 
-export ODBCINI=./odbc.ini
+echo OFFLINE_MAIN: $OFFLINE_MAIN
+
 
 echo ..............................................................................................
 echo $@
@@ -56,8 +59,14 @@ for i in ${payload[@]}; do
     cp --verbose ${subdir}/${i} .
 done
 
+if [ -e odbc.ini ]; then
+echo export ODBCINI=./odbc.ini
+     export ODBCINI=./odbc.ini
+fi
+
 #______________________________________________________________________________________ started __
 #
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
 #_________________________________________________________________________________________________
 
@@ -97,6 +106,10 @@ echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${stat
 echo "bdee bdee bdee, That's All Folks!"
 
 
-} >${logdir#file:/}/${logbase}.out  2>${logdir#file:/}/${logbase}.err 
+} >${logdir#file:/}/${logbase}.out  2>${logdir#file:/}/${logbase}.err
+
+if [ -e cups.stat ]; then
+    cp cups.stat ${logdir#file:/}/${logbase}.dbstat
+fi
 
 exit $status_f4a

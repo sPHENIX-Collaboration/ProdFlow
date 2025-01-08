@@ -8,13 +8,19 @@ segment=${5}
 outdir=${6}
 build=${7/./}
 dbtag=${8}
-inputs=(`echo ${9} | tr "," " "`)  # array of input files 
+inputs=(`echo ${9} | tr "," " "`)  # array of input files
 ranges=(`echo ${10} | tr "," " "`)  # array of input files with ranges appended
 neventsper=${11:-1000}
 logdir=${12:-.}
 histdir=${13:-.}
 #-----
 export cupsid=${@: -1}
+
+echo =================================================================================================
+echo
+echo production script is deprecated
+echo 
+echo =================================================================================================
 
 sighandler()
 {
@@ -36,8 +42,8 @@ export HOME=/sphenix/u/${USER}
 hostname
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
-
-export ODBCINI=./odbc.ini
+echo OFFLINE_MAIN: $OFFLINE_MAIN
+#export ODBCINI=./odbc.ini
 
 #______________________________________________________________________________________ started __
 #
@@ -63,14 +69,11 @@ echo ...........................................................................
 
 #______________________________________________________________________________________ running __
 #
-./cups.py -r ${runnumber} -s ${segment} -d ${outbase} inputs --files ${inputs[@]}
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
 #_________________________________________________________________________________________________
 
 
 dstname=${logbase%%-*}
-echo ./bachi.py --blame cups created ${dstname} ${runnumber} --parent ${inputs[0]}
-     ./bachi.py --blame cups created ${dstname} ${runnumber} --parent ${inputs[0]}
 
 out0=${logbase}.root
 out1=HIST_${logbase#DST_}.root
@@ -95,11 +98,6 @@ for infile_ in ${inputs[@]}; do
     done
 done
 
-if [ "${status_f4a}" -eq 0 ]; then
-  echo ./bachi.py --blame cups finalized ${dstname} ${runnumber}  
-       ./bachi.py --blame cups finalized ${dstname} ${runnumber} 
-fi
-
 # In principle, stageout should have moved the files to their final location
 rm *.root
 
@@ -115,5 +113,9 @@ echo "bdee bdee bdee, That's All Folks!"
 
 mv ${logbase}.out ${logdir#file:/}
 mv ${logbase}.err ${logdir#file:/}
+
+if [ -e cups.stat ]; then
+    cp cups.stat ${logdir#file:/}/${logbase}.dbstat
+fi
 
 exit ${status_f4a}

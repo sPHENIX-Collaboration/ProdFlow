@@ -90,8 +90,8 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
     {
       SingleInttPoolInput *intt_sngl = new SingleInttPoolInput("INTT_" + to_string(i));
       //intt_sngl->Verbosity(3);
-      intt_sngl->SetNegativeBco(120-23);
-      intt_sngl->SetBcoRange(500);
+      intt_sngl->SetNegativeBco(1);
+      intt_sngl->SetBcoRange(2);
     
       auto pos = iter.find("intt");
       std::string num = iter.substr(pos+4, 1);
@@ -121,8 +121,6 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       readoutNumber = "MVTX"+felix;
       SingleMvtxPoolInput *mvtx_sngl = new SingleMvtxPoolInput("MVTX_" + to_string(i));
 //    mvtx_sngl->Verbosity(5);
-      mvtx_sngl->SetBcoRange(100);
-      mvtx_sngl->SetNegativeBco(500);
     
       mvtx_sngl->setHitContainerName("MVTXRAWHIT_" + felix);
       mvtx_sngl->setRawEventHeaderName("MVTXRAWEVTHEADER_" + felix);
@@ -152,7 +150,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       //   tpc_sngl->DryRun();
       readoutNumber = "TPC"+ebdc;
       tpc_sngl->SetBcoRange(5);
-      tpc_sngl->SetMaxTpcTimeSamples(1024);
+      //tpc_sngl->SetMaxTpcTimeSamples(1024);
       tpc_sngl->setHitContainerName("TPCRAWHIT_" + ebdc);
       tpc_sngl->AddListFile(iter);
       in->registerStreamingInput(tpc_sngl, InputManagerType::TPC);

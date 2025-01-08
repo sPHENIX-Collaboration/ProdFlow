@@ -18,8 +18,9 @@ payload=(`echo ${15} | tr ","  " "`) # array of files to be rsynced
 firstevent=${16}
 lastevent=${17}
 lasteventinrun=${18}
+
 #-- Must always be last + 1
-export cupsid=${19}
+export cupsid=${@: -1}
 
 sighandler()
 {
@@ -35,13 +36,25 @@ export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
-
-export ODBCINI=./odbc.ini
+echo OFFLINE_MAIN: $OFFLINE_MAIN
+#export ODBCINI=./odbc.ini
 
 # Stagein
 for i in ${payload[@]}; do
     cp --verbose ${subdir}/${i} .
 done
+
+if [ -e odbc.ini ]; then
+echo export ODBCINI=./odbc.ini
+     export ODBCINI=./odbc.ini
+else
+     echo No odbc.ini file detected.  Using system odbc.ini
+fi
+
+# Debugging info
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
+
+
 
 # Set state to started
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
@@ -87,6 +100,8 @@ for events in ${ranges[@]}; do
    fname=${e[2]}
    first=${e[0]}
    last=${e[1]}
+
+   echo $fname $first $last
 
    if [[ $string == *"GL1"* ]]; then
       FE["${fname}"]=$first
@@ -197,8 +212,6 @@ fi
 
 # Flag the creation of a new dataset in dataset_status
 dstname=${logbase%%-*}
-#echo ./bachi.py --blame cups created ${dstname} ${runnumber} 
-#     ./bachi.py --blame cups created ${dstname} ${runnumber}
 
 # Write local
 echo root.exe -q -b Fun4All_Prdf_Combiner.C\(${nevents},${firstevent},${lastevent},\"${logbase}.root\"\)
@@ -213,9 +226,6 @@ if [ "${status_f4a}" -eq 0 ]; then
    echo   stageout.sh ${logbase}.root ${outdir}
           stageout.sh ${logbase}.root ${outdir}
 
-#   echo   ./bachi.py --blame cups finalized ${dstname} ${runnumber}
-#          ./bachi.py --blame cups finalized ${dstname} ${runnumber}
-
 else
 
    echo Fun4All exited with status ${status_f4a}
@@ -225,7 +235,11 @@ else
 fi
 
 echo "script done"
-} >& ${logdir#file:/}/${logbase}.out 
+} >& ${logdir#file:/}/${logbase}.out
+
+if [ -e cups.stat ]; then
+    cp cups.stat ${logdir#file:/}/${logbase}.dbstat
+fi
 
 exit ${status_f4a}
 

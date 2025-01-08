@@ -7,6 +7,7 @@
 #include <Trkr_Clustering.C>
 #include <Trkr_RecoInit.C>
 #include <Trkr_Reco.C>
+#include <Trkr_TpcReadoutInit.C>
 
 #include <fun4all/Fun4AllUtils.h>
 #include <fun4all/Fun4AllDstInputManager.h>
@@ -69,13 +70,28 @@ void Fun4All_JobC(
       i++;
     }
 
+  TpcReadoutInit( runnumber );
+  std::cout<< " run: " << runnumber
+	   << " samples: " << TRACKING::reco_tpc_maxtime_sample
+	   << " pre: " << TRACKING::reco_tpc_time_presample
+	   << " vdrift: " << G4TPC::tpc_drift_velocity_reco
+	   << std::endl;
+  
+
   std::string geofile = CDBInterface::instance()->getUrl("Tracking_Geometry");
   Fun4AllRunNodeInputManager *ingeo = new Fun4AllRunNodeInputManager("GeoIn");
   ingeo->AddFile(geofile);
   se->registerInputManager(ingeo);
 
+  /*
+   * flags for tracking
+   */
+
+  TRACKING::pp_mode = true;
   TrackingInit();
 
+  // reject laser events if G4TPC::REJECT_LASER_EVENTS is true 
+  Reject_Laser_Events();
 
   auto deltazcorr = new PHTpcDeltaZCorrection;
   deltazcorr->Verbosity(0);
@@ -98,6 +114,7 @@ void Fun4All_JobC(
   
   auto cleaner = new PHTrackCleaner();
   cleaner->Verbosity(0);
+  cleaner->set_pp_mode(TRACKING::pp_mode);
   se->registerSubsystem(cleaner);
 
   PHSimpleVertexFinder *finder = new PHSimpleVertexFinder;

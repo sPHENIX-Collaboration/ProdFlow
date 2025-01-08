@@ -6,6 +6,8 @@
 #include <QA.C>
 #include <GlobalVariables.C>
 #include <Trkr_Clustering.C>
+#include <Trkr_LaserClustering.C>
+#include <Trkr_RecoInit.C>
 
 #include <fun4all/Fun4AllUtils.h>
 #include <fun4all/Fun4AllDstInputManager.h>
@@ -14,6 +16,12 @@
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllRunNodeInputManager.h>
 #include <fun4all/Fun4AllServer.h>
+
+
+#include <trackingqa/InttClusterQA.h>
+#include <trackingqa/MicromegasClusterQA.h>
+#include <trackingqa/MvtxClusterQA.h>
+#include <trackingqa/TpcClusterQA.h>
 
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
@@ -33,7 +41,8 @@ R__LOAD_LIBRARY(libmicromegas.so)
 R__LOAD_LIBRARY(libinttrawhitqa.so)
 R__LOAD_LIBRARY(libmvtxrawhitqa.so)
 R__LOAD_LIBRARY(libtpcqa.so)
-void Fun4All_SingleTrkrHitSet_Unpacker(
+R__LOAD_LIBRARY(libtrackingqa.so)
+void Fun4All_SingleJob0(
     const int nEvents = 2,
     const int runnumber = 41626,
     const std::string outfilename = "cosmics",
@@ -49,11 +58,32 @@ void Fun4All_SingleTrkrHitSet_Unpacker(
   auto se = Fun4AllServer::instance();
   se->Verbosity(1);
   auto rc = recoConsts::instance();
-
+  
   std::ifstream ifs(filelist);
   std::string filepath;
+
+
+
+  TRACKING::tpc_zero_supp = true;
+    
+
+  CDBInterface::instance()->Verbosity(1);
+
+  rc->set_StringFlag("CDB_GLOBALTAG", dbtag );
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
+
+  FlagHandler *flag = new FlagHandler();
+  se->registerSubsystem(flag);
+
+  std::string geofile = CDBInterface::instance()->getUrl("Tracking_Geometry");
+  Fun4AllRunNodeInputManager *ingeo = new Fun4AllRunNodeInputManager("GeoIn");
+  ingeo->AddFile(geofile);
+  se->registerInputManager(ingeo);
+  
+  TrackingInit();
+
   int i = 0;
-   std::string filenum = "";
+  std::string filenum = "";
   
   while(std::getline(ifs,filepath))
     {
@@ -82,7 +112,6 @@ void Fun4All_SingleTrkrHitSet_Unpacker(
 	       // do nothing for TPOT since it processes together no matter what
 	   
 	     }
-
 	}
       std::string inputname = "InputManager" + std::to_string(i);
       auto hitsin = new Fun4AllDstInputManager(inputname);
@@ -90,32 +119,51 @@ void Fun4All_SingleTrkrHitSet_Unpacker(
       se->registerInputManager(hitsin);
       i++;
     }
-
-  if(runNumber>51428)
+  
+  for(int felix=0; felix < 6; felix++)
     {
-      TRACKING::tpc_zero_supp = true;
+      Mvtx_HitUnpacking(std::to_string(felix));
+    }
+  for(int server = 0; server < 8; server++)
+    {
+      Intt_HitUnpacking(std::to_string(server));
+    }
+  ostringstream ebdcname;
+  for(int ebdc = 0; ebdc < 24; ebdc++)
+    {
+      ebdcname.str("");
+      if(ebdc < 10)
+	{
+	  ebdcname<<"0";
+	}
+      ebdcname<<ebdc;
+      Tpc_HitUnpacking(ebdcname.str());
     }
 
-  CDBInterface::instance()->Verbosity(1);
-
-  rc->set_StringFlag("CDB_GLOBALTAG", dbtag );
-  rc->set_uint64Flag("TIMESTAMP", runnumber);
-
-  FlagHandler *flag = new FlagHandler();
-  se->registerSubsystem(flag);
-
-  std::string geofile = CDBInterface::instance()->getUrl("Tracking_Geometry");
-  Fun4AllRunNodeInputManager *ingeo = new Fun4AllRunNodeInputManager("GeoIn");
-  ingeo->AddFile(geofile);
-  se->registerInputManager(ingeo);
-
-  // Figure out which subsystem and which felix/server/ebdc we are reading
- 
-
-  Mvtx_HitUnpacking(filenum);
-  Intt_HitUnpacking(filenum);
-  Tpc_HitUnpacking(filenum);
   Micromegas_HitUnpacking();
+
+  Mvtx_Clustering();
+
+  Intt_Clustering();
+
+  Tpc_LaserEventIdentifying();
+
+  TPC_LaserClustering();
+
+  auto tpcclusterizer = new TpcClusterizer;
+  tpcclusterizer->Verbosity(0);
+  tpcclusterizer->set_do_hit_association(G4TPC::DO_HIT_ASSOCIATION);
+  tpcclusterizer->set_rawdata_reco();
+  tpcclusterizer->set_reject_event(G4TPC::REJECT_LASER_EVENTS);
+  se->registerSubsystem(tpcclusterizer);
+
+  Micromegas_Clustering();
+
+  se->registerSubsystem(new MvtxClusterQA);
+  se->registerSubsystem(new InttClusterQA);
+  se->registerSubsystem(new TpcClusterQA);
+  se->registerSubsystem(new MicromegasClusterQA);
+
 
   auto mvtx = new MvtxRawHitQA;
   se->registerSubsystem(mvtx);
@@ -127,10 +175,15 @@ void Fun4All_SingleTrkrHitSet_Unpacker(
   se->registerSubsystem(tpc);
 
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfilename);
-
   out->AddNode("Sync");
   out->AddNode("EventHeader");
-  out->AddNode("TRKR_HITSET");
+  out->AddNode("TRKR_CLUSTER");
+  out->AddNode("TRKR_CLUSTERCROSSINGASSOC");
+  out->AddNode("LaserEventInfo");
+  if(G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING)
+  {
+    out->AddNode("LASER_CLUSTER");
+  }
   se->registerOutputManager(out);
 
   se->run(nEvents);
