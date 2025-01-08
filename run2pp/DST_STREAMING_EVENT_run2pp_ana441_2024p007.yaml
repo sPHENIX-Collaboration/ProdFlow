@@ -36,11 +36,11 @@ DST_STREAMING_EVENT_run2pp:
                 filelist,run2pp
          where 
            ( 
-             (filename  like '/bbox%/TPC%physics%.evt'   and lastevent>2 and transferred_to_sdcc ) or
-             (filename  like '/bbox%/TPOT%physics%.evt'  and lastevent>2 and transferred_to_sdcc ) or
-             (filename  like '/bbox%/physics_intt%.evt'  and lastevent>2 and transferred_to_sdcc ) or
-             (filename  like '/bbox%/GL1_physics%.evt'   and lastevent>2 and transferred_to_sdcc ) or
-             (filename  like '/bbox%/physics_mvtx%.evt'  and lastevent>2 and transferred_to_sdcc )
+             (filename  like '/bbox%/TPC%physics%.evt'   and lastevent>2 ) or
+             (filename  like '/bbox%/TPOT%physics%.evt'  and lastevent>2 ) or
+             (filename  like '/bbox%/physics_intt%.evt'  and lastevent>2 ) or
+             (filename  like '/bbox%/GL1_physics%.evt'   and lastevent>2 ) or
+             (filename  like '/bbox%/physics_mvtx%.evt'  and lastevent>2 )
            )
 
          and runnumber>=run2pp.firstrun and runnumber<=run2pp.lastrun
