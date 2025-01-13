@@ -11,7 +11,7 @@ DST_STREAMING_EVENT_run2pp:
      script  :   run_streaming.sh
      payload :   ./ProdFlow/run2pp/streaming/     
 #     neventsper: 10000
-     neventsper: 1000
+     neventsper: 2500
      comment :    "---"
      rsync   : "./ProdFlow/run2pp/streaming/*,cups.py,bachi.py,odbc.ini"
      mem     :   20000MB
@@ -228,7 +228,7 @@ DST_TRKR_SEED_run2pp:
                 datasets
          where
 
-                dataset='{inputds}' and dsttype='{dsttype}'
+                dataset='{inputds}' and dsttype='{dsttype}' and events>0
                 and runnumber>={mnrun}
                 and runnumber<={mxrun}
                 {run_condition}                
