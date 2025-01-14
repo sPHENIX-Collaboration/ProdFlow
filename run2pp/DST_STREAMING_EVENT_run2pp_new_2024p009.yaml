@@ -6,8 +6,9 @@ DST_STREAMING_EVENT_run2pp:
      build:      new
      build_name: new
      dbtag:      nocdbtag
-     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
-     outbase :   $(name)_$(build)_$(tag)
+     version:    0
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run_streaming.sh
      payload :   ./ProdFlow/run2pp/streaming/     
 #     neventsper: 10000
@@ -88,8 +89,9 @@ DST_TRKR_HIT_run2pp:
      build:      new
      build_name: new
      dbtag:      2024p009
-     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
-     outbase :   $(name)_$(build)_$(tag)
+     version:   0
+     logbase :   $(name)_$(build)_$(tag)-$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)-$(version)
      script  :   run.sh
      payload :   ./ProdFlow/run2pp/TrackingProduction/
      mem     :   2048MB
@@ -144,9 +146,10 @@ DST_TRKR_CLUSTER_run2pp:
      name:       DST_TRKR_CLUSTER_run2pp
      build:      new
      build_name: new
-     dbtag:      2024p009
-     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
-     outbase :   $(name)_$(build)_$(tag)
+     dbtag:      2024p009 
+     version:   0    
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run_job0.sh
      payload :   ./ProdFlow/run2pp/TrackingProduction/
      mem     :   2048MB
@@ -201,8 +204,9 @@ DST_TRKR_SEED_run2pp:
      build:      new
      build_name: new
      dbtag:      2024p009
-     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
-     outbase :   $(name)_$(build)_$(tag)
+     version:   0     
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run_jobA.sh
      payload :   ./ProdFlow/run2pp/TrackingProduction/
      mem     :   2048MB
@@ -254,8 +258,8 @@ DST_TRKR_TRACKS_run2pp:
      build:      new
      build_name: new
      dbtag:      2024p009
-     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
-     outbase :   $(name)_$(build)_$(tag)
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run_jobC.sh
      payload :   ./ProdFlow/run2pp/TrackingProduction/
      mem     :   2048MB
@@ -332,8 +336,8 @@ DST_STREAMING_EVENT_run2pp_streams:
      build:      new
      build_name: new
      dbtag:      2024p009
-     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
-     outbase :   $(name)_$(build)_$(tag)
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run_streaming_streams.sh
      payload :   ./ProdFlow/run2pp/streaming/     
      neventsper:      10000
@@ -419,7 +423,7 @@ DST_STREAMING_EVENT_run2pp_streams:
    # definition of the payload script.
    #
    job:
-     batch_name            : "$(name)_$(streamname)_$(build)_$(tag)"
+     batch_name            : "$(name)_$(build)_$(tag)_$(version)-singlestreams"
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
