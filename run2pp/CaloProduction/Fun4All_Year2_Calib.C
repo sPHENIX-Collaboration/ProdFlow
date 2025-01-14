@@ -85,8 +85,6 @@ void Fun4All_Year2_Calib(int nEvents=100,
 
   //ZDC Reconstruction--Calib Info
   ZdcReco *zdcreco = new ZdcReco();
-  zdcreco->set_zdc1_cut(0.0);
-  zdcreco->set_zdc2_cut(0.0);
   se->registerSubsystem(zdcreco);
 
   // Official vertex storage
