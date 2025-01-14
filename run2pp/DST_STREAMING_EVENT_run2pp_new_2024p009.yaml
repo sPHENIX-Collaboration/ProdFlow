@@ -335,10 +335,10 @@ DST_STREAMING_EVENT_run2pp_streams:
      name:       DST_STREAMING_EVENT_$(streamname)_run2pp
      build:      new
      build_name: new
-     dbtag:      2024p009
+     dbtag:      nocdbtag
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
-     script  :   run_streaming_streams.sh
+     script  :   run_parallel_streams.sh
      payload :   ./ProdFlow/run2pp/streaming/     
      neventsper:      10000
      comment :    "---"
