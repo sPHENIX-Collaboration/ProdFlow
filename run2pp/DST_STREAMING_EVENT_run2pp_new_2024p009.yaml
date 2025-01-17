@@ -340,7 +340,7 @@ DST_STREAMING_EVENT_run2pp_streams:
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run_parallel_streams.sh
      payload :   ./ProdFlow/run2pp/streaming/     
-     neventsper:      10000
+     neventsper:  10000
      comment :    "---"
      rsync   : "./ProdFlow/run2pp/streaming/*,cups.py,bachi.py,odbc.ini"
      mem     :   20000MB
@@ -433,7 +433,71 @@ DST_STREAMING_EVENT_run2pp_streams:
      request_xferslots: '0'
 
 
+DST_TRKR_CLUSTER_run2pp_streams:
+
+   params:
+     name:       DST_TRKR_CLUSTER_run2pp
+     build:      new
+     build_name: new
+     dbtag:      2024p009
+     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)
+     script  :   run_job0_new.sh
+     payload :   ./ProdFlow/run2pp/TrackingProduction/
+     neventsper:      10000
+     comment :    "---"
+     rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
+     mem     :   4000MB
+     mnrun   : 51428
+     mxrun   : 53880
+
+   input:
+      db: fc
+      direct_path: /sphenix/lustre01/sphnxpro/production/run2pp/physics/ana459_nocdbtag_v001/DST_STREAMING_EVENT_*/*/dst/
+      query: |-
+         with allruns as (
+         select
+                'filecatalog/datasets'         as source        ,
+                runnumber                                       ,
+                segment                                         ,
+                string_agg( distinct filename, ' ' ) as files   ,
+                'NA'  as fileranges,
+                count(distinct filename) as ninputs
+         from
+                datasets
+         where
+                filename like 'DST_STREAMING_EVENT_%_run2pp_ana459_nocdbtag_v001-%00001%'
+                {run_condition}
+                and runnumber>={mnrun}
+                and runnumber<={mxrun}
+
+         group by runnumber, segment
+
+         order by runnumber {limit_condition}
+         )
+
+         select * from allruns where allruns.ninputs=39 order by runnumber, segment
 
 
+   # TODO:  Need to add error checking to make sure that outdir, logdir, etc... are quoted properly.  Else, this will cause problems with argument substitution
+   filesystem:
+     outdir  : "/sphenix/lustre01/sphnxpro/physics/slurp/single_streaming/physics/$(build)_$(tag)/run_$(rungroup)"
+     logdir  : "file:///sphenix/data/data02/sphnxpro/single_streaminglogs/$(build)_$(tag)/run_$(rungroup)"
+     histdir :       "/sphenix/data/data02/sphnxpro/single_streamhist/$(build)_$(tag)/run_$(rungroup)"
+     condor :        "/tmp/single_stream/$(build)_$(tag)/run_$(rungroup)"
+
+   #
+   # Again I note the need to ensure that the arguments are properly specified given the
+   # definition of the payload script.
+   #
+   job:
+     executable            : "{payload}/run_job0_new.sh"
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '4000'
+     request_xferslots: '0'
 
 
