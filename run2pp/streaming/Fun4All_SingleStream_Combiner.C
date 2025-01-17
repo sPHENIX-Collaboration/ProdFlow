@@ -13,6 +13,8 @@
 #include <fun4allraw/SingleTpcPoolInput.h>
 #include <fun4allraw/SingleTpcTimeFrameInput.h>
 
+#include <intt/InttOdbcQuery.h>
+
 #include <phool/recoConsts.h>
 
 #include <ffarawmodules/InttCheck.h>
@@ -28,7 +30,7 @@ R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4allraw.so)
 R__LOAD_LIBRARY(libffarawmodules.so)
-
+R__LOAD_LIBRARY(libintt.so)
 bool isGood(const string &infile);
 
 void Fun4All_SingleStream_Combiner(int nEvents = 0,
@@ -47,6 +49,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   vector<string> gl1_infile;
   gl1_infile.push_back(input_gl1file);
 
+ 
 // MVTX
   vector<string> mvtx_infile;
   mvtx_infile.push_back(input_mvtxfile00);
@@ -93,8 +96,16 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
     {
       SingleInttPoolInput *intt_sngl = new SingleInttPoolInput("INTT_" + to_string(i));
       //intt_sngl->Verbosity(3);
-      intt_sngl->SetNegativeBco(120-23);
-      intt_sngl->SetBcoRange(500);
+   
+      InttOdbcQuery query;
+      bool isStreaming = true;
+      if(runnumber != 0)
+	{
+	  query.Query(runnumber);
+	  isStreaming = query.IsStreaming();
+	}
+      intt_sngl->streamingMode(isStreaming);
+      
     /// find the ebdc number from the filename
       std::string filepath, felix;
       std::ifstream ifs(iter);
