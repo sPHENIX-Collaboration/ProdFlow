@@ -90,14 +90,14 @@ DST_TRKR_HIT_run2pp:
      build_name: new
      dbtag:      2024p009
      version:   0
-     logbase :   $(name)_$(build)_$(tag)-$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
-     outbase :   $(name)_$(build)_$(tag)-$(version)
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run.sh
      payload :   ./ProdFlow/run2pp/TrackingProduction/
      mem     :   2048MB
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
-     input   : "DST_STREAMING_EVENT_run2pp_new_nocdbtag%"
-     inputds : "new_nocdbtag"
+     input   : "DST_STREAMING_EVENT_run2pp_new_nocdbtag_v000%"
+     inputds : "new_nocdbtag_v000"
      dsttype : "DST_STREAMING_EVENT_run2pp"
      mnrun   : 51428
      mxrun   : 53880
