@@ -90,14 +90,14 @@ DST_TRKR_HIT_run2pp:
      build_name: new
      dbtag:      2024p009
      version:   0
-     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
-     outbase :   $(name)_$(build)_$(tag)_$(version)
+     logbase :   $(name)_$(build)_$(tag)-$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)-$(version)
      script  :   run.sh
      payload :   ./ProdFlow/run2pp/TrackingProduction/
      mem     :   2048MB
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
-     input   : "DST_STREAMING_EVENT_run2pp_new_nocdbtag_v000%"
-     inputds : "new_nocdbtag_v000"
+     input   : "DST_STREAMING_EVENT_run2pp_new_nocdbtag%"
+     inputds : "new_nocdbtag"
      dsttype : "DST_STREAMING_EVENT_run2pp"
      mnrun   : 51428
      mxrun   : 53880
@@ -333,8 +333,9 @@ DST_STREAMING_EVENT_run2pp_streams:
 
    params:
      name:       DST_STREAMING_EVENT_$(streamname)_run2pp
-     build:      new
-     build_name: new
+     build:      ana.461
+     build_name: ana461
+     version: 1
      dbtag:      nocdbtag
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
@@ -343,8 +344,7 @@ DST_STREAMING_EVENT_run2pp_streams:
      neventsper:  10000
      comment :    "---"
      rsync   : "./ProdFlow/run2pp/streaming/*,cups.py,bachi.py,odbc.ini"
-     mem     :   20000MB
-     # 20GB of memory is not a typo
+     mem     :   6000MB
 
    input:
       db: daqdb
@@ -387,7 +387,7 @@ DST_STREAMING_EVENT_run2pp_streams:
            from filelist, run2pp, all_streams
 
            where 
-
+           transferred_to_sdcc='true' and
            runnumber>=run2pp.firstrun and runnumber<=run2pp.lastrun and
            (
                (filename  like '/bbox%/GL1_physics%.evt'   and lastevent>2 ) or
@@ -399,7 +399,6 @@ DST_STREAMING_EVENT_run2pp_streams:
            group by runnumber,all_streams.streamfile,all_streams.streamname
 
            having
-                every(transferred_to_sdcc)   and
                 max(lastevent)>1000          and
                 sum( case when filename like '/bbox%/GL1%' then 1 else 0 end )>0 and
                 (
@@ -433,15 +432,19 @@ DST_STREAMING_EVENT_run2pp_streams:
      request_xferslots: '0'
 
 
+
+
+
 DST_TRKR_CLUSTER_run2pp_streams:
 
    params:
      name:       DST_TRKR_CLUSTER_run2pp
-     build:      new
-     build_name: new
+     build:      ana.461
+     build_name: ana461
      dbtag:      2024p009
-     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
-     outbase :   $(name)_$(build)_$(tag)
+     version:    1
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run_job0_new.sh
      payload :   ./ProdFlow/run2pp/TrackingProduction/
      neventsper:      10000
@@ -453,7 +456,7 @@ DST_TRKR_CLUSTER_run2pp_streams:
 
    input:
       db: fc
-      direct_path: /sphenix/lustre01/sphnxpro/production/run2pp/physics/ana459_nocdbtag_v001/DST_STREAMING_EVENT_*/*/dst/
+      direct_path: /sphenix/lustre01/sphnxpro/production/run2pp/physics/ana461_nocdbtag_v001/DST_STREAMING_EVENT_*/*/dst/
       query: |-
          with allruns as (
          select
@@ -466,7 +469,7 @@ DST_TRKR_CLUSTER_run2pp_streams:
          from
                 datasets
          where
-                filename like 'DST_STREAMING_EVENT_%_run2pp_ana459_nocdbtag_v001-%00001%'
+                filename like 'DST_STREAMING_EVENT_%_run2pp_ana461_nocdbtag_v001-%'
                 {run_condition}
                 and runnumber>={mnrun}
                 and runnumber<={mxrun}
@@ -479,19 +482,11 @@ DST_TRKR_CLUSTER_run2pp_streams:
          select * from allruns where allruns.ninputs=39 order by runnumber, segment
 
 
-   # TODO:  Need to add error checking to make sure that outdir, logdir, etc... are quoted properly.  Else, this will cause problems with argument substitution
-   filesystem:
-     outdir  : "/sphenix/lustre01/sphnxpro/physics/slurp/single_streaming/physics/$(build)_$(tag)/run_$(rungroup)"
-     logdir  : "file:///sphenix/data/data02/sphnxpro/single_streaminglogs/$(build)_$(tag)/run_$(rungroup)"
-     histdir :       "/sphenix/data/data02/sphnxpro/single_streamhist/$(build)_$(tag)/run_$(rungroup)"
-     condor :        "/tmp/single_stream/$(build)_$(tag)/run_$(rungroup)"
-
    #
    # Again I note the need to ensure that the arguments are properly specified given the
    # definition of the payload script.
    #
    job:
-     executable            : "{payload}/run_job0_new.sh"
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
@@ -499,5 +494,3 @@ DST_TRKR_CLUSTER_run2pp_streams:
      accounting_group_user : "sphnxpro"
      priority : '4000'
      request_xferslots: '0'
-
-
