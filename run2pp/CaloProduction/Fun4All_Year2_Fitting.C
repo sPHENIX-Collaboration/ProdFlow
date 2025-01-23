@@ -2,7 +2,7 @@
 #define FUN4ALL_YEAR2_FITTING_C
 
 #include <QA.C>
-#include <Calo_Fitting.C>
+#include </sphenix/user/shuhangli/macros/common/Calo_Fitting.C>
 
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
