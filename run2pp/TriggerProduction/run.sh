@@ -185,11 +185,11 @@ echo "ls -l *.list"
 ls -l *.list
 
 nlist=$( ls *.list | wc -l )
-if [[ $nlist -lt 21 ]]; then
-   echo "Input file lists were not properly filled.  Aborting the job"
-   ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e 2 --nevents 0 --inc 
-    exit 2
-fi
+#if [[ $nlist -lt 21 ]]; then
+#   echo "Input file lists were not properly filled.  Aborting the job"
+#   ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e 2 --nevents 0 --inc 
+#    exit 2
+#fi
 
 # Register the input list and set state to running
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} inputs --files ${inputlist}
