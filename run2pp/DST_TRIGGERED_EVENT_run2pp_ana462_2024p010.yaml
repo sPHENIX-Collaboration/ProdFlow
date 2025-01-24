@@ -38,7 +38,7 @@ DST_CALO_run2pp_new_2024p010:
                 dataset='ana446_2024p007' and dsttype='DST_CALOFITTING_run2pp'
                 {run_condition}
 
-                 and runnumber>53880
+                 and runnumber<=53880
            
          {limit_condition}
 
