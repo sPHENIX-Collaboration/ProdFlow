@@ -142,10 +142,10 @@ DST_JETS_run2auau_new_2024p010:
 DST_TRIGGERED_EVENT_run2auau_ana462_2024p010:
    params:
      name:       DST_TRIGGERED_EVENT_run2auau
-     build:      -------
-     build_name: ------
-     dbtag:      --------
-     version :   -
+     build:      xxxxxxx
+     build_name: xxxxxx
+     dbtag:      xxxxxxxx
+     version :   x
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run.sh
