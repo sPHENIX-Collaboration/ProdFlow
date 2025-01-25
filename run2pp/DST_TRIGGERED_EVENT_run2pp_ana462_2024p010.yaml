@@ -134,7 +134,6 @@ DST_JETCALO_run2pp_ana462_2024p010:
 
          ;
    job:
-     executable            : "{payload}/runy2jetskim.sh"
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
