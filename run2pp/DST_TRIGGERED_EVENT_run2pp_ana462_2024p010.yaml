@@ -97,6 +97,54 @@ DST_JETS_run2pp_new_2024p010:
 
 
 
+# Downstream products
+DST_JETSKIMMED_run2pp_ana462_2024p010:
+   params:
+     name:       DST_JETSKIMMED_run2pp
+     build:      ana.462
+     build_name: ana462
+     dbtag:      2024p010
+     version:    1
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
+     script  :   runy2jetskim.sh
+     payload :   ./ProdFlow/run2pp/JetProduction/
+     mem     :   4096MB
+     neventsper: 50000
+     rsync  : "./ProdFlow/run2pp/JetProduction/*,cups.py,bachi.py"
+
+   input:
+     db: filecatalog
+     query: |-
+         select
+                'filecatalog/datasets'                                  as source      ,
+                runnumber                                                              ,
+                segment                                                                ,
+                filename                                                as files       ,
+                filename || ':' || 0 || ':' || events                   as fileranges
+         from
+                datasets
+         where
+                filename like 'DST_CALOFITTING_run2pp_ana462_2024p010%'
+                {run_condition}
+
+                 and runnumber<=53880
+
+         {limit_condition}
+
+         ;
+   job:
+     executable            : "{payload}/runy2jetskim.sh"
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '3900'
+
+
+
+
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------
 # Disable the DST_TRIGGERED_EVENT rule
