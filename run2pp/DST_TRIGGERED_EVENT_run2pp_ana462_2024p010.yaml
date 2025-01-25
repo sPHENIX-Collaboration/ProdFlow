@@ -125,7 +125,7 @@ DST_JETCALO_run2pp_ana462_2024p010:
          from
                 datasets
          where
-                filename like 'DST_CALOFITTING_run2pp_ana462_2024p010%'
+                dataset='ana446_2024p007' and dsttype='DST_CALOFITTING_run2pp'
                 {run_condition}
 
                  and runnumber<=53880
