@@ -97,12 +97,14 @@ out1=HIST_${logbase#DST_}.root
 nevents=-1
 status_f4a=0
 
+# there should be only one input file in this workflow
 for infile_ in ${inputs[@]}; do
     infile=$( basename ${infile_} )
     cp -v ${infile_} .
-    outfile1=${infile/CALOFITTING/JETCALO}
-    outfile2=${infile/CALOFITTING/JET}
-    outhist=${infile/DST_CALOFITTING/HIST_CALOQASKIMMED}
+#${infile/CALOFITTING/JETCALO}
+    outfile1=${logbase}.root
+    outfile2=${logbase/JETCALO/JET}.root
+    outhist=${logbase/DST_JETCALO/HIST_CALOQASKIMMED}.root
     root.exe -q -b Fun4All_JetSkimmedProductionYear2.C\(${nevents},\"${infile}\",\"${outfile1}\",\"${outfile2}\",\"${outhist}\",\"${dbtag}\"\);  status_f4a=$?
 
     # Stageout the (single) DST created in the macro run
@@ -120,6 +122,9 @@ for infile_ in ${inputs[@]}; do
 	echo Stageout ${hfile} to ${histdir}
         ./stageout.sh ${hfile} ${histdir}
     done
+
+    break # as noted... there should only be one input file in this workflow.   Force a break at this point.
+
 done
 
 ls -lah

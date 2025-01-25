@@ -98,9 +98,9 @@ DST_JETS_run2pp_new_2024p010:
 
 
 # Downstream products
-DST_JETSKIMMED_run2pp_ana462_2024p010:
+DST_JETCALO_run2pp_ana462_2024p010:
    params:
-     name:       DST_JETSKIMMED_run2pp
+     name:       DST_JETCALO_run2pp
      build:      ana.462
      build_name: ana462
      dbtag:      2024p010
