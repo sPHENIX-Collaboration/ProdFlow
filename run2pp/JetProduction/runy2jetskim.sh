@@ -36,6 +36,8 @@ export USER="$(id -u -n)"
 export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 hostname
+echo cupsid=${cupsid}
+
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
 echo OFFLINE_MAIN: $OFFLINE_MAIN
@@ -55,6 +57,8 @@ fi
 
 if [[ "${inputs}" == *"dbinput"* ]]; then
     echo "Getting inputs via cups.  ranges is not set."
+    echo ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs
+         ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs
     inputs=( $(./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs) )
 fi
 
