@@ -147,13 +147,12 @@ DST_JETCALO_run2pp_ana462_2024p010:
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------
 # Disable the DST_TRIGGERED_EVENT rule
-XXX_TRIGGERED_EVENT_run2pp_ana462_2024p010:
+DST_TRIGGERED_EVENT_run2pp_ana462_2024p010:
    params:
      name:       DST_TRIGGERED_EVENT_run2pp
-     build:      xxxxxxx
-     build_name: xxxxxx
-     dbtag:      xxxxxxxx
-     version :   x
+     build:      ana.462
+     build_name: ana462
+     dbtag:      nocdbtag
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run.sh
@@ -161,8 +160,7 @@ XXX_TRIGGERED_EVENT_run2pp_ana462_2024p010:
      mem     :   2048M
      neventsper: 5000
      noverflow:  1000
-     rsync  : "-----"
-#    rsync  : "ProdFlow/run2pp/TriggerProduction/*,cups.py,bachi.py,odbc.ini"
+     rsync  : "ProdFlow/run2pp/TriggerProduction/*,cups.py"
 
 
    #
@@ -181,7 +179,7 @@ XXX_TRIGGERED_EVENT_run2pp_ana462_2024p010:
    # For now, require GL1 files...
    #
    input:
-      db: daqdb
+      db: raw
       direct_path: /sphenix/lustre01/sphnxpro/physics/*/*/
       query: |-
          with config as (
@@ -195,7 +193,7 @@ XXX_TRIGGERED_EVENT_run2pp_ana462_2024p010:
               from filelist, config
               where (filename similar to '/bbox%/GL1_(beam|physics)%.evt'        and lastevent>2 )
 
-                 {run_condition} and runnumber>54748
+                 {run_condition} and runnumber>46000
 
               group by runnumber
               having
@@ -229,7 +227,7 @@ XXX_TRIGGERED_EVENT_run2pp_ana462_2024p010:
 
            {run_condition}
 
-                 and runnumber>53880
+                 and runnumber<=53880
 
          group by runnumber
 
@@ -337,23 +335,19 @@ XXX_TRIGGERED_EVENT_run2pp_ana462_2024p010:
 
                  from segmentedC
 
-                 where runnumber>53880
+                 where runnumber<=53880
 
-          order by runnumber desc, segment desc;
+          order by runnumber desc, segment;
                  
-
-   #
-   # Again I note the need to ensure that the arguments are properly specified given the
-   # definition of the payload script.
-   #
    job:
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync} $(firstevent) $(lastevent) $(runs_last_event) {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
      accounting_group_user : "sphnxpro"
-     priority : '3900'
-     request_xferslots: '1'
+     priority              : '3900'
+     request_xferslots     : '1'
+     periodicremove:       : "(JobStatus == 2) && (time() - EnteredCurrentStatus) > (3 * 24 * 3600)"
 
 
 
