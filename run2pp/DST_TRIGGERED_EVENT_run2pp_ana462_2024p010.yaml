@@ -13,7 +13,7 @@ DST_CALO_run2pp_new_2024p010:
      build:      ana.462
      build_name: ana462
      dbtag:      2024p010
-     version : 1
+     version :   1
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   runy2calib.sh
@@ -153,6 +153,7 @@ DST_TRIGGERED_EVENT_run2pp_ana462_2024p010:
      build:      ana.462
      build_name: ana462
      dbtag:      nocdbtag
+     version :   1
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run.sh
@@ -347,7 +348,7 @@ DST_TRIGGERED_EVENT_run2pp_ana462_2024p010:
      accounting_group_user : "sphnxpro"
      priority              : '3900'
      request_xferslots     : '1'
-     periodicremove:       : "(JobStatus == 2) && (time() - EnteredCurrentStatus) > (3 * 24 * 3600)"
+     periodicremove        : '(JobStatus==2)&&(time()-EnteredCurrentStatus)>(3*24*3600)'
 
 
 
