@@ -1,51 +1,4 @@
 # Downstream products
-DST_CALOFITTING_run2auau_ana462_2024p010:
-   params:
-     name:       DST_CALOFITTING_run2auau
-     nevents:    5000
-     build:      ana.462
-     build_name: ana462
-     dbtag:      2024p010
-     version : 1
-     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
-     outbase :   $(name)_$(build)_$(tag)_$(version)
-     script  :   runy2fitting.sh
-     payload :   ./ProdFlow/run2auau/CaloProduction/
-     mem     :   1024MB
-     neventsper: 50000
-     rsync  : "./ProdFlow/run2auau/CaloProduction/*,cups.py,bachi.py,odbc.ini"
-
-   input:
-     db: filecatalog
-     query: |-
-         select 
-                'filecatalog/datasets'                                  as source      , 
-                runnumber                                                              , 
-                segment                                                                ,
-                filename                                                as files       ,
-                filename || ':' || 0 || ':' || events                   as fileranges 
-         from  
-                datasets
-         where 
-                filename like 'DST_TRIGGERED_EVENT_run2auau_ana451_2024p009%'
-                {run_condition}
-
-                 and runnumber>53880
-           
-         {limit_condition}
-
-         ;
-   job:
-     arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
-     output_destination    : '{logdir}'
-     log                   : '{condor}/{logbase}.condor'
-     accounting_group      : "group_sphenix.mdc2"
-     accounting_group_user : "sphnxpro"
-     priority : '3900'
-
-
-
-# Downstream products
 DST_CALO_run2auau_new_2024p010:
    params:
      name:       DST_CALO_run2auau
@@ -73,10 +26,10 @@ DST_CALO_run2auau_new_2024p010:
          from  
                 datasets
          where 
-                filename like 'DST_CALOFITTING_run2auau_ana462_2024p010%'
+                dataset='ana450_2024p009' and dsttype='DST_CALOFITTING_run2auau'
                 {run_condition}
 
-                 and runnumber>53880
+                and runnumber in  ( 54909, 54911, 54912, 54913, 54914, 54915, 54916, 54918, 54920 )
            
          {limit_condition}
 
@@ -136,10 +89,57 @@ DST_JETS_run2auau_new_2024p010:
 
 
 
+# Downstream products
+DST_JETCALO_run2auau_ana462_2024p010:
+   params:
+     name:       DST_JETCALO_run2auau
+     build:      ana.462
+     build_name: ana462
+     dbtag:      2024p010
+     version:    1
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
+     script  :   runy2jetskim.sh
+     payload :   ./ProdFlow/run2auau/JetProduction/
+     mem     :   4096MB
+     neventsper: 50000
+     rsync  : "./ProdFlow/run2auau/JetProduction/*,cups.py,bachi.py"
+
+   input:
+     db: filecatalog
+     query: |-
+         select
+                'filecatalog/datasets'                                  as source      ,
+                runnumber                                                              ,
+                segment                                                                ,
+                filename                                                as files       ,
+                filename || ':' || 0 || ':' || events                   as fileranges
+         from
+                datasets
+         where
+                dataset='ana446_2024p007' and dsttype='DST_CALOFITTING_run2auau'
+                {run_condition}
+
+                 and runnumber<=53880
+
+         {limit_condition}
+
+         ;
+   job:
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '3900'
+
+
+
+
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------
 # Disable the DST_TRIGGERED_EVENT rule
-DST_TRIGGERED_EVENT_run2auau_ana462_2024p010:
+XXX_TRIGGERED_EVENT_run2auau_ana462_2024p010:
    params:
      name:       DST_TRIGGERED_EVENT_run2auau
      build:      xxxxxxx
@@ -347,6 +347,53 @@ DST_TRIGGERED_EVENT_run2auau_ana462_2024p010:
      priority : '3900'
      request_xferslots: '1'
 
+
+
+
+# Downstream products
+XXX_CALOFITTING_run2auau_ana462_2024p010:
+   params:
+     name:       DST_CALOFITTING_run2auau
+     nevents:    5000
+     build:      ana.462
+     build_name: ana462
+     dbtag:      2024p010
+     version : 1
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
+     script  :   runy2fitting.sh
+     payload :   ./ProdFlow/run2auau/CaloProduction/
+     mem     :   1024MB
+     neventsper: 50000
+     rsync  : "./ProdFlow/run2auau/CaloProduction/*,cups.py,bachi.py,odbc.ini"
+
+   input:
+     db: filecatalog
+     query: |-
+         select 
+                'filecatalog/datasets'                                  as source      , 
+                runnumber                                                              , 
+                segment                                                                ,
+                filename                                                as files       ,
+                filename || ':' || 0 || ':' || events                   as fileranges 
+         from  
+                datasets
+         where 
+                filename like 'DST_TRIGGERED_EVENT_run2auau_ana451_2024p009%'
+                {run_condition}
+
+                 and runnumber>53880
+           
+         {limit_condition}
+
+         ;
+   job:
+     arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '3900'
 
 
 
