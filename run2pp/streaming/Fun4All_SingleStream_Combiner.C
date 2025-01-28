@@ -36,6 +36,7 @@ bool isGood(const string &infile);
 void Fun4All_SingleStream_Combiner(int nEvents = 0,
 				   const int runnumber = 30117,
 				   const string &outdir = "/sphenix/lustre01/sphnxpro/commissioning/slurp/tpccosmics/",
+				   const string& histdir = "/sphenix/data/data02/sphnxpro/single_streamhist/",
 				   const string &type = "beam",
 				   const int neventsper = 100,
 				   const string &dbtag = "ProdA_2024",
@@ -218,6 +219,16 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 
   se->registerOutputManager(out);
 
+  auto hm = QAHistManagerDef::getHistoManager();
+  hm->SetClosingScript("stageout.sh");
+  hm->SetClosingScriptArgs(histdir);
+  hm->dumpHistoSegments(true);
+  char histoutfile[500];
+  sprintf(histoutfile,"./HIST_%s",type.c_str());
+  string shistoutfile(histoutfile);
+  hm->setOutfileName(shistoutfile);
+  
+  
   if (nEvents < 0)
   {
     return;
@@ -226,9 +237,6 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 
   se->End();
 
-  char histoutfile[500];
-  sprintf(histoutfile,"./HIST_%s-%08i-%05i.root",type.c_str(),runnumber,0);
-  QAHistManagerDef::saveQARootFile(histoutfile);
 
   delete se;
   cout << "all done" << endl;
