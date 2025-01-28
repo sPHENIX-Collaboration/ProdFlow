@@ -159,8 +159,8 @@ DST_TRIGGERED_EVENT_run2pp_ana462_2024p010:
      script  :   run.sh
      payload :   ./ProdFlow/run2pp/TriggerProduction/
      mem     :   2048M
-     neventsper: 5000
-     noverflow:  1000
+     neventsper: 100000
+     noverflow:   20000
      rsync  : "ProdFlow/run2pp/TriggerProduction/*,cups.py"
 
 
