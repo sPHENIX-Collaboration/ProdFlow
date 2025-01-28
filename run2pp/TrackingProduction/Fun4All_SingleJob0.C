@@ -43,11 +43,11 @@ R__LOAD_LIBRARY(libmvtxrawhitqa.so)
 R__LOAD_LIBRARY(libtpcqa.so)
 R__LOAD_LIBRARY(libtrackingqa.so)
 void Fun4All_SingleJob0(
-    const int nEvents = 2,
-    const int runnumber = 41626,
-    const std::string outfilename = "cosmics",
-    const std::string dbtag = "2024p001",
-    const std::string filelist = "filelist.list")
+    const int nEvents = 1000,
+    const int runnumber = 51736,
+    const std::string outfilename = "test",
+    const std::string dbtag = "2024p008",
+    const std::string filelist = "test.txt")
 {
 
   gSystem->Load("libg4dst.so");
@@ -56,18 +56,17 @@ void Fun4All_SingleJob0(
  
 
   auto se = Fun4AllServer::instance();
-  se->Verbosity(1);
+  se->Verbosity(INT_MAX);
   auto rc = recoConsts::instance();
   
   std::ifstream ifs(filelist);
   std::string filepath;
 
 
-
   TRACKING::tpc_zero_supp = true;
     
 
-  CDBInterface::instance()->Verbosity(1);
+  CDBInterface::instance()->Verbosity(INT_MAX);
 
   rc->set_StringFlag("CDB_GLOBALTAG", dbtag );
   rc->set_uint64Flag("TIMESTAMP", runnumber);
@@ -148,10 +147,12 @@ void Fun4All_SingleJob0(
 
   Tpc_LaserEventIdentifying();
 
+  TPC_LaminationClustering();
+
   TPC_LaserClustering();
 
   auto tpcclusterizer = new TpcClusterizer;
-  tpcclusterizer->Verbosity(0);
+  tpcclusterizer->Verbosity(INT_MAX);
   tpcclusterizer->set_do_hit_association(G4TPC::DO_HIT_ASSOCIATION);
   tpcclusterizer->set_rawdata_reco();
   tpcclusterizer->set_reject_event(G4TPC::REJECT_LASER_EVENTS);

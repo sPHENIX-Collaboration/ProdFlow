@@ -55,7 +55,7 @@ echo payload: ${payload[@]}
 
 echo .............................................................................................. 
 
-for i in ${payload[@]}; do
+   for i in ${payload[@]}; do
     cp --verbose ${subdir}/${i} .
 done
 
@@ -92,8 +92,6 @@ echo root.exe -q -b Fun4All_Job0.C\(${nevents},${runnumber},\"${logbase}.root\",
 ls -la
 
 ./stageout.sh ${logbase}.root ${outdir}
-
-./stageout.sh Laminations_${logbase}.root ${outdir}
 
 for hfile in `ls HIST_*.root`; do
     echo Stageout ${hfile} to ${histdir}
