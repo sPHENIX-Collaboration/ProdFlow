@@ -44,7 +44,6 @@ DST_TRKR_CLUSTER_run2pp:
 
 
    job:
-     executable            : "{payload}/run_job0.sh"
      arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {logdir} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
@@ -99,7 +98,6 @@ DST_TRKR_SEED_run2pp:
 
 
    job:
-     executable            : "{payload}/run_jobA.sh"
      arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {logdir} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'

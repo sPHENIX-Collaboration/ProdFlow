@@ -6,7 +6,9 @@ logbase=${3}
 runnumber=${4}
 segment=${5}
 outdir=${6}
+echo "build first "${7}
 build=${7/./}
+echo "build after "${7}
 dbtag=${8}
 inputs=(`echo ${9} | tr "," " "`)  # array of input files 
 ranges=(`echo ${10} | tr "," " "`)  # array of input files with ranges appended
@@ -16,6 +18,9 @@ comment=${13}
 histdir=${14:-.}
 subdir=${15}
 payload=(`echo ${16} | tr ","  " "`) # array of files to be rsynced
+#-----
+export cupsid=${@: -1}
+echo cupsid = $cupsid
 
 sighandler()
 {
@@ -35,13 +40,26 @@ export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
-echo OFFLINE_MAIN: $OFFLINE_MAIN
-#export ODBCINI=./odbc.ini
+
+echo "Offline main "${OFFLINE_MAIN}
+
 
 echo "PAYLOAD"
 for i in ${payload[@]}; do
     cp --verbose ${subdir}/${i} .
 done
+
+if [ -e odbc.ini ]; then
+echo export ODBCINI=./odbc.ini
+     export ODBCINI=./odbc.ini
+else
+     echo No odbc.ini file detected.  Using system odbc.ini
+fi
+
+echo "CUPS configuration"
+echo ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
+     ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
+
 
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
 
@@ -60,9 +78,8 @@ fi
 
 #______________________________________________________________________________________________
 # Map TPC input files into filelists
-# TPC_ebdc23_cosmics-00030117-0009.evt test%%_cosmics*
+neventsperintt=$(( 10 * neventsper ))
 inputlist=""
-#for f in "${inputs[@]}"; do
 cat inputfiles.list | while read -r f; do
     b=$( basename $f )
     # TPC files
@@ -92,6 +109,7 @@ cat inputfiles.list | while read -r f; do
        echo ${f} >> ${l}.list
        echo Add ${f} to ${l}.list
        inputlist="${f} ${inputlist}"
+       neventsper=$(neventsperintt)
     fi
     if [[ $b =~ "cosmics_mvtx" ]]; then
        l=${b#*cosmics_}
@@ -112,6 +130,7 @@ cat inputfiles.list | while read -r f; do
        echo ${f} >> ${l}.list
        echo Add ${f} to ${l}.list
        inputlist="${f} ${inputlist}"
+       neventsper=$(neventsperintt)
     fi
     if [[ $b =~ "beam_mvtx" ]]; then
        l=${b#*beam_}
@@ -132,6 +151,7 @@ cat inputfiles.list | while read -r f; do
        echo ${f} >> ${l}.list
        echo Add ${f} to ${l}.list
        inputlist="${f} ${inputlist}"
+       neventsper=$(neventsperintt)
     fi
     if [[ $b =~ "calib_mvtx" ]]; then
        l=${b#*calib_}
@@ -152,6 +172,7 @@ cat inputfiles.list | while read -r f; do
        echo ${f} >> ${l}.list
        echo Add ${f} to ${l}.list
        inputlist="${f} ${inputlist}"
+       neventsper=$(neventsperintt)
     fi
     if [[ $b =~ "physics_mvtx" ]]; then
        l=${b#*physics_}
@@ -184,17 +205,28 @@ touch tpot.list
 
 ls -la *.list
 
+cat intt*.list >> inttinputs.list
+cat tpc*.list >> tpcinputs.list
+cat mvtx*.list >> mvtxinputs.list
+
+cat gl1.list
+cat mvtxinputs.list
+cat inttinputs.list
+cat tpcinputs.list
+
+# If no input files are in the file lists exit with code 111 to indicate a failure
+if [ $(cat *.list|wc -l) -eq 0 ]; then
+     ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e 111 --nevents 0 --inc 
+     exit 111
+fi
+
 # Flag job as running in production status
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
 
-# Flag the creation of a new dataset in dataset_status
-dstname=${logbase%%-*}
-echo ./bachi.py --blame cups created ${dstname} ${runnumber} 
-     ./bachi.py --blame cups created ${dstname} ${runnumber} 
 
 
-echo root.exe -q -b Fun4All_Stream_Combiner.C\(${nevents},${runnumber},\"${outbase}\",\"${outdir}\",${neventsper}\);
-     root.exe -q -b Fun4All_Stream_Combiner.C\(${nevents},${runnumber},\"${outbase}\",\"${outdir}\",${neventsper}\); status_f4a=$?
+echo root.exe -q -b Fun4All_SingleStream_Combiner.C\(${nevents},${runnumber},\"${outdir}\",\"${outbase}\",${neventsper},\"${dbtag}\",\"gl1.list\",\"tpcinputs.list\",\"inttinputs.list\",\"mvtxinputs.list\",\"tpot.list\"\);
+     root.exe -q -b Fun4All_SingleStream_Combiner.C\(${nevents},${runnumber},\"${outdir}\",\"${outbase}\",${neventsper},\"${dbtag}\",\"gl1.list\",\"tpcinputs.list\",\"inttinputs.list\",\"mvtxinputs.list\",\"tpot.list\"\); status_f4a=$?
 
 # There should be no output files hanging around  (TODO add number of root files to exit code)
 ls -la 
@@ -203,13 +235,11 @@ ls -la
 echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents 0 --inc 
      ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents 0 --inc 
 
+# Close the dataset
 
-if [ "${status_f4a}" -eq 0 ]; then
-  echo ./bachi.py --blame cups finalized ${dstname} ${runnumber} 
-       ./bachi.py --blame cups finalized ${dstname} ${runnumber} 
-fi
+dstname=${logbase%%-*} # dstname is needed for production status, but not related to the dataset we are registering
+./cups.py -r ${runnumber} -s ${segment} -d ${dstname} closeout ${dstname}-${runnumber} ${destination} --dsttype ${dsttype} --dataset ${build}_${dbtag}
 
-#???outputname="cosmics-${runnumber}-${segment}";
 
 echo $outbase
 echo $logbase

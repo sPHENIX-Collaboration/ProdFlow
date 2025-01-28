@@ -1,20 +1,20 @@
 #
 # Testbed for file ranges
 #
-DST_TRIGGERED_EVENT_run2pp_new_2024p007:
+DST_TRIGGERED_EVENT_run2auau:
    params:
-     name:       DST_TRIGGERED_EVENT_run2pp
+     name:       DST_TRIGGERED_EVENT_run2auau
      build:      new
      build_name: new
-     dbtag:      2024p007
+     dbtag:      nocdbtag
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   run.sh
-     payload :   ./ProdFlow/run2pp/TriggerProduction/
+     payload :   ./ProdFlow/run2auau/TriggerProduction/
      mem     :   2048M
      neventsper: 5000
      noverflow:  1000
-     rsync  : "ProdFlow/run2pp/TriggerProduction/*,cups.py,bachi.py,odbc.ini"
+     rsync  : "ProdFlow/run2auau/TriggerProduction/*,cups.py,bachi.py,odbc.ini"
 
 
 
@@ -48,7 +48,7 @@ DST_TRIGGERED_EVENT_run2pp_new_2024p007:
               from filelist, config
               where (filename similar to '/bbox%/GL1_(beam|physics)%.evt'        and lastevent>2 )
 
-                 {run_condition} and runnumber<=53880
+                 {run_condition} and runnumber>54748
 
               group by runnumber
               having
@@ -82,7 +82,7 @@ DST_TRIGGERED_EVENT_run2pp_new_2024p007:
 
            {run_condition}
 
-                 and runnumber<=53880
+                 and runnumber>53880
 
          group by runnumber
 
@@ -190,7 +190,7 @@ DST_TRIGGERED_EVENT_run2pp_new_2024p007:
 
                  from segmentedC
 
-                 where runnumber<=53880
+                 where runnumber>53880
 
           order by runnumber desc, segment desc;
                  
@@ -213,20 +213,20 @@ DST_TRIGGERED_EVENT_run2pp_new_2024p007:
 
 
 # Downstream products
-DST_CALOFITTING_run2pp_new_2024p007:
+DST_CALOFITTING_run2auau:
    params:
-     name:       DST_CALOFITTING_run2pp
+     name:       DST_CALOFITTING_run2auau
      nevents:    5000
      build:      new
      build_name: new
-     dbtag:      2024p007
+     dbtag:      2024p009
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   runy2fitting.sh
-     payload :   ./ProdFlow/run2pp/CaloProduction/
+     payload :   ./ProdFlow/run2auau/CaloProduction/
      mem     :   1024MB
      neventsper: 50000
-     rsync  : "./ProdFlow/run2pp/CaloProduction/*,cups.py,bachi.py,odbc.ini"
+     rsync  : "./ProdFlow/run2auau/CaloProduction/*,cups.py,bachi.py,odbc.ini"
 
    input:
      db: filecatalog
@@ -240,16 +240,16 @@ DST_CALOFITTING_run2pp_new_2024p007:
          from  
                 datasets
          where 
-                filename like 'DST_TRIGGERED_EVENT_run2pp_new_2024p007%'
+                filename like 'DST_TRIGGERED_EVENT_run2auau_new_nocdbtag%'
                 {run_condition}
 
-                 and runnumber<=53880
+                 and runnumber>53880
            
          {limit_condition}
 
          ;
    job:
-     arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
+     arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
@@ -257,20 +257,21 @@ DST_CALOFITTING_run2pp_new_2024p007:
      priority : '3900'
 
 
+
 # Downstream products
-DST_CALO_run2pp_new_2024p007:
+DST_CALO_run2auau:
    params:
-     name:       DST_CALO_run2pp
+     name:       DST_CALO_run2auau
      build:      new
      build_name: new
-     dbtag:      2024p007
+     dbtag:      2024p009
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   runy2calib.sh
-     payload :   ./ProdFlow/run2pp/CaloProduction/
+     payload :   ./ProdFlow/run2auau/CaloProduction/
      mem     :   4096MB
      neventsper: 50000
-     rsync  : "./ProdFlow/run2pp/CaloProduction/*,cups.py,bachi.py,odbc.ini"
+     rsync  : "./ProdFlow/run2auau/CaloProduction/*,cups.py,bachi.py,odbc.ini"
 
    input:
      db: filecatalog
@@ -284,10 +285,10 @@ DST_CALO_run2pp_new_2024p007:
          from  
                 datasets
          where 
-                filename like 'DST_CALOFITTING_run2pp_new_2024p007%'
+                filename like 'DST_CALOFITTING_run2auau_new_2024p009%'
                 {run_condition}
 
-                 and runnumber<=53880
+                 and runnumber>53880
            
          {limit_condition}
 
@@ -302,19 +303,19 @@ DST_CALO_run2pp_new_2024p007:
 
 
 # Downstream products
-DST_JETS_run2pp_new_2024p007:
+DST_JETS_run2auau:
    params:
-     name:       DST_JETS_run2pp
+     name:       DST_JETS_run2auau
      build:      new
      build_name: new
-     dbtag:      2024p007
+     dbtag:      2024p009
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   runjets.sh
-     payload :   ./ProdFlow/run2pp/JetProduction/
+     payload :   ./ProdFlow/run2auau/JetProduction/
      mem     :   2096MB
      neventsper: 50000
-     rsync  : "./ProdFlow/run2pp/JetProduction/*,cups.py,bachi.py,odbc.ini"
+     rsync  : "./ProdFlow/run2auau/JetProduction/*,cups.py,bachi.py,odbc.ini"
 
    input:
      db: filecatalog
@@ -328,9 +329,9 @@ DST_JETS_run2pp_new_2024p007:
          from  
                 datasets
          where 
-                filename like 'DST_CALO_run2pp_new_2024p007%'
+                filename like 'DST_CALO_run2auau_new_2024p009%'
                 {run_condition}
-                and runnumber<=53880
+                and runnumber>53880
            
          {limit_condition}
 

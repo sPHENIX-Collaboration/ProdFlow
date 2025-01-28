@@ -1,11 +1,11 @@
 #________________________________________________________________________________________________________DST_PHYSICS__
-DST_STREAMING_EVENT_run2auau_new_2024p007:
+DST_STREAMING_EVENT_run2auau:
 
    params:
      name:       DST_STREAMING_EVENT_run2auau
      build:      new
      build_name: new
-     dbtag:      2024p007
+     dbtag:      nocdbtag
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   run_streaming.sh
@@ -107,20 +107,20 @@ DST_STREAMING_EVENT_run2auau_new_2024p007:
 
 
 
-DST_TRKR_HIT_run2auau_new_2024p007:
+DST_TRKR_HIT_run2auau:
    # DST_EVENT works from a pre-built set of run lists.
    params:
      name:       DST_TRKR_HIT_run2auau
      build:      new
      build_name: new
-     dbtag:      2024p007
+     dbtag:      2024p009
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   run.sh
      payload :   ./ProdFlow/run2auau/TrackingProduction/
      mem     :   4096MB
      rsync   : "./ProdFlow/run2auau/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
-     input   : "DST_STREAMING_EVENT_run2auau_new_2024p007%"
+     input   : "DST_STREAMING_EVENT_run2auau_new_nocdbtag%"
      mnrun   : 53881
      mxrun   : 99999
 
@@ -162,13 +162,13 @@ DST_TRKR_HIT_run2auau_new_2024p007:
 
 
 #_________________________________________________________________________________________________________________________________________
-DST_TRKR_CLUSTER_run2auau_new_2024p007:
+DST_TRKR_CLUSTER_run2auau:
    # DST_EVENT works from a pre-built set of run lists.
    params:
      name:       DST_TRKR_CLUSTER_run2auau
      build:      new
      build_name: new
-     dbtag:      2024p007
+     dbtag:      2024p009
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   run_job0.sh
@@ -176,7 +176,7 @@ DST_TRKR_CLUSTER_run2auau_new_2024p007:
      mem     :   2048MB
      nevents :  0
      rsync   : "./ProdFlow/run2auau/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
-     input   : "DST_TRKR_HIT_run2auau_new_2024p007%"
+     input   : "DST_TRKR_HIT_run2auau_new_2024p009%"
      mnrun   : 53881
      mxrun   : 99999
 
@@ -215,13 +215,13 @@ DST_TRKR_CLUSTER_run2auau_new_2024p007:
 
 
 #_________________________________________________________________________________________________________________________________________
-DST_TRKR_SEED_run2auau_new_2024p007:
+DST_TRKR_SEED_run2auau:
    # DST_EVENT works from a pre-built set of run lists.
    params:
      name:       DST_TRKR_SEED_run2auau
      build:      new
      build_name: new
-     dbtag:      2024p007
+     dbtag:      2024p009
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   run_jobA.sh
@@ -229,7 +229,7 @@ DST_TRKR_SEED_run2auau_new_2024p007:
      mem     :   2048MB
      nevents :  0
      rsync   : "./ProdFlow/run2auau/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
-     input   : "DST_TRKR_CLUSTER_run2auau_new_2024p007%"
+     input   : "DST_TRKR_CLUSTER_run2auau_new_2024p009%"
      mnrun   : 53881
      mxrun   : 99999
 
@@ -265,13 +265,13 @@ DST_TRKR_SEED_run2auau_new_2024p007:
      priority : '3900'
 
 
-DST_TRKR_TRACKS_run2auau_new_2024p007:
+DST_TRKR_TRACKS_run2auau:
    # DST_EVENT works from a pre-built set of run lists.
    params:
      name:       DST_TRKR_TRACKS_run2auau
      build:      new
      build_name: new
-     dbtag:      2024p007
+     dbtag:      2024p009
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
      script  :   run_jobC.sh
@@ -279,8 +279,8 @@ DST_TRKR_TRACKS_run2auau_new_2024p007:
      mem     :   2048MB
      nevents :   0
      rsync   : "./ProdFlow/run2auau/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
-     seeds   : "DST_TRKR_SEED_run2auau_new_2024p007%"
-     clusters: "DST_TRKR_CLUSTER_run2auau_new_2024p007%"
+     seeds   : "DST_TRKR_SEED_run2auau_new_2024p009%"
+     clusters: "DST_TRKR_CLUSTER_run2auau_new_2024p009%"
      mnrun   : 53881
      mxrun   : 99999
 

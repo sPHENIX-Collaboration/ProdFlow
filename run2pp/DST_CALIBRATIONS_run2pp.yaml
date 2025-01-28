@@ -12,8 +12,8 @@ DST_TPCCALIB_run2pp:
      dbtag:      2024p002
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
-     script  :   run_cosmics.sh
-     payload :   ./ProdFlow/run2pp/cosmics/
+     script  :   run_streaming.sh
+     payload :   ./ProdFlow/run2pp/streaming/
      neventsper: 100
      mem     :   8192MB
 
@@ -58,8 +58,7 @@ DST_TPCCALIB_run2pp:
    # definition of the payload script.
    #
    job:
-     executable            : "{payload}/run_cosmics.sh"
-     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir}"
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      transfer_input_files  : "{payload},cups.py,bachi.py,odbc.ini"
      log                   : '{condor}/{logbase}.condor'
@@ -126,8 +125,7 @@ DST_MBD_CALIBRATION_run2pp:
    # definition of the payload script.
    #
    job:
-     executable            : "{payload}/run.sh"
-     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {pass0dir}"
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {pass0dir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      transfer_input_files  : "{payload},cups.py,bachi.py,odbc.ini"
      log                   : '{condor}/{logbase}.condor'

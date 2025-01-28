@@ -3,30 +3,28 @@ DST_STREAMING_EVENT_run2pp:
 
    params:
      name:       DST_STREAMING_EVENT_run2pp
-     build:      ana.439
-     build_name: ana439
-     dbtag:      2024p007
-     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
-     outbase :   $(name)_$(build)_$(tag)
+     build:      new
+     build_name: new
+     dbtag:      nocdbtag
+     version:    0
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run_streaming.sh
      payload :   ./ProdFlow/run2pp/streaming/     
-     neventsper: 10000
+#     neventsper: 10000
+     neventsper: 2500
      comment :    "---"
      rsync   : "./ProdFlow/run2pp/streaming/*,cups.py,bachi.py,odbc.ini"
      mem     :   20000MB
-     mnrun   : 51428
-     mxrun   : 53880
      # 20GB of memory is not a typo
-     # PHYSICS declared for the streaming detectors from run 51428
-     # ... earlier runs not suitable for the mass production workflows ...
 
    input:
-      db: daqdb
+      db: rawdr
       direct_path: /sphenix/lustre01/sphnxpro/{mode}/*/physics/
       query: |-
          with run2pp as (
-              select {mnrun} as firstrun,
-                     {mxrun} as lastrun
+              select 51428 as firstrun,
+                     53880 as lastrun
          ),
          fullrun as (
          select 
@@ -80,7 +78,7 @@ DST_STREAMING_EVENT_run2pp:
      accounting_group      : "group_sphenix.mdc2"
      accounting_group_user : "sphnxpro"
      priority : '4000'
-     request_xferslots: '1'
+     request_xferslots: '0'
 
 
 
@@ -88,16 +86,19 @@ DST_TRKR_HIT_run2pp:
    # DST_EVENT works from a pre-built set of run lists.
    params:
      name:       DST_TRKR_HIT_run2pp
-     build:      ana.439
-     build_name: ana439
-     dbtag:      2024p007
-     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
-     outbase :   $(name)_$(build)_$(tag)
+     build:      new
+     build_name: new
+     dbtag:      2024p009
+     version:   0
+     logbase :   $(name)_$(build)_$(tag)-$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)-$(version)
      script  :   run.sh
      payload :   ./ProdFlow/run2pp/TrackingProduction/
      mem     :   2048MB
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
-     input   : "DST_STREAMING_EVENT_run2pp_ana439_2024p007%"
+     input   : "DST_STREAMING_EVENT_run2pp_new_nocdbtag%"
+     inputds : "new_nocdbtag"
+     dsttype : "DST_STREAMING_EVENT_run2pp"
      mnrun   : 51428
      mxrun   : 53880
 
@@ -113,16 +114,17 @@ DST_TRKR_HIT_run2pp:
          from  
                 datasets
          where
-                filename like '{input}'
-
-                {run_condition}
+                dataset='{inputds}' and dsttype='{dsttype}'
                 and runnumber>={mnrun}
                 and runnumber<={mxrun}
+
+                {run_condition}                
 
 
          order by runnumber
                 {limit_condition}
               ;              
+
 
    job:
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {logdir} {histdir} {PWD} {rsync}"
@@ -142,17 +144,20 @@ DST_TRKR_CLUSTER_run2pp:
    # DST_EVENT works from a pre-built set of run lists.
    params:
      name:       DST_TRKR_CLUSTER_run2pp
-     build:      ana.439
-     build_name: ana439
-     dbtag:      2024p007
-     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
-     outbase :   $(name)_$(build)_$(tag)
+     build:      new
+     build_name: new
+     dbtag:      2024p009 
+     version:   0    
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run_job0.sh
      payload :   ./ProdFlow/run2pp/TrackingProduction/
      mem     :   2048MB
      nevents :  0
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
-     input   : "DST_TRKR_HIT_run2pp_ana439_2024p007%"
+     input   : "DST_TRKR_HIT_run2pp_new_2024p009%"
+     inputds : "new_2024p009"
+     dsttype : "DST_TRKR_HIT_run2pp"
      mnrun   : 51428
      mxrun   : 53880
 
@@ -170,14 +175,15 @@ DST_TRKR_CLUSTER_run2pp:
                 datasets
          where
 
-                filename like '{input}'
-                {run_condition}
+                dataset='{inputds}' and dsttype='{dsttype}'
                 and runnumber>={mnrun}
                 and runnumber<={mxrun}
+                {run_condition}
 
          order by runnumber
                 {limit_condition}
               ;              
+
 
    job:
      arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {logdir} {histdir} {PWD} {rsync}"
@@ -195,17 +201,20 @@ DST_TRKR_SEED_run2pp:
    # DST_EVENT works from a pre-built set of run lists.
    params:
      name:       DST_TRKR_SEED_run2pp
-     build:      ana.439
-     build_name: ana439
-     dbtag:      2024p007
-     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
-     outbase :   $(name)_$(build)_$(tag)
+     build:      new
+     build_name: new
+     dbtag:      2024p009
+     version:   0     
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run_jobA.sh
      payload :   ./ProdFlow/run2pp/TrackingProduction/
      mem     :   2048MB
      nevents :  0
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
-     input   : "DST_TRKR_CLUSTER_run2pp_ana439_2024p007%"
+     input   : "DST_TRKR_CLUSTER_run2pp_new_2024p009%"
+     inputds : "new_2024p009"
+     dsttype : "DST_TRKR_CLUSTER_run2pp"
      mnrun   : 51428
      mxrun   : 53880
 
@@ -223,14 +232,15 @@ DST_TRKR_SEED_run2pp:
                 datasets
          where
 
-                filename like '{input}'
-                {run_condition}
+                dataset='{inputds}' and dsttype='{dsttype}' and events>0
                 and runnumber>={mnrun}
                 and runnumber<={mxrun}
+                {run_condition}                
 
          order by runnumber
                 {limit_condition}
               ;              
+
 
    job:
      arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {logdir} {histdir} {PWD} {rsync}"
@@ -245,18 +255,22 @@ DST_TRKR_TRACKS_run2pp:
    # DST_EVENT works from a pre-built set of run lists.
    params:
      name:       DST_TRKR_TRACKS_run2pp
-     build:      ana.439
-     build_name: ana439
-     dbtag:      2024p007
-     logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
-     outbase :   $(name)_$(build)_$(tag)
+     build:      new
+     build_name: new
+     dbtag:      2024p009
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run_jobC.sh
      payload :   ./ProdFlow/run2pp/TrackingProduction/
      mem     :   2048MB
      nevents :   0
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
-     seeds   : "DST_TRKR_SEED_run2pp_ana439_2024p007%"
-     clusters: "DST_TRKR_CLUSTER_run2pp_ana439_2024p007%"
+     seeds     : "DST_TRKR_SEED_run2pp_new_2024p009%"
+     clusters     : "DST_TRKR_CLUSTER_run2pp_new_2024p009%"
+     seedDS    : "new_2024p009"
+     seedDST   : "DST_TRKR_SEED_run2pp"     
+     clusterDS : "new_2024p009"
+     clusterDST: "DST_TRKR_CLUSTER_run2pp"
      mnrun   : 51428
      mxrun   : 53880
 
@@ -297,6 +311,7 @@ DST_TRKR_TRACKS_run2pp:
  
          {limit_condition}
          ;
+              ;              
 
    job:
      arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {logdir} {histdir} {PWD} {rsync}"
@@ -309,7 +324,173 @@ DST_TRKR_TRACKS_run2pp:
 
 
 
+#==========================================================================================================================================================================
+#
+# Single stream workflows
+#
+#==========================================================================================================================================================================
+DST_STREAMING_EVENT_run2pp_streams:
+
+   params:
+     name:       DST_STREAMING_EVENT_$(streamname)_run2pp
+     build:      ana.461
+     build_name: ana461
+     version: 1
+     dbtag:      nocdbtag
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
+     script  :   run_parallel_streams.sh
+     payload :   ./ProdFlow/run2pp/streaming/     
+     neventsper:  10000
+     comment :    "---"
+     rsync   : "./ProdFlow/run2pp/streaming/*,cups.py,bachi.py,odbc.ini"
+     mem     :   6000MB
+
+   input:
+      db: daqdb
+      direct_path: /sphenix/lustre01/sphnxpro/{mode}/*/physics/
+      query: |-
+         with run2pp as (
+              select 51428 as firstrun,
+                     53880 as lastrun
+         ),
+         streams as (select distinct split_part( split_part(filename,'/',-1), '-', 1 ) as streamfile, hostname                     from filelist,run2pp where runnumber>=run2pp.firstrun and runnumber<=run2pp.lastrun),
+
+         intt_stream as (
+              select streamfile, hostname as names from streams where hostname in ( 'intt0', 'intt1', 'intt2', 'intt3', 'intt4', 'intt5', 'intt6', 'intt7' )
+         ),
+         mvtx_stream as (
+              select streamfile, hostname as names from streams where hostname in ( 'mvtx0',  'mvtx1',  'mvtx2',  'mvtx3',  'mvtx4',  'mvtx5' )
+         ),
+         tpot_stream as ( 
+              select streamfile, 'TPOT' as names from streams where hostname in ( 'ebdc39' ) 
+         ),
+         tpc_stream as (
+              select streamfile, replace( hostname, 'ebdc', 'TPC' ) as streamname from streams where hostname in ( 'ebdc00', 'ebdc01', 'ebdc02', 'ebdc03', 'ebdc04', 'ebdc05', 'ebdc06', 'ebdc07', 'ebdc08', 'ebdc09', 
+                                                                                    'ebdc10', 'ebdc11', 'ebdc12', 'ebdc13', 'ebdc14', 'ebdc15', 'ebdc16', 'ebdc17', 'ebdc18', 'ebdc19', 
+                                                                                    'ebdc20', 'ebdc21', 'ebdc22', 'ebdc23' ) 
+         ),
+         all_streams as ( 
+             select * from tpc_stream
+                 union
+             select * from intt_stream
+                 union 
+             select * from mvtx_stream
+                 union
+             select * from tpot_stream
+         ),
+
+         all_jobs as (
+
+           select 'daqdb/filelist' as source, runnumber, 0 as segment, string_agg( distinct split_part(filename,'/',-1), ' ' ) as files, 'na' as fileranges, UPPER(all_streams.streamname) as streamname, all_streams.streamfile
+ 
+           from filelist, run2pp, all_streams
+
+           where 
+           transferred_to_sdcc='true' and
+           runnumber>=run2pp.firstrun and runnumber<=run2pp.lastrun and
+           (
+               (filename  like '/bbox%/GL1_physics%.evt'   and lastevent>2 ) or
+               (filename  like '%'||all_streams.streamfile||'%' )           
+           )
+
+           {run_condition}
+
+           group by runnumber,all_streams.streamfile,all_streams.streamname
+
+           having
+                max(lastevent)>1000          and
+                sum( case when filename like '/bbox%/GL1%' then 1 else 0 end )>0 and
+                (
+                   sum( case when filename like '/bbox%/TPC%'   then 1 else 0 end )>0 or
+                   sum( case when filename like '/bbox%/%intt%' then 1 else 0 end )>0 or
+                   sum( case when filename like '/bbox%/%mvtx%' then 1 else 0 end )>0 or
+                   sum( case when filename like '/bbox%/TPOT%'  then 1 else 0 end )>0 
+                )
+
+           )        
+
+           select * from all_jobs 
+
+
+
+              ;
+
+
+   #
+   # Again I note the need to ensure that the arguments are properly specified given the
+   # definition of the payload script.
+   #
+   job:
+     batch_name            : "$(name)_$(build)_$(tag)_$(version)-singlestreams"
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '4000'
+     request_xferslots: '0'
 
 
 
 
+
+DST_TRKR_CLUSTER_run2pp_streams:
+
+   params:
+     name:       DST_TRKR_CLUSTER_run2pp
+     build:      ana.461
+     build_name: ana461
+     dbtag:      2024p009
+     version:    1
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
+     script  :   run_job0_new.sh
+     payload :   ./ProdFlow/run2pp/TrackingProduction/
+     neventsper:      10000
+     comment :    "---"
+     rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
+     mem     :   4000MB
+     mnrun   : 51428
+     mxrun   : 53880
+
+   input:
+      db: fc
+      direct_path: /sphenix/lustre01/sphnxpro/production/run2pp/physics/ana461_nocdbtag_v001/DST_STREAMING_EVENT_*/*/dst/
+      query: |-
+         with allruns as (
+         select
+                'filecatalog/datasets'         as source        ,
+                runnumber                                       ,
+                segment                                         ,
+                string_agg( distinct filename, ' ' ) as files   ,
+                'NA'  as fileranges,
+                count(distinct filename) as ninputs
+         from
+                datasets
+         where
+                filename like 'DST_STREAMING_EVENT_%_run2pp_ana461_nocdbtag_v001-%'
+                {run_condition}
+                and runnumber>={mnrun}
+                and runnumber<={mxrun}
+
+         group by runnumber, segment
+
+         order by runnumber {limit_condition}
+         )
+
+         select * from allruns where allruns.ninputs=39 order by runnumber, segment
+
+
+   #
+   # Again I note the need to ensure that the arguments are properly specified given the
+   # definition of the payload script.
+   #
+   job:
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '4000'
+     request_xferslots: '0'

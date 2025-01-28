@@ -48,6 +48,22 @@ echo "PAYLOAD"
 for i in ${payload[@]}; do
     cp --verbose ${subdir}/${i} .
 done
+
+if [[ "${inputs}" == *"dbinput"* ]]; then
+    echo "Getting inputs via cups.  ranges is not set."
+    inputs=( $(./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs) )
+fi
+
+if [ -e odbc.ini ]; then
+echo export ODBCINI=./odbc.ini
+     export ODBCINI=./odbc.ini
+else
+     echo No odbc.ini file detected.  Using system odbc.ini
+fi
+
+# Debugging info
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
+
  
 # There ought to be just one here... but ymmv...
 echo ${inputs[@]}
@@ -142,7 +158,11 @@ for r in *.root; do
     ./stageout.sh ${r} ${outdir} ${outbase}-$(printf "%08d" ${runnumber})-$(printf "%05d" ${segment}).root
 done
 
-exit
+if [ -e cups.stat ]; then
+    cp cups.stat ${logdir#file:/}/${logbase}.dbstat
+fi
+
+exit  #?????????
 
 
 ################################################

@@ -46,6 +46,20 @@ for i in ${payload[@]}; do
     cp --verbose ${subdir}/${i} .
 done
 
+if [ -e odbc.ini ]; then
+echo export ODBCINI=./odbc.ini
+     export ODBCINI=./odbc.ini
+else
+     echo No odbc.ini file detected.  Using system odbc.ini
+fi
+
+if [[ "${inputs}" == *"dbinput"* ]]; then
+    echo "Getting inputs via cups.  ranges is not set."
+    inputs=( $(./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs) )
+fi
+
+
+
 #______________________________________________________________________________________ started __
 #
 # $$$ ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
@@ -76,8 +90,6 @@ echo ...........................................................................
 
 
 dstname=${logbase%%-*}
-echo ./bachi.py --blame cups created ${dstname} ${runnumber} --parent ${inputs[0]}
-     ./bachi.py --blame cups created ${dstname} ${runnumber} --parent ${inputs[0]}
 
 out0=${logbase}.root
 out1=HIST_${logbase#DST_}.root
@@ -88,7 +100,7 @@ status_f4a=0
 for infile_ in ${inputs[@]}; do
     infile=$( basename ${infile_} )
     cp -v ${infile_} .
-    outfile1=${infile/CALOFITTING/CALO}
+    outfile1=${infile/CALOFITTING/JETCALO}
     outfile2=${infile/CALOFITTING/JET}
     outhist=${infile/DST_CALOFITTING/HIST_CALOQASKIMMED}
     root.exe -q -b Fun4All_JetSkimmedProductionYear2.C\(${nevents},\"${infile}\",\"${outfile1}\",\"${outfile2}\",\"${outhist}\",\"${dbtag}\"\);  status_f4a=$?
@@ -107,17 +119,8 @@ for infile_ in ${inputs[@]}; do
     for hfile in `ls HIST_*.root`; do
 	echo Stageout ${hfile} to ${histdir}
         ./stageout.sh ${hfile} ${histdir}
-	#mv --verbose ${hfile} ${histdir}
     done
 done
-
-if [ "${status_f4a}" -eq 0 ]; then
-  echo ./bachi.py --blame cups finalized ${dstname} ${runnumber}  
-       ./bachi.py --blame cups finalized ${dstname} ${runnumber} 
-fi
-
-# In principle, stageout should have moved the files to their final location
-#rm *.root
 
 ls -lah
 
@@ -131,7 +134,8 @@ echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${stat
 echo "bdee bdee bdee, That's All Folks!"
 } >  ${logdir#file:/}/${logbase}.out 2> ${logdir#file:/}/${logbase}.err
 
-#mv ${logbase}.out ${logdir#file:/}
-#mv ${logbase}.err ${logdir#file:/}
+if [ -e cups.stat ]; then
+    cp cups.stat ${logdir#file:/}/${logbase}.dbstat
+fi
 
 exit $status_f4a

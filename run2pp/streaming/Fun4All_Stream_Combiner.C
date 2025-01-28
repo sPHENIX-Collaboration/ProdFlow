@@ -10,7 +10,10 @@
 #include <fun4allraw/SingleInttPoolInput.h>
 #include <fun4allraw/SingleMicromegasPoolInput.h>
 #include <fun4allraw/SingleMvtxPoolInput.h>
-#include <fun4allraw/SingleTpcPoolInput.h>
+
+#include <intt/InttOdbcQuery.h>
+
+#include <fun4allraw/SingleTpcTimeFrameInput.h>
 
 #include <phool/recoConsts.h>
 
@@ -26,7 +29,7 @@ R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4allraw.so)
 R__LOAD_LIBRARY(libffarawmodules.so)
-
+R__LOAD_LIBRARY(libintt.so)
 bool isGood(const string &infile);
 
 void Fun4All_Stream_Combiner(int nEvents = 100,
@@ -160,8 +163,15 @@ void Fun4All_Stream_Combiner(int nEvents = 100,
     {
     SingleInttPoolInput *intt_sngl = new SingleInttPoolInput("INTT_" + to_string(i));
     //    intt_sngl->Verbosity(3);
-    intt_sngl->SetNegativeBco(120-23);
-    intt_sngl->SetBcoRange(500);
+    InttOdbcQuery query;
+    bool isStreaming = true;
+    if(runnumber != 0)
+      {
+	query.Query(runnumber);
+	isStreaming = query.IsStreaming();
+      }
+    intt_sngl->streamingMode(isStreaming);
+      
     intt_sngl->AddListFile(iter);
     in->registerStreamingInput(intt_sngl, InputManagerType::INTT);
     i++;
@@ -188,11 +198,10 @@ void Fun4All_Stream_Combiner(int nEvents = 100,
   {
     if (isGood(iter))
     {
-    SingleTpcPoolInput *tpc_sngl = new SingleTpcPoolInput("TPC_" + to_string(i));
+    SingleTpcTimeFrameInput *tpc_sngl = new SingleTpcTimeFrameInput("TPC_" + to_string(i));
 //    tpc_sngl->Verbosity(2);
     //   tpc_sngl->DryRun();
-    tpc_sngl->SetBcoRange(5);
-    tpc_sngl->SetMaxTpcTimeSamples(1024);
+    tpc_sngl->setHitContainerName("TPCRAWHIT");
     tpc_sngl->AddListFile(iter);
     in->registerStreamingInput(tpc_sngl, InputManagerType::TPC);
     i++;

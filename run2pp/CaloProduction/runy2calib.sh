@@ -46,10 +46,20 @@ for i in ${payload[@]}; do
     cp --verbose ${subdir}/${i} .
 done
 
-#______________________________________________________________________________________ started __
-#
-# $$$ ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
-#_________________________________________________________________________________________________
+if [[ "${inputs}" == *"dbinput"* ]]; then
+    echo "Getting inputs via cups.  ranges is not set."
+    inputs=( $(./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs) )
+fi
+
+if [ -e odbc.ini ]; then
+echo export ODBCINI=./odbc.ini
+     export ODBCINI=./odbc.ini
+else
+     echo No odbc.ini file detected.  Using system odbc.ini
+fi
+
+# Debugging info
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
 
 echo ..............................................................................................
 echo $@
@@ -70,15 +80,11 @@ echo ...........................................................................
 
 #______________________________________________________________________________________ running __
 #
-#./cups.py -r ${runnumber} -s ${segment} -d ${outbase} inputs --files ${inputs[@]}
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
 #_________________________________________________________________________________________________
 
 
 dstname=${logbase%%-*}
-echo ./bachi.py --blame cups created ${dstname} ${runnumber} --parent ${inputs[0]}
-     ./bachi.py --blame cups created ${dstname} ${runnumber} --parent ${inputs[0]}
-
 out0=${logbase}.root
 out1=HIST_${logbase#DST_}.root
 
@@ -106,14 +112,6 @@ for infile_ in ${inputs[@]}; do
     done
 done
 
-if [ "${status_f4a}" -eq 0 ]; then
-  echo ./bachi.py --blame cups finalized ${dstname} ${runnumber}  
-       ./bachi.py --blame cups finalized ${dstname} ${runnumber} 
-fi
-
-# In principle, stageout should have moved the files to their final location
-#rm *.root
-
 ls -lah
 
 #______________________________________________________________________________________ finished __
@@ -126,7 +124,8 @@ echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${stat
 echo "bdee bdee bdee, That's All Folks!"
 } >  ${logdir#file:/}/${logbase}.out 2> ${logdir#file:/}/${logbase}.err
 
-#mv ${logbase}.out ${logdir#file:/}
-#mv ${logbase}.err ${logdir#file:/}
+if [ -e cups.stat ]; then
+    cp cups.stat ${logdir#file:/}/${logbase}.dbstat
+fi
 
 exit $status_f4a

@@ -5,8 +5,13 @@ destination=${2}
 
 echo stageout ${filename} ${destination} start `date`
 
-regex_dsttype_run="([A-Z]+_[A-Z_]+[a-z0-9]+)_([a-z0-9]+)_(202[345]p[0-9][0-9][0-9])-([0-9]+)-([0-9]+)"
-regex_dsttype_range="([A-Z]+_[A-Z_]+[a-z0-9]+)_([a-z0-9]+)_(202[345]p[0-9][0-9][0-9])-([0-9]+)-([0-9]+)-([0-9]+)"
+# An option version number is optionally added to the filenaming convention.  It is made part of the dataset name.
+# We add the optional _vxxx tag to the dbtag portion of this regex... so note well that 'dbtag' is overloaded in
+# this context.  It now indicates both the conditions database tag and the file version number.
+
+regex_dsttype_run="([A-Z]+_[A-Z0-9_]+[a-z0-9]+)_([a-z0-9]+)_(202[345]p[0-9][0-9][0-9][_v0-9]*|nocdbtag[_v0-9]*)-([0-9]+)-([0-9]+)"
+regex_dsttype_range="([A-Z]+_[A-Z_]+[a-z0-9]+)_([a-z0-9]+)_(202[3456789]p[0-9][0-9][0-9][_v0-9]*|nocdbtag[_v0-9]*)-([0-9]+)-([0-9]+)-([0-9]+)"
+
 
 # decode filename
 base=${filename/.root/}

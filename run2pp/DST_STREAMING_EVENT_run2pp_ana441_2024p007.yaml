@@ -8,11 +8,11 @@ DST_STREAMING_EVENT_run2pp:
      dbtag:      2024p007
      logbase :   $(name)_$(build)_$(tag)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)
-     script  :   run_cosmics.sh
-     payload :   ./ProdFlow/run2pp/cosmics/     
+     script  :   run_streaming.sh
+     payload :   ./ProdFlow/run2pp/streaming/     
      neventsper: 10000
      comment :    "---"
-     rsync   : "./ProdFlow/run2pp/cosmics/*,cups.py,bachi.py,odbc.ini"
+     rsync   : "./ProdFlow/run2pp/streaming/*,cups.py,bachi.py,odbc.ini"
      mem     :   20000MB
      # 20GB of memory is not a typo
 
@@ -72,7 +72,6 @@ DST_STREAMING_EVENT_run2pp:
    # definition of the payload script.
    #
    job:
-     executable            : "{payload}/run_cosmics.sh"
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
@@ -124,7 +123,6 @@ DST_TRKR_HIT_run2pp:
               ;              
 
    job:
-     executable            : "{payload}/run.sh"
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {logdir} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
@@ -179,7 +177,6 @@ DST_TRKR_CLUSTER_run2pp:
                 {limit_condition}
               ;              
    job:
-     executable            : "{payload}/run_job0.sh"
      arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {logdir} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
@@ -232,7 +229,6 @@ DST_TRKR_SEED_run2pp:
                 {limit_condition}
               ;              
    job:
-     executable            : "{payload}/run_jobA.sh"
      arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {logdir} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
@@ -300,7 +296,6 @@ DST_TRKR_TRACKS_run2pp:
               ;              
 
    job:
-     executable            : "{payload}/run_jobC.sh"
      arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) {outdir} $(buildarg) $(tag) $(inputs) $(ranges) {logdir} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'

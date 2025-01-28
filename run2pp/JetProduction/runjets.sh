@@ -15,8 +15,8 @@ logdir=${12:-.}
 histdir=${13:-.}
 subdir=${14}
 payload=(`echo ${15} | tr ","  " "`) # array of files to be rsynced
+
 #--
-#export cupsid=${16}
 export cupsid=${@: -1}
 
 sighandler()
@@ -46,6 +46,20 @@ echo OFFLINE_MAIN: $OFFLINE_MAIN
 for i in ${payload[@]}; do
     cp --verbose ${subdir}/${i} .
 done
+
+if [ -e odbc.ini ]; then
+echo export ODBCINI=./odbc.ini
+     export ODBCINI=./odbc.ini
+else
+     echo No odbc.ini file detected.  Using system odbc.ini
+fi
+
+if [[ "${inputs}" == *"dbinput"* ]]; then
+    echo "Getting inputs via cups.  ranges is not set."
+    inputs=( $(./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs) )
+fi
+
+
 
 #______________________________________________________________________________________ started __
 #
@@ -77,8 +91,6 @@ echo ...........................................................................
 
 
 dstname=${logbase%%-*}
-echo ./bachi.py --blame cups created ${dstname} ${runnumber} --parent ${inputs[0]}
-     ./bachi.py --blame cups created ${dstname} ${runnumber} --parent ${inputs[0]}
 
 out0=${logbase}.root
 
@@ -111,14 +123,6 @@ for infile_ in ${inputs[@]}; do
 
 done
 
-if [ "${status_f4a}" -eq 0 ]; then
-  echo ./bachi.py --blame cups finalized ${dstname} ${runnumber}  
-       ./bachi.py --blame cups finalized ${dstname} ${runnumber} 
-fi
-
-# In principle, stageout should have moved the files to their final location
-#rm *.root
-
 ls -lah
 
 #______________________________________________________________________________________ finished __
@@ -130,5 +134,9 @@ echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${stat
 
 echo "bdee bdee bdee, That's All Folks!"
 } >  ${logdir#file:/}/${logbase}.out 2> ${logdir#file:/}/${logbase}.err
+
+if [ -e cups.stat ]; then
+    cp cups.stat ${logdir#file:/}/${logbase}.dbstat
+fi
 
 exit $status_f4a

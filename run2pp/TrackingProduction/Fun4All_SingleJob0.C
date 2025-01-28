@@ -62,14 +62,35 @@ void Fun4All_SingleJob0(
   std::ifstream ifs(filelist);
   std::string filepath;
 
-
   TRACKING::tpc_zero_supp = true;
-    
+  G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING = false;
+  
+  
+  int i = 0;
+  
+  while(std::getline(ifs,filepath))
+    {
+      std::cout << "Adding DST with filepath: " << filepath << std::endl; 
+     if(i==0)
+	{
+	   std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(filepath);
+	   int runNumber = runseg.first;
+	   int segment = runseg.second;
+	   rc->set_IntFlag("RUNNUMBER", runNumber);
+	   rc->set_uint64Flag("TIMESTAMP", runNumber);
+        
+	}
+      std::string inputname = "InputManager" + std::to_string(i);
+      auto hitsin = new Fun4AllDstInputManager(inputname);
+      hitsin->fileopen(filepath);
+      se->registerInputManager(hitsin);
+      i++;
+    }
+
 
   CDBInterface::instance()->Verbosity(INT_MAX);
 
   rc->set_StringFlag("CDB_GLOBALTAG", dbtag );
-  rc->set_uint64Flag("TIMESTAMP", runnumber);
 
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
@@ -79,46 +100,10 @@ void Fun4All_SingleJob0(
   ingeo->AddFile(geofile);
   se->registerInputManager(ingeo);
   
+
+  
   TrackingInit();
 
-  int i = 0;
-  std::string filenum = "";
-  
-  while(std::getline(ifs,filepath))
-    {
-      
-     if(i==0)
-	{
-	   std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(filepath);
-	   int runNumber = runseg.first;
-	   int segment = runseg.second;
-	   rc->set_IntFlag("RUNNUMBER", runNumber);
-	   rc->set_uint64Flag("TIMESTAMP", runNumber);
-	   if(filepath.find("MVTX") != std::string::npos)
-	     {
-	       filenum = filepath.substr(filepath.find("MVTX")+4,1);
-	     }
-	   else if(filepath.find("INTT") != std::string::npos)
-	     {
-	       filenum = filepath.substr(filepath.find("INTT")+4,1);
-	     }
-	   else if (filepath.find("TPC") != std::string::npos)
-	     {
-	       filenum = filepath.substr(filepath.find("TPC")+3,2);
-	     }
-	   else if (filepath.find("TPOT") != std::string::npos)
-	     {
-	       // do nothing for TPOT since it processes together no matter what
-	   
-	     }
-	}
-      std::string inputname = "InputManager" + std::to_string(i);
-      auto hitsin = new Fun4AllDstInputManager(inputname);
-      hitsin->fileopen(filepath);
-      se->registerInputManager(hitsin);
-      i++;
-    }
-  
   for(int felix=0; felix < 6; felix++)
     {
       Mvtx_HitUnpacking(std::to_string(felix));
