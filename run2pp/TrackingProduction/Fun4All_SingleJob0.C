@@ -47,7 +47,7 @@ void Fun4All_SingleJob0(
     const int runnumber = 41626,
     const std::string outfilename = "cosmics",
     const std::string dbtag = "2024p001",
-    const std::string filelist = "filelist.txt")
+    const std::string filelist = "filelist.list")
 {
 
   gSystem->Load("libg4dst.so");

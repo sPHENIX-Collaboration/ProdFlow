@@ -55,7 +55,7 @@ echo payload: ${payload[@]}
 
 echo .............................................................................................. 
 
-   for i in ${payload[@]}; do
+for i in ${payload[@]}; do
     cp --verbose ${subdir}/${i} .
 done
 
