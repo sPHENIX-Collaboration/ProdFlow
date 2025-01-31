@@ -357,7 +357,7 @@ DST_TRIGGERED_EVENT_run2pp_ana462_2024p010:
 XXX_CALOFITTING_run2pp_ana462_2024p010:
    params:
      name:       DST_CALOFITTING_run2pp
-     nevents:    5000
+     nevents:    0
      build:      ana.462
      build_name: ana462
      dbtag:      2024p010
@@ -368,7 +368,7 @@ XXX_CALOFITTING_run2pp_ana462_2024p010:
      payload :   ./ProdFlow/run2pp/CaloProduction/
      mem     :   1024MB
      neventsper: 50000
-     rsync  : "./ProdFlow/run2pp/CaloProduction/*,cups.py,bachi.py,odbc.ini"
+     rsync  : "./ProdFlow/run2pp/CaloProduction/*,cups.py"
 
    input:
      db: filecatalog
@@ -382,7 +382,7 @@ XXX_CALOFITTING_run2pp_ana462_2024p010:
          from  
                 datasets
          where 
-                filename like 'DST_TRIGGERED_EVENT_run2pp_ana451_2024p009%'
+                filename like 'DST_TRIGGERED_EVENT_run2pp_ana462_nocdbtag%'
                 {run_condition}
 
                  and runnumber>53880
