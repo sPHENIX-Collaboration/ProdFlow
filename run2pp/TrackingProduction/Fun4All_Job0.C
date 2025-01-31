@@ -90,9 +90,11 @@ void Fun4All_Job0(
 
   Tpc_LaserEventIdentifying();
 
-  TPC_LaminationClustering();
-
   TPC_LaserClustering();
+
+  G4TPC::LaminationOutputName = "Laminations_" + outfilename;
+
+  TPC_LaminationFitting();
 
   auto tpcclusterizer = new TpcClusterizer;
   tpcclusterizer->Verbosity(0);

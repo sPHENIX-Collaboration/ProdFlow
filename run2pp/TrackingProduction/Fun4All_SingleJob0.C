@@ -131,11 +131,10 @@ void Fun4All_SingleJob0(
   Intt_Clustering();
 
   Tpc_LaserEventIdentifying();
-
-  TPC_LaminationClustering();
-
+  if(G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING)
+  {
   TPC_LaserClustering();
-
+  }
   auto tpcclusterizer = new TpcClusterizer;
   tpcclusterizer->Verbosity(0);
   tpcclusterizer->set_do_hit_association(G4TPC::DO_HIT_ASSOCIATION);
