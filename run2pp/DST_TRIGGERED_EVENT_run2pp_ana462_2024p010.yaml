@@ -354,7 +354,7 @@ DST_TRIGGERED_EVENT_run2pp_ana462_2024p010:
 
 
 # Downstream products
-XXX_CALOFITTING_run2pp_ana462_2024p010:
+DST_CALOFITTING_run2pp_ana462_2024p010:
    params:
      name:       DST_CALOFITTING_run2pp
      nevents:    0
@@ -385,7 +385,7 @@ XXX_CALOFITTING_run2pp_ana462_2024p010:
                 filename like 'DST_TRIGGERED_EVENT_run2pp_ana462_nocdbtag%'
                 {run_condition}
 
-                 and runnumber>53880
+                 and runnumber<=53880
            
          {limit_condition}
 
