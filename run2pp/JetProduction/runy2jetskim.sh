@@ -100,7 +100,7 @@ status_f4a=0
 for infile_ in ${inputs[@]}; do
     infile=$( basename ${infile_} )
     cp -v ${infile_} .
-    outfile1=${infile/CALOFITTING/JETCALO}
+    outfile1=${infile/CALOFITTING/CALO}
     outfile2=${infile/CALOFITTING/JET}
     outhist=${infile/DST_CALOFITTING/HIST_CALOQASKIMMED}
     root.exe -q -b Fun4All_JetSkimmedProductionYear2.C\(${nevents},\"${infile}\",\"${outfile1}\",\"${outfile2}\",\"${outhist}\",\"${dbtag}\"\);  status_f4a=$?
