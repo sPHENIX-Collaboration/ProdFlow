@@ -11,6 +11,7 @@
 #include <fun4allraw/SingleMicromegasPoolInput.h>
 #include <fun4allraw/SingleMvtxPoolInput.h>
 #include <fun4allraw/SingleTpcPoolInput.h>
+#include <fun4allraw/SingleTpcTimeFrameInput.h>
 
 #include <intt/InttOdbcQuery.h>
 
@@ -23,20 +24,22 @@
 #include <ffamodules/HeadReco.h>
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/SyncReco.h>
+#include <ffamodules/CDBInterface.h>
 
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4allraw.so)
 R__LOAD_LIBRARY(libffarawmodules.so)
-
 R__LOAD_LIBRARY(libintt.so)
 bool isGood(const string &infile);
 
 void Fun4All_SingleStream_Combiner(int nEvents = 0,
 				   const int runnumber = 30117,
 				   const string &outdir = "/sphenix/lustre01/sphnxpro/commissioning/slurp/tpccosmics/",
+				   const string& histdir = "/sphenix/data/data02/sphnxpro/single_streamhist/",
 				   const string &type = "beam",
 				   const int neventsper = 100,
+				   const string &dbtag = "ProdA_2024",
 				   const string &input_gl1file = "gl1daq.list",
 				   const string &input_tpcfile00 = "tpc00.list",
 				   const string &input_inttfile00 = "intt0.list",
@@ -47,6 +50,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   vector<string> gl1_infile;
   gl1_infile.push_back(input_gl1file);
 
+ 
 // MVTX
   vector<string> mvtx_infile;
   mvtx_infile.push_back(input_mvtxfile00);
@@ -65,13 +69,13 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
   recoConsts *rc = recoConsts::instance();
+  CDBInterface::instance()->Verbosity(1);
+  rc->set_StringFlag("CDB_GLOBALTAG", dbtag );
   Fun4AllStreamingInputManager *in = new Fun4AllStreamingInputManager("Comb");
 //  in->Verbosity(3);
 
 // create and register input managers
   int i = 0;
-
-  std::string readoutNumber = "";
 
   for (auto iter : gl1_infile)
   {
@@ -93,6 +97,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
     {
       SingleInttPoolInput *intt_sngl = new SingleInttPoolInput("INTT_" + to_string(i));
       //intt_sngl->Verbosity(3);
+   
       InttOdbcQuery query;
       bool isStreaming = true;
       if(runnumber != 0)
@@ -102,12 +107,16 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 	}
       intt_sngl->streamingMode(isStreaming);
       
-    
-      auto pos = iter.find("intt");
-      std::string num = iter.substr(pos+4, 1);
-      readoutNumber = "INTT"+num;
-      intt_sngl->setHitContainerName("INTTRAWHIT_" + num);
-    
+    /// find the ebdc number from the filename
+      std::string filepath, felix;
+      std::ifstream ifs(iter);
+      while(std::getline(ifs, filepath))
+      {
+	auto pos = filepath.find("intt");
+	felix = filepath.substr(pos+4, 1);
+	break;
+      }
+      intt_sngl->setHitContainerName("INTTRAWHIT_" + felix);
       intt_sngl->AddListFile(iter);
       in->registerStreamingInput(intt_sngl, InputManagerType::INTT);
       i++;
@@ -128,10 +137,9 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 	felix = filepath.substr(pos+4, 1);
 	break;
       }
-      readoutNumber = "MVTX"+felix;
+
       SingleMvtxPoolInput *mvtx_sngl = new SingleMvtxPoolInput("MVTX_" + to_string(i));
 //    mvtx_sngl->Verbosity(5);
-    
       mvtx_sngl->setHitContainerName("MVTXRAWHIT_" + felix);
       mvtx_sngl->setRawEventHeaderName("MVTXRAWEVTHEADER_" + felix);
       mvtx_sngl->AddListFile(iter);
@@ -155,12 +163,9 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 	break;
       }
 
-      SingleTpcPoolInput *tpc_sngl = new SingleTpcPoolInput("TPC_" + to_string(i));
+      SingleTpcTimeFrameInput *tpc_sngl = new SingleTpcTimeFrameInput("TPC_" + to_string(i));
 //    tpc_sngl->Verbosity(2);
       //   tpc_sngl->DryRun();
-      readoutNumber = "TPC"+ebdc;
-      tpc_sngl->SetBcoRange(5);
-      //tpc_sngl->SetMaxTpcTimeSamples(1024);
       tpc_sngl->setHitContainerName("TPCRAWHIT_" + ebdc);
       tpc_sngl->AddListFile(iter);
       in->registerStreamingInput(tpc_sngl, InputManagerType::TPC);
@@ -180,7 +185,6 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       mm_sngl->SetBcoPoolSize(50);
       mm_sngl->AddListFile(iter);
       in->registerStreamingInput(mm_sngl, InputManagerType::MICROMEGAS);
-      readoutNumber = "TPOT";
       i++;
     }
   }
@@ -204,7 +208,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 
 
   char outfile[500];
-  sprintf(outfile,"./%s-%s.root",type.c_str(),readoutNumber.c_str());
+  sprintf(outfile,"./%s.root",type.c_str());
   
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("out",outfile);
   out->UseFileRule();
@@ -215,6 +219,16 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 
   se->registerOutputManager(out);
 
+  auto hm = QAHistManagerDef::getHistoManager();
+  hm->SetClosingScript("stageout.sh");
+  hm->SetClosingScriptArgs(histdir);
+  hm->dumpHistoSegments(true);
+  char histoutfile[500];
+  sprintf(histoutfile,"./HIST_%s",type.c_str());
+  string shistoutfile(histoutfile);
+  hm->setOutfileName(shistoutfile);
+  
+  
   if (nEvents < 0)
   {
     return;
@@ -223,9 +237,6 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 
   se->End();
 
-  char histoutfile[500];
-  sprintf(histoutfile,"./HIST_%s-%s-%08i-%05i.root",type.c_str(),readoutNumber.c_str(),runnumber,0);
-  QAHistManagerDef::saveQARootFile(histoutfile);
 
   delete se;
   cout << "all done" << endl;
