@@ -225,8 +225,8 @@ fi
 
 
 
-echo root.exe -q -b Fun4All_SingleStream_Combiner.C\(${nevents},${runnumber},\"${outdir}\",\"${outbase}\",${neventsper},\"${dbtag}\",\"gl1.list\",\"tpcinputs.list\",\"inttinputs.list\",\"mvtxinputs.list\",\"tpot.list\"\);
-     root.exe -q -b Fun4All_SingleStream_Combiner.C\(${nevents},${runnumber},\"${outdir}\",\"${outbase}\",${neventsper},\"${dbtag}\",\"gl1.list\",\"tpcinputs.list\",\"inttinputs.list\",\"mvtxinputs.list\",\"tpot.list\"\); status_f4a=$?
+echo root.exe -q -b Fun4All_SingleStream_Combiner.C\(${nevents},${runnumber},\"${outdir}\",\"${histdir}\",\"${outbase}\",${neventsper},\"${dbtag}\",\"gl1.list\",\"tpcinputs.list\",\"inttinputs.list\",\"mvtxinputs.list\",\"tpot.list\"\);
+     root.exe -q -b Fun4All_SingleStream_Combiner.C\(${nevents},${runnumber},\"${outdir}\",\"${histdir}\",\"${outbase}\",${neventsper},\"${dbtag}\",\"gl1.list\",\"tpcinputs.list\",\"inttinputs.list\",\"mvtxinputs.list\",\"tpot.list\"\); status_f4a=$?
 
 # There should be no output files hanging around  (TODO add number of root files to exit code)
 ls -la 
@@ -246,11 +246,6 @@ echo $logbase
 
 #cp stderr.log ${logbase}.err
 #cp stdout.log ${logbase}.out
-
-for hfile in `ls HIST_*.root`; do
-    echo Stageout ${hfile} to ${histdir}
-    ./stageout.sh ${hfile} ${histdir}
-done
 
 # Cleanup any stray root and/or list files leftover from stageout
 rm *.root *.list
