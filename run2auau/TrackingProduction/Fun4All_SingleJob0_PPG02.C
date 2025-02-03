@@ -40,11 +40,8 @@ void Fun4All_SingleJob0_PPG02(const int nEvents = 2,                            
 )
 {
     bool saverawhit = true;
-    bool doqa = false;
 
     gSystem->Load("libg4dst.so");
-    // char filename[500];
-    // sprintf(filename, "%s%08d-0000.root", inputRawHitFile.c_str(), runnumber);
 
     auto se = Fun4AllServer::instance();
     se->Verbosity(1);
@@ -108,13 +105,10 @@ void Fun4All_SingleJob0_PPG02(const int nEvents = 2,                            
 
     Intt_Clustering();
 
-    if (doqa)
-    {
-        se->registerSubsystem(new InttClusterQA);
-
-        auto intt = new InttRawHitQA;
-        se->registerSubsystem(intt);
-    }
+    // Fun4All standard QA
+    se->registerSubsystem(new InttClusterQA);
+    auto intt = new InttRawHitQA;
+    se->registerSubsystem(intt);
 
     // nodes to save
     vector<std::string> nodes = {"Sync", "EventHeader", "GL1RAWHIT", "INTTEVENTHEADER", "TRKR_CLUSTER", "TRKR_HITSET", "TRKR_CLUSTERCROSSINGASSOC", "TRKR_CLUSTERHITASSOC"};
@@ -136,12 +130,9 @@ void Fun4All_SingleJob0_PPG02(const int nEvents = 2,                            
     se->run(nEvents);
     se->End();
 
-    if (doqa)
-    {
-        TString qaname = "HIST_" + outfilename;
-        std::string qaOutputFileName(qaname.Data());
-        QAHistManagerDef::saveQARootFile(qaOutputFileName);
-    }
+    TString qaname = "HIST_" + outfilename;
+    std::string qaOutputFileName(qaname.Data());
+    QAHistManagerDef::saveQARootFile(qaOutputFileName);
 
     CDBInterface::instance()->Print();
     se->PrintTimer();
