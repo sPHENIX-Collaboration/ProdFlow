@@ -38,8 +38,6 @@ void Fun4All_SingleJob0(const int nEvents = 2,                                  
                         const std::string filelist = "filelist.list"              //
 )
 {
-    bool saverawhit = true;
-
     gSystem->Load("libg4dst.so");
 
     auto se = Fun4AllServer::instance();
@@ -115,14 +113,6 @@ void Fun4All_SingleJob0(const int nEvents = 2,                                  
     for (auto node : nodes)
     {
         out->AddNode(node);
-    }
-    if (saverawhit)
-    {
-        for (int server = 0; server < 8; server++)
-        {
-            std::string str_server = std::to_string(server);
-            out->AddNode("INTTRAWHIT_" + str_server);
-        }
     }
     se->registerOutputManager(out);
 
