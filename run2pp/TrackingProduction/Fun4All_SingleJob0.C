@@ -168,7 +168,7 @@ void Fun4All_SingleJob0(
   out->AddNode("LaserEventInfo");
   if(G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING)
   {
-    out->AddNode("LASER_CLUSTER");
+    out->AddNode("LAMINATION_CLUSTER");
   }
   se->registerOutputManager(out);
 
