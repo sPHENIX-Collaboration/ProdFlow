@@ -63,7 +63,7 @@ void Fun4All_SingleJob0(
   std::string filepath;
 
   TRACKING::tpc_zero_supp = true;
-  G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING = false;
+  G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING = true;
   
   
   int i = 0;
@@ -126,16 +126,20 @@ void Fun4All_SingleJob0(
 
   Micromegas_HitUnpacking();
 
-  Mvtx_Clustering();
+  MvtxClusterizer* mvtxclusterizer = new MvtxClusterizer("MvtxClusterizer");
+  mvtxclusterizer->Verbosity(verbosity);
+  se->registerSubsystem(mvtxclusterizer);
 
   Intt_Clustering();
 
   Tpc_LaserEventIdentifying();
+  
+  if( G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING )
+  {
+    TPC_LaminationClustering();
 
-  TPC_LaminationClustering();
-
-  TPC_LaserClustering();
-
+    TPC_LaserClustering();
+  }
   auto tpcclusterizer = new TpcClusterizer;
   tpcclusterizer->Verbosity(0);
   tpcclusterizer->set_do_hit_association(G4TPC::DO_HIT_ASSOCIATION);
