@@ -137,8 +137,6 @@ void Fun4All_SingleJob0(
   if( G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING )
   {
     TPC_LaminationClustering();
-
-    TPC_LaserClustering();
   }
   auto tpcclusterizer = new TpcClusterizer;
   tpcclusterizer->Verbosity(0);
