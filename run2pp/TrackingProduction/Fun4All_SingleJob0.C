@@ -127,7 +127,7 @@ void Fun4All_SingleJob0(
   Micromegas_HitUnpacking();
 
   MvtxClusterizer* mvtxclusterizer = new MvtxClusterizer("MvtxClusterizer");
-  mvtxclusterizer->Verbosity(verbosity);
+  mvtxclusterizer->Verbosity(0);
   se->registerSubsystem(mvtxclusterizer);
 
   Intt_Clustering();
