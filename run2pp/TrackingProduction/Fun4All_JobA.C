@@ -91,28 +91,17 @@ void Fun4All_JobA(
   ingeo->AddFile(geofile);
   se->registerInputManager(ingeo);
 
-  std::string tpc_dv_calib_dir = CDBInterface::instance()->getUrl("TPC_DRIFT_VELOCITY");
-  if (tpc_dv_calib_dir.empty())
-  {
-    std::cout << "No calibrated TPC drift velocity for Run " << runnumber << ". Use default value " << G4TPC::tpc_drift_velocity_reco << " cm/ns" << std::endl;
-  }
-  else
-  {
-    CDBTTree *cdbttree = new CDBTTree(tpc_dv_calib_dir);
-    cdbttree->LoadCalibrations();
-    G4TPC::tpc_drift_velocity_reco = cdbttree->GetSingleFloatValue("tpc_drift_velocity");
-    std::cout << "Use calibrated TPC drift velocity for Run " << runnumber << ": " << G4TPC::tpc_drift_velocity_reco << " cm/ns" << std::endl;
-  }
-
   /*
    * Flags for seeding macro
    */
   G4TPC::ENABLE_MODULE_EDGE_CORRECTIONS = true;
   TRACKING::pp_mode = true;
   G4TRACKING::SC_CALIBMODE = false;
+  G4TPC::REJECT_LASER_EVENTS = true;
+  
     //to turn on the default static corrections, enable the two lines below
-  //G4TPC::ENABLE_STATIC_CORRECTIONS = true;
-  //G4TPC::USE_PHI_AS_RAD_STATIC_CORRECTIONS = false;
+  G4TPC::ENABLE_STATIC_CORRECTIONS = true;
+  G4TPC::USE_PHI_AS_RAD_STATIC_CORRECTIONS = false;
 
   //to turn on the average corrections derived from simulation, enable the three lines below
   //note: these are designed to be used only if static corrections are also applied
@@ -130,6 +119,7 @@ void Fun4All_JobA(
    */
   auto silicon_Seeding = new PHActsSiliconSeeding;
   silicon_Seeding->Verbosity(0);
+  silicon_Seeding0->setStrobeRange(-5,5);
   silicon_Seeding->seedAnalysis(false);
   silicon_Seeding->setinttRPhiSearchWindow(0.4);
   silicon_Seeding->setinttZSearchWindow(2.0);
@@ -201,13 +191,8 @@ void Fun4All_JobA(
   // Match the TPC track stubs from the CA seeder to silicon track stubs from PHSiliconTruthTrackSeeding
   auto silicon_match = new PHSiliconTpcTrackMatching;
   silicon_match->Verbosity(0);
-  silicon_match->set_x_search_window(2.);
-  silicon_match->set_y_search_window(2.);
-  silicon_match->set_z_search_window(5.);
-  silicon_match->set_phi_search_window(0.2);
-  silicon_match->set_eta_search_window(0.1);
+  silicon_match->set_use_legacy_windowing(false);
   silicon_match->set_pp_mode(TRACKING::pp_mode);
-  silicon_match->set_test_windows_printout(false);  // used for tuning search windows
   se->registerSubsystem(silicon_match);
 
   // Match TPC track stubs from CA seeder to clusters in the micromegas layers
