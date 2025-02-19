@@ -20,6 +20,7 @@
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
 
+#include <trackingqa/TpcSiliconQA.h>
 #include <phool/recoConsts.h>
 
 #include <stdio.h>
@@ -31,6 +32,7 @@ R__LOAD_LIBRARY(libintt.so)
 R__LOAD_LIBRARY(libtpc.so)
 R__LOAD_LIBRARY(libmicromegas.so)
 R__LOAD_LIBRARY(libtrack_reco.so)
+R__LOAD_LIBRARY(libtrackingqa.so)
 void Fun4All_JobC(
     const int nEvents = 2,
     const int runnumber = 41626,
@@ -93,6 +95,32 @@ void Fun4All_JobC(
   // reject laser events if G4TPC::REJECT_LASER_EVENTS is true 
   Reject_Laser_Events();
 
+  
+
+  /*
+   * Track Matching between silicon and TPC
+   */
+  // The normal silicon association methods
+  // Match the TPC track stubs from the CA seeder to silicon track stubs from PHSiliconTruthTrackSeeding
+  auto silicon_match = new PHSiliconTpcTrackMatching;
+  silicon_match->Verbosity(0);
+  silicon_match->set_use_legacy_windowing(false);
+  silicon_match->set_pp_mode(TRACKING::pp_mode);
+  se->registerSubsystem(silicon_match);
+
+  // Match TPC track stubs from CA seeder to clusters in the micromegas layers
+  auto mm_match = new PHMicromegasTpcTrackMatching;
+  mm_match->Verbosity(0);
+  mm_match->set_rphi_search_window_lyr1(3.);
+  mm_match->set_rphi_search_window_lyr2(15.0);
+  mm_match->set_z_search_window_lyr1(30.0);
+  mm_match->set_z_search_window_lyr2(3.);
+
+  mm_match->set_min_tpc_layer(38);             // layer in TPC to start projection fit
+  mm_match->set_test_windows_printout(false);  // used for tuning search windows only
+  se->registerSubsystem(mm_match);
+
+  
   auto deltazcorr = new PHTpcDeltaZCorrection;
   deltazcorr->Verbosity(0);
   se->registerSubsystem(deltazcorr);
@@ -127,9 +155,15 @@ void Fun4All_JobC(
   finder->setOutlierPairCut(0.1);
   se->registerSubsystem(finder);
 
+    auto tpcsiliconqa = new TpcSiliconQA;
+  se->registerSubsystem(tpcsiliconqa);
+
+  
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfilename);
   out->AddNode("Sync");
   out->AddNode("EventHeader");
+  
+  out->AddNode("SvtxTrackSeedContainer");
   out->AddNode("SvtxTrackMap");
   out->AddNode("SvtxVertexMap");
   se->registerOutputManager(out);
