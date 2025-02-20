@@ -451,7 +451,7 @@ DST_TRKR_CLUSTER_run2pp_streams:
      comment :    "---"
      rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
      mem     :   4000MB
-     mnrun   : 51428
+     mnrun   : 49700
      mxrun   : 53880
 
    input:
@@ -479,7 +479,68 @@ DST_TRKR_CLUSTER_run2pp_streams:
          order by runnumber {limit_condition}
          )
 
-         select * from allruns where allruns.ninputs=39 order by runnumber, segment
+         select * from allruns where allruns.ninputs=38 order by runnumber, segment
+
+
+   #
+   # Again I note the need to ensure that the arguments are properly specified given the
+   # definition of the payload script.
+   #
+   job:
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '4000'
+     request_xferslots: '0'
+
+
+DST_TRKR_SEED_run2pp_streams:
+
+   params:
+     name:       DST_TRKR_SEED_run2pp
+     build:      ana.466
+     build_name: ana466
+     dbtag:      2024p012
+     version:    1
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
+     script  :   run_jobA.sh 
+     payload :   ./ProdFlow/run2pp/TrackingProduction/
+     neventsper:      10000
+     comment :    "---"
+     rsync   : "./ProdFlow/run2pp/TrackingProduction/*,cups.py,bachi.py,odbc.ini"
+     mem     :   4000MB
+     mnrun   : 49709
+     mxrun   : 53880
+
+   input:
+      db: fc
+      direct_path: /sphenix/lustre01/sphnxpro/production/run2pp/physics/ana466_2024p012_v001/DST_TRKR_CLUSTER/*/dst/
+      query: |-
+         with allruns as (
+         select
+                'filecatalog/datasets'         as source        ,
+                runnumber                                       ,
+                segment                                         ,
+                string_agg( distinct filename, ' ' ) as files   ,
+                'NA'  as fileranges,
+                count(distinct filename) as ninputs
+         from
+                datasets
+         where
+                filename like 'DST_TRKR_CLUSTER_run2pp_ana466_2024p012_v001-%'
+                {run_condition}
+                and runnumber>={mnrun}
+                and runnumber<={mxrun}
+
+         group by runnumber, segment
+
+         order by runnumber {limit_condition}
+         )
+
+         select * from allruns where allruns.ninputs=1 order by runnumber, segment
 
 
    #
