@@ -170,6 +170,7 @@ void Fun4All_JobA(
   }
   cprop->useFixedClusterError(true);
   cprop->set_max_window(5.);
+  cprop->set_max_seeds(5000);
   cprop->Verbosity(0);
   cprop->set_pp_mode(true);
   se->registerSubsystem(cprop);
