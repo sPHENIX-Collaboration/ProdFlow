@@ -13,7 +13,7 @@ DST_CALO_run2pp_new_2024p010:
      build:      ana.462
      build_name: ana462
      dbtag:      2024p010
-     version :   1
+     version :   2
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   runy2calib.sh
@@ -34,7 +34,7 @@ DST_CALO_run2pp_new_2024p010:
          from  
                 datasets
          where 
-                dataset='ana446_2024p007' and dsttype='DST_CALOFITTING_run2pp'
+                dataset='ana472_2024p010_v001' and dsttype='DST_CALOFITTING_run2pp'
                 {run_condition}
 
                  and runnumber<=53880
@@ -104,14 +104,14 @@ DST_JETCALO_run2pp_ana462_2024p010:
      build:      ana.462
      build_name: ana462
      dbtag:      2024p010
-     version:    1
+     version:    2
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   runy2jetskim.sh
      payload :   ./ProdFlow/run2pp/JetProduction/
      mem     :   4096MB
      neventsper: 50000
-     rsync  : "./ProdFlow/run2pp/JetProduction/*,cups.py,bachi.py"
+     rsync  : "./ProdFlow/run2pp/JetProduction/*,cups.py"
 
    input:
      db: filecatalog
@@ -125,7 +125,7 @@ DST_JETCALO_run2pp_ana462_2024p010:
          from
                 datasets
          where
-                dataset='ana446_2024p007' and dsttype='DST_CALOFITTING_run2pp'
+                dataset='ana462_2024p010_v001' and dsttype='DST_CALOFITTING_run2pp'
                 {run_condition}
 
                  and runnumber<=53880
