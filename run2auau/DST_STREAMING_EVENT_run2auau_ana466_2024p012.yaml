@@ -348,11 +348,12 @@ DST_STREAMING_EVENT_run2auau_streams:
 
    input:
       db: daqdb
-      direct_path: /sphenix/lustre01/sphnxpro/{mode}/*/physics/
+#      direct_path: /sphenix/lustre01/sphnxpro/{mode}/*/physics/
+      direct_path: /sphenix/lustre01/sphnxpro/{mode}/*/cosmics/
       query: |-
          with run2pp as (
               select 54089 as firstrun,
-                     54974 as lastrun
+                     55666 as lastrun
          ),
          streams as (select distinct split_part( split_part(filename,'/',-1), '-', 1 ) as streamfile, hostname                     from filelist,run2pp where runnumber>=run2pp.firstrun and runnumber<=run2pp.lastrun),
 
@@ -390,7 +391,7 @@ DST_STREAMING_EVENT_run2auau_streams:
            transferred_to_sdcc='true' and
            runnumber>=run2pp.firstrun and runnumber<=run2pp.lastrun and
            (
-               (filename  like '/bbox%/GL1_physics%.evt'   and lastevent>2 ) or
+               (filename  like '/bbox%/GL1_cosmics%.evt'   and lastevent>2 ) or
                (filename  like '%'||all_streams.streamfile||'%' )           
            )
 
