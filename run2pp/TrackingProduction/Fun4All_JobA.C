@@ -26,7 +26,6 @@
 
 #include <trackingqa/SiliconSeedsQA.h>
 #include <trackingqa/TpcSeedsQA.h>
-#include <trackingqa/TpcSiliconQA.h>
 
 #include <stdio.h>
 
@@ -95,7 +94,6 @@ void Fun4All_JobA(
    * Flags for seeding macro
    */
   G4TPC::ENABLE_MODULE_EDGE_CORRECTIONS = true;
-  TRACKING::pp_mode = true;
   G4TRACKING::SC_CALIBMODE = false;
   G4TPC::REJECT_LASER_EVENTS = true;
   
@@ -119,7 +117,7 @@ void Fun4All_JobA(
    */
   auto silicon_Seeding = new PHActsSiliconSeeding;
   silicon_Seeding->Verbosity(0);
-  silicon_Seeding0->setStrobeRange(-5,5);
+  silicon_Seeding->setStrobeRange(-5,5);
   silicon_Seeding->seedAnalysis(false);
   silicon_Seeding->setinttRPhiSearchWindow(0.4);
   silicon_Seeding->setinttZSearchWindow(2.0);
@@ -147,6 +145,7 @@ void Fun4All_JobA(
     seeder->magFieldFile(G4MAGNET::magfield_tracking);  // to get charge sign right
   }
   seeder->Verbosity(0);
+  seeder->reject_zsize1_clusters(true);
   seeder->SetLayerRange(7, 55);
   seeder->SetSearchWindow(2.0, 0.05);  // (z width, phi width)
   seeder->SetMinHitsPerCluster(0);
@@ -171,6 +170,7 @@ void Fun4All_JobA(
   }
   cprop->useFixedClusterError(true);
   cprop->set_max_window(5.);
+  cprop->set_max_seeds(5000);
   cprop->Verbosity(0);
   cprop->set_pp_mode(true);
   se->registerSubsystem(cprop);
@@ -183,36 +183,11 @@ void Fun4All_JobA(
   prelim_distcorr->Verbosity(0);
   se->registerSubsystem(prelim_distcorr);
   
-
-  /*
-   * Track Matching between silicon and TPC
-   */
-  // The normal silicon association methods
-  // Match the TPC track stubs from the CA seeder to silicon track stubs from PHSiliconTruthTrackSeeding
-  auto silicon_match = new PHSiliconTpcTrackMatching;
-  silicon_match->Verbosity(0);
-  silicon_match->set_use_legacy_windowing(false);
-  silicon_match->set_pp_mode(TRACKING::pp_mode);
-  se->registerSubsystem(silicon_match);
-
-  // Match TPC track stubs from CA seeder to clusters in the micromegas layers
-  auto mm_match = new PHMicromegasTpcTrackMatching;
-  mm_match->Verbosity(0);
-  mm_match->set_rphi_search_window_lyr1(3.);
-  mm_match->set_rphi_search_window_lyr2(15.0);
-  mm_match->set_z_search_window_lyr1(30.0);
-  mm_match->set_z_search_window_lyr2(3.);
-
-  mm_match->set_min_tpc_layer(38);             // layer in TPC to start projection fit
-  mm_match->set_test_windows_printout(false);  // used for tuning search windows only
-  se->registerSubsystem(mm_match);
-
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfilename);
   out->AddNode("Sync");
   out->AddNode("EventHeader");
   out->AddNode("SiliconTrackSeedContainer");
   out->AddNode("TpcTrackSeedContainer");
-  out->AddNode("SvtxTrackSeedContainer");
 
   se->registerOutputManager(out);
 
@@ -270,8 +245,6 @@ void Fun4All_JobA(
   tpcqa->setSegment(rc->get_IntFlag("RUNSEGMENT"));
   se->registerSubsystem(tpcqa);
 
-  auto tpcsiliconqa = new TpcSiliconQA;
-  se->registerSubsystem(tpcsiliconqa);
 
   se->run(nEvents);
   se->End();
