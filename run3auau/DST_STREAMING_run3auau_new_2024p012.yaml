@@ -97,7 +97,7 @@ DST_STREAMING_EVENT_run3auau_streams:
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
      accounting_group_user : "sphnxpro"
-     priority : '4000'
+     priority : '40000000'
      request_xferslots: '0'
 
 
@@ -161,7 +161,7 @@ DST_TRKR_CLUSTER_run3auau_streams:
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
      accounting_group_user : "sphnxpro"
-     priority : '4000'
+     priority : '40000000'
      request_xferslots: '0'
 
      
