@@ -245,22 +245,22 @@ echo $outbase
 echo $logbase
 
 # Any leftover DSTs and histograms are staged out at the end of the job.  We
-status_stageout=0
-for r in $( ls DST*.root ); do
-    echo "${r} was not successfully staged out, trying again."
-    stageout.sh ${r} ${outdir}
-    if [[ $?>0 ]]; then status_stageout=$? ; fi
-done
-for r in $( ls HIST*.root ); do
-    echo "${r} was not successfully staged out, trying again."
-    stageout.sh ${r} ${histdir}
-    #if [[ $?>0 ]]; then status_stageout=$? ; fi    
-done
-
-# If any stageout failed, the job will fail and go on hold.
-if [[ $status_stageout>0 ]]; then
-    status_f4a=${status_stageout}
-fi
+#status_stageout=0
+#for r in $( ls DST*.root ); do
+#    echo "${r} was not successfully staged out, trying again."
+#    stageout.sh ${r} ${outdir}
+#    if [[ $?>0 ]]; then status_stageout=$? ; fi
+#done
+#for r in $( ls HIST*.root ); do
+#    echo "${r} was not successfully staged out, trying again."
+#    stageout.sh ${r} ${histdir}
+#    #if [[ $?>0 ]]; then status_stageout=$? ; fi    
+#done
+#
+## If any stageout failed, the job will fail and go on hold.
+#if [[ $status_stageout>0 ]]; then
+#    status_f4a=${status_stageout}
+#fi
 
 
 
