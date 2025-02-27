@@ -4,8 +4,9 @@ filename=`basename ${1}`   # must be a local file
 destination=${2}
 
 echo stageout ${filename} ${destination} start `date`
-echo ls -lah ${filename}
-     ls -lah ${filename}
+echo ls -lah 
+ls -lah 
+
 
 # An option version number is optionally added to the filenaming convention.  It is made part of the dataset name.
 # We add the optional _vxxx tag to the dbtag portion of this regex... so note well that 'dbtag' is overloaded in
