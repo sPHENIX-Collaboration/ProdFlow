@@ -60,7 +60,7 @@ DST_STREAMING_EVENT_run3auau_streams:
            runnumber>=run2pp.firstrun and runnumber<=run2pp.lastrun and
            (
                (filename  like '/bbox%/GL1_cosmics%.evt'   and lastevent>2 ) or
-               (filename  like '%'||all_streams.streamfile||'%' )           
+               (filename  like '%'||all_streams.streamfile||'%' and filename like '%cosmics%' )           
            )
 
            {run_condition}
@@ -69,7 +69,7 @@ DST_STREAMING_EVENT_run3auau_streams:
 
            having
                 max(lastevent)>1000          and
-                sum( case when filename like '/bbox%/GL1%' then 1 else 0 end )>0 and
+                sum( case when filename like '/bbox%/GL1_cosmics%.evt' then 1 else 0 end )>0 and
                 (
                    sum( case when filename like '/bbox%/TPC%'   then 1 else 0 end )>0 or
                    sum( case when filename like '/bbox%/%intt%' then 1 else 0 end )>0 or
