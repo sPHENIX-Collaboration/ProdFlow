@@ -212,9 +212,9 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("out",outfile);
   out->UseFileRule();
-  out->SetNEvents(neventsper);                       // number of events per output file
-  out->SetClosingScript("stageout.sh");      // script to call on file close (not quite working yet...)
-  out->SetClosingScriptArgs(outdir);  // additional beyond the name of the file
+  out->SetNEvents(neventsper);                        // number of events per output file
+  out->SetClosingScript("stageout.sh");               // script to call on file close (not quite working yet...)
+  out->SetClosingScriptArgs(outdir + " " + histdir);  // stageout to outdir first, then histdir if failed
   se->registerOutputManager(out);
 
   se->registerOutputManager(out);
