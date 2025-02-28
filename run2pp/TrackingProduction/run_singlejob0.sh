@@ -37,6 +37,7 @@ echo ...........................................................................
 echo $@
 echo .............................................................................................. 
 echo nevents: $nevents
+echo neventsper: $neventsper
 echo outbase: $outbase
 echo logbase: $logbase
 echo runnumb: $runnumber
@@ -83,8 +84,8 @@ cat inlist
 dstname=${logbase%%-*}
 echo "in dir"
 pwd
-echo root.exe -q -b Fun4All_SingleJob0.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"inlist\"\)
-     root.exe -q -b Fun4All_SingleJob0.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"inlist\"\);  status_f4a=$?
+echo root.exe -q -b Fun4All_SingleJob0.C\(${neventsper},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"inlist\"\)
+     root.exe -q -b Fun4All_SingleJob0.C\(${neventsper},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"inlist\"\);  status_f4a=$?
 
 ls -la
 
@@ -99,8 +100,8 @@ done
 ls -la
 
 # Flag run as finished. 
-echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${nevents}  
-     ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${nevents}
+echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${neventsper}  
+     ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${neventsper}
 
 echo "bdee bdee bdee, That's All Folks!"
 
