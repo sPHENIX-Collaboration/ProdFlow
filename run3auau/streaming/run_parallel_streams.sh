@@ -22,15 +22,17 @@ payload=(`echo ${16} | tr ","  " "`) # array of files to be rsynced
 export cupsid=${@: -1}
 echo cupsid = $cupsid
 
-sighandler()
-{
-mv ${logbase}.out ${logdir#file:/}
-mv ${logbase}.err ${logdir#file:/}
-}
-trap sighandler SIGTERM 
-trap sighandler SIGSTOP 
-trap sighandler SIGINT 
-trap sighandler SIGKILL
+#sighandler()
+#{
+#mv ${logbase}.out ${logdir#file:/}
+#mv ${logbase}.err ${logdir#file:/}
+#}
+#trap onsighup SIGHUP
+#trap onsigint SIGINT
+#trap onsigkill SIGKILL
+#trap onsigpipe SIGPIPE
+#trap onsigusr1 SIGUSR1
+#trap onsigusr2 SIGUSR2
 
 
 {
