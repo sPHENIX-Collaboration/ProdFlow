@@ -2,6 +2,7 @@
 
 filename=`basename ${1}`   # must be a local file
 destination=${2}
+alternate=${3}
 
 echo stageout ${filename} ${destination} start `date`
 echo ls -lah 
@@ -54,6 +55,11 @@ nevents=${nevents_:--1}
 # prodtype is required... specifies whether the production status entry manages a single output file (only) or many output files (many).
 echo ./cups.py -r ${runnumber} -s ${segment} -d ${dstname}  stageout ${filename} ${destination} --dsttype ${dsttype} --dataset ${build}_${dbtag} --nevents ${nevents} --inc --prodtype many
      ./cups.py -r ${runnumber} -s ${segment} -d ${dstname}  stageout ${filename} ${destination} --dsttype ${dsttype} --dataset ${build}_${dbtag} --nevents ${nevents} --inc --prodtype many
+
+# if the file remains on disk this indicates a failure to stageout.  if provided we will try to stageout to the alternate location
+if [ -e ${filename} && -n "${alternate}" ]; then
+   ./stageout.sh ${filename} ${alternate}	 
+fi
 
 echo stageout ${filename} ${destination} finish `date`
 
