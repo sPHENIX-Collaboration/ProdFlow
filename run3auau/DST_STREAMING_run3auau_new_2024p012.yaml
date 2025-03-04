@@ -148,7 +148,7 @@ DST_TRKR_CLUSTER_run3auau_streams:
          order by runnumber {limit_condition}
          )
 
-         select * from allruns where allruns.ninputs=39 order by runnumber, segment
+         select * from allruns where allruns.ninputs>0 order by runnumber, segment
 
 
    #
