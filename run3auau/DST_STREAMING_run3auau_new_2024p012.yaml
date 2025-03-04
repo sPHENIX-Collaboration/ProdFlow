@@ -110,7 +110,7 @@ DST_TRKR_CLUSTER_run3auau_streams:
      build:      new
      build_name: new
      dbtag:      2024p012
-     version:    1
+     version:    0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run_singlejob0.sh
@@ -122,7 +122,7 @@ DST_TRKR_CLUSTER_run3auau_streams:
      mnrun   : 56900
      mxrun   : 99999
      dstin   : 'DST_STREAMING_EVENT_%_run3auau'
-     dataset : 'new_nocdbtag_v001'
+     dataset : 'new_nocdbtag_v000'
 
    input:
       db: fc
