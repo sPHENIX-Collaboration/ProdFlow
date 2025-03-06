@@ -17,11 +17,23 @@ comment=${13}
 histdir=${14:-.}
 subdir=${15}
 payload=(`echo ${16} | tr ","  " "`) # array of files to be rsynced
+
+export cupsid=${@: -1}
+echo CUPSID=${cupsid}
+
+# Verify that we can write to the log file.  If not, early exit and flag the error.  Otherwise, message that we were able to succeed.
+echo ${0} started `date`> ${logdir#file:/}/${logbase}.out
+if [ $? -ne 0 ]; then
+    ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} message "Unable to write test file to gpfs." --error 'gpfs-failure'
+    exit 10
+else
+    ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} message f"Initialized logfile {logdir}/{logbase}.out"    
+fi
+
+
 # ---
 {
     
-export cupsid=${@: -1}
-echo CUPSID=${cupsid}
 
 export USER="$(id -u -n)"
 export LOGNAME=${USER}
@@ -111,7 +123,7 @@ echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${stat
 
 echo "bdee bdee bdee, That's All Folks!"
 
-} >${logdir#file:/}/${logbase}.out  2>${logdir#file:/}/${logbase}.err
+} >> ${logdir#file:/}/${logbase}.out  2>${logdir#file:/}/${logbase}.err
 
 
-exit $status_f4a
+exit ${status_f4a:-1}
