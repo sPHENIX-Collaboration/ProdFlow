@@ -113,4 +113,4 @@ if [ -e cups.stat ]; then
     cp cups.stat ${logdir#file:/}/${logbase}.dbstat
 fi
 
-exit $status_f4a
+exit ${status_f4a:-1}
