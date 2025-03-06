@@ -89,6 +89,7 @@ void Fun4All_JobC(
   //note: these are designed to be used only if static corrections are also applied
   G4TPC::ENABLE_AVERAGE_CORRECTIONS = true;
   G4TPC::USE_PHI_AS_RAD_AVERAGE_CORRECTIONS = false;
+  G4TPC::average_correction_filename = CDBInterface::instance()->getUrl("TPC_LAMINATION_FIT_CORRECTION");
   
   std::string geofile = CDBInterface::instance()->getUrl("Tracking_Geometry");
   Fun4AllRunNodeInputManager *ingeo = new Fun4AllRunNodeInputManager("GeoIn");
@@ -98,7 +99,7 @@ void Fun4All_JobC(
   /*
    * flags for tracking
    */
-
+  G4TPC::REJECT_LASER_EVENTS=true;
   TRACKING::pp_mode = true;
   TrackingInit();
 
