@@ -103,8 +103,9 @@ void Fun4All_JobA(
 
   //to turn on the average corrections derived from simulation, enable the three lines below
   //note: these are designed to be used only if static corrections are also applied
-  //G4TPC::ENABLE_AVERAGE_CORRECTIONS = true;
-  //G4TPC::USE_PHI_AS_RAD_AVERAGE_CORRECTIONS = false;
+  G4TPC::ENABLE_AVERAGE_CORRECTIONS = true;
+  G4TPC::USE_PHI_AS_RAD_AVERAGE_CORRECTIONS = false;
+  G4TPC::average_correction_filename = CDBInterface::instance()->getUrl("TPC_LAMINATION_FIT_CORRECTION");
   //G4TPC:average_correction_filename = std::string(getenv("CALIBRATIONROOT")) + "/distortion_maps/average_minus_static_distortion_inverted_10-new.root";
 
   TrackingInit();
@@ -119,8 +120,8 @@ void Fun4All_JobA(
   silicon_Seeding->Verbosity(0);
   silicon_Seeding->setStrobeRange(-5,5);
   silicon_Seeding->seedAnalysis(false);
-  silicon_Seeding->setinttRPhiSearchWindow(0.4);
-  silicon_Seeding->setinttZSearchWindow(2.0);
+  silicon_Seeding->setinttRPhiSearchWindow(0.2);
+  silicon_Seeding->setinttZSearchWindow(1.0);
   se->registerSubsystem(silicon_Seeding);
 
   auto merger = new PHSiliconSeedMerger;

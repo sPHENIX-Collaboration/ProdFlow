@@ -79,7 +79,18 @@ void Fun4All_JobC(
 	   << " vdrift: " << G4TPC::tpc_drift_velocity_reco
 	   << std::endl;
   
+  G4TPC::ENABLE_MODULE_EDGE_CORRECTIONS = true;
 
+  // to turn on the default static corrections, enable the two lines below
+  G4TPC::ENABLE_STATIC_CORRECTIONS = true;
+  G4TPC::USE_PHI_AS_RAD_STATIC_CORRECTIONS = false;
+
+  //to turn on the average corrections, enable the three lines below
+  //note: these are designed to be used only if static corrections are also applied
+  G4TPC::ENABLE_AVERAGE_CORRECTIONS = true;
+  G4TPC::USE_PHI_AS_RAD_AVERAGE_CORRECTIONS = false;
+  G4TPC::average_correction_filename = CDBInterface::instance()->getUrl("TPC_LAMINATION_FIT_CORRECTION");
+  
   std::string geofile = CDBInterface::instance()->getUrl("Tracking_Geometry");
   Fun4AllRunNodeInputManager *ingeo = new Fun4AllRunNodeInputManager("GeoIn");
   ingeo->AddFile(geofile);
@@ -88,8 +99,11 @@ void Fun4All_JobC(
   /*
    * flags for tracking
    */
-
+  G4TPC::REJECT_LASER_EVENTS=true;
   TRACKING::pp_mode = true;
+  ACTSGEOM::mvtxMisalignment = 100;
+  ACTSGEOM::inttMisalignment = 100.;
+  ACTSGEOM::tpotMisalignment = 100.;
   TrackingInit();
 
   // reject laser events if G4TPC::REJECT_LASER_EVENTS is true 
@@ -106,6 +120,14 @@ void Fun4All_JobC(
   silicon_match->Verbosity(0);
   silicon_match->set_use_legacy_windowing(false);
   silicon_match->set_pp_mode(TRACKING::pp_mode);
+  if(G4TPC::ENABLE_AVERAGE_CORRECTIONS)
+    {
+      // reset phi matching window to be centered on zero
+      // it defaults to being centered on -0.1 radians for the case of static corrections only
+      std::array<double,3> arrlo = {-0.15,0,0};
+      std::array<double,3> arrhi = {0.15,0,0};
+      silicon_match->window_dphi.set_QoverpT_range(arrlo, arrhi);
+    }
   se->registerSubsystem(silicon_match);
 
   // Match TPC track stubs from CA seeder to clusters in the micromegas layers
