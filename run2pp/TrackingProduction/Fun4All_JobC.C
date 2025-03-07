@@ -101,9 +101,6 @@ void Fun4All_JobC(
    */
   G4TPC::REJECT_LASER_EVENTS=true;
   TRACKING::pp_mode = true;
-  ACTSGEOM::mvtxMisalignment = 100;
-  ACTSGEOM::inttMisalignment = 100.;
-  ACTSGEOM::tpotMisalignment = 100.;
   TrackingInit();
 
   // reject laser events if G4TPC::REJECT_LASER_EVENTS is true 
