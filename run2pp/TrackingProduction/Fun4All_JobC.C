@@ -166,15 +166,21 @@ void Fun4All_JobC(
 
   PHSimpleVertexFinder *finder = new PHSimpleVertexFinder;
   finder->Verbosity(0);
-  finder->setDcaCut(0.5);
-  finder->setTrackPtCut(-99999.);
+  finder->setDcaCut(0.02);
+  finder->setTrackPtCut(0.1);
   finder->setBeamLineCut(1);
-  finder->setTrackQualityCut(1000000000);
+  finder->setTrackQualityCut(100);
   finder->setNmvtxRequired(3);
-  finder->setOutlierPairCut(0.1);
+  finder->setOutlierPairCut(0.05);
   se->registerSubsystem(finder);
 
-    auto tpcsiliconqa = new TpcSiliconQA;
+  auto vtxProp = new PHActsVertexPropagator;
+  vtxProp->Verbosity(0);
+  vtxProp->fieldMap(G4MAGNET::magfield_tracking);
+  se->registerSubsystem(vtxProp);
+  
+  
+  auto tpcsiliconqa = new TpcSiliconQA;
   se->registerSubsystem(tpcsiliconqa);
 
   
