@@ -166,6 +166,7 @@ void Fun4All_SingleJob0(
   out->AddNode("TRKR_CLUSTER");
   out->AddNode("TRKR_CLUSTERCROSSINGASSOC");
   out->AddNode("LaserEventInfo");
+  out->AddNode("GL1RAWHIT");
   if(G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING)
   {
     out->AddNode("LAMINATION_CLUSTER");
