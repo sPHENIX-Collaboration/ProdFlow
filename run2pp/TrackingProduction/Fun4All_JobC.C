@@ -166,12 +166,12 @@ void Fun4All_JobC(
 
   PHSimpleVertexFinder *finder = new PHSimpleVertexFinder;
   finder->Verbosity(0);
-  finder->setDcaCut(0.02);
+  finder->setDcaCut(0.05);
   finder->setTrackPtCut(0.1);
   finder->setBeamLineCut(1);
-  finder->setTrackQualityCut(100);
+  finder->setTrackQualityCut(300);
   finder->setNmvtxRequired(3);
-  finder->setOutlierPairCut(0.05);
+  finder->setOutlierPairCut(0.1);
   se->registerSubsystem(finder);
 
   auto vtxProp = new PHActsVertexPropagator;
