@@ -41,6 +41,14 @@ export HOME=/sphenix/u/${USER}
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
 
+OS=$( hostnamectl | awk '/Operating System/{ print $3" "$4 }' )
+#if [[ $OS =~ "Alma" ]]; then
+#    echo "Can live with stock pyton on alma9"
+#else
+#    echo "Need older python on SL7"
+#   source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/stow/opt_sphenix_scripts/bin/setup_python-3.6.sh
+#fi
+
 echo "Offline main "${OFFLINE_MAIN}
 
 
@@ -109,7 +117,7 @@ cat inputfiles.list | while read -r f; do
        echo ${f} >> ${l}.list
        echo Add ${f} to ${l}.list
        inputlist="${f} ${inputlist}"
-       neventsper=$(neventsperintt)
+       neventsper=${neventsperintt}
     fi
     if [[ $b =~ "cosmics_mvtx" ]]; then
        l=${b#*cosmics_}
@@ -130,7 +138,7 @@ cat inputfiles.list | while read -r f; do
        echo ${f} >> ${l}.list
        echo Add ${f} to ${l}.list
        inputlist="${f} ${inputlist}"
-       neventsper=$(neventsperintt)
+       neventsper=${neventsperintt}
     fi
     if [[ $b =~ "beam_mvtx" ]]; then
        l=${b#*beam_}
@@ -151,7 +159,7 @@ cat inputfiles.list | while read -r f; do
        echo ${f} >> ${l}.list
        echo Add ${f} to ${l}.list
        inputlist="${f} ${inputlist}"
-       neventsper=$(neventsperintt)
+       neventsper=${neventsperintt}
     fi
     if [[ $b =~ "calib_mvtx" ]]; then
        l=${b#*calib_}
@@ -172,7 +180,7 @@ cat inputfiles.list | while read -r f; do
        echo ${f} >> ${l}.list
        echo Add ${f} to ${l}.list
        inputlist="${f} ${inputlist}"
-       neventsper=$(neventsperintt)
+       neventsper=${neventsperintt}
     fi
     if [[ $b =~ "physics_mvtx" ]]; then
        l=${b#*physics_}

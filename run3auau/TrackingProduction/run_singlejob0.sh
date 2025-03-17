@@ -21,14 +21,14 @@ payload=(`echo ${16} | tr ","  " "`) # array of files to be rsynced
 export cupsid=${@: -1}
 echo CUPSID=${cupsid}
 
-# Verify that we can write to the log file.  If not, early exit and flag the error.  Otherwise, message that we were able to succeed.
-echo ${0} started `date`> ${logdir#file:/}/${logbase}.out
-if [ $? -ne 0 ]; then
-    ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} message "Unable to write test file to gpfs." --error 'gpfs-failure'
-    exit 10
-else
-    ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} message f"Initialized logfile {logdir}/{logbase}.out"    
-fi
+## Verify that we can write to the log file.  If not, early exit and flag the error.  Otherwise, message that we were able to succeed.
+#echo ${0} started `date`> ${logdir#file:/}/${logbase}.out
+#if [ $? -ne 0 ]; then
+#    ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} message "Unable to write test file to gpfs." --error 'gpfs-failure'
+#    exit 10
+#else
+#    ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} message f"Initialized logfile {logdir}/{logbase}.out"    
+#fi
 
 
 # ---
@@ -41,6 +41,14 @@ export HOME=/sphenix/u/${USER}
 hostname
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
+OS=$( hostnamectl | awk '/Operating System/{ print $3" "$4 }' )
+if [[ $OS =~ "Alma" ]]; then
+    echo "Can live with stock pyton on alma9"
+else
+    echo "Need older python on SL7"
+   source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/stow/opt_sphenix_scripts/bin/setup_python-3.6.sh
+fi
+
 
 echo OFFLINE_MAIN: $OFFLINE_MAIN
 
