@@ -1,3 +1,4 @@
+#__________________________________________________________________________________________________________________________________________
 DST_STREAMING_EVENT_run3auau_streams:
 
    params:
@@ -102,7 +103,7 @@ DST_STREAMING_EVENT_run3auau_streams:
 
 
 
-
+#__________________________________________________________________________________________________________________________________________
 DST_TRKR_CLUSTER_run3auau_streams:
 
    params:
@@ -164,4 +165,146 @@ DST_TRKR_CLUSTER_run3auau_streams:
      priority : '100000'
      request_xferslots: '0'
 
+     
+
+#__________________________________________________________________________________________________________________________________________
+DST_TRKR_SEED_run3auau_streams:
+
+   params:
+     name:       DST_TRKR_SEED_run3auau
+     build:      new
+     build_name: new
+     dbtag:      2024p012
+     version:    0
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
+     script  :   run_jobA.sh
+     payload :   ./ProdFlow/run3auau/TrackingProduction/
+     neventsper:      10000
+     comment :    "---"
+     rsync   : "./ProdFlow/run3auau/TrackingProduction/*"
+     mem     :   4000MB
+     mnrun   : 56900
+     mxrun   : 99999
+     dstin   : 'DST_TRKR_CLUSTER_run3auau'
+     dataset : 'new_2024p012_v000'     
+
+   input:
+      db: fc
+      query: |-
+         with allruns as (
+         select
+                'filecatalog/datasets'         as source        ,
+                runnumber                                       ,
+                segment                                         ,
+                string_agg( distinct filename, ' ' ) as files   ,
+                'NA'  as fileranges,
+                count(distinct filename) as ninputs
+         from
+                datasets
+         where
+                dsttype like '{dstin}' and dataset='{dataset}'
+                {run_condition}
+                and runnumber>={mnrun}
+                and runnumber<={mxrun}
+
+         group by runnumber, segment
+
+         order by runnumber {limit_condition}
+         )
+
+         select * from allruns where allruns.ninputs>0 order by runnumber, segment
+
+
+   #
+   # Again I note the need to ensure that the arguments are properly specified given the
+   # definition of the payload script.
+   #
+   job:
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '100000'
+     request_xferslots: '0'
+
+     
+
+
+#__________________________________________________________________________________________________________________________________________
+DST_TRKR_TRACKS_run3auau_streams:
+
+   params:
+     name:       DST_TRKR_TRACKS_run3auau
+     build:      new
+     build_name: new
+     dbtag:      2024p012
+     version:    0
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
+     script  :   run_jobC.sh
+     payload :   ./ProdFlow/run3auau/TrackingProduction/
+     neventsper:      10000
+     comment :    "---"
+     rsync   : "./ProdFlow/run3auau/TrackingProduction/*"
+     mem     :   4000MB
+     mnrun   : 56900
+     mxrun   : 99999
+     dstin1   : 'DST_TRKR_CLUSTER_run3auau'
+     dataset1 : 'new_2024p012_v000'
+     dstin2   : 'DST_TRKR_SEED_run3auau'
+     dataset2 : 'new_2024p012_v000'          
+
+   input:
+      db: fc
+      query: |-
+         with allruns as (
+         select
+                'filecatalog/datasets'         as source        ,
+                runnumber                                       ,
+                segment                                         ,
+                string_agg( distinct filename, ' ' ) as files   ,
+                'NA'  as fileranges,
+                count(distinct filename) as ninputs
+         from
+                datasets
+         where
+                (
+                   (dsttype like '{dstin1}' and dataset='{dataset1}') or
+                   (dsttype like '{dstin2}' and dataset='{dataset2}')
+                )
+                {run_condition}
+                and runnumber>={mnrun}
+                and runnumber<={mxrun}
+
+         group by runnumber, segment
+
+         having (
+
+            sum( case when (dsttype like '{dstin1}' and dataset='{dataset1}')     then 1 else 0 end )>0    and
+            sum( case when (dsttype like '{dstin2}' and dataset='{dataset2}')     then 1 else 0 end )>0 
+
+         )         
+
+         order by runnumber {limit_condition}
+         )
+
+         select * from allruns where allruns.ninputs>0 order by runnumber, segment
+
+
+   #
+   # Again I note the need to ensure that the arguments are properly specified given the
+   # definition of the payload script.
+   #
+   job:
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '100000'
+     request_xferslots: '0'
+
+     
      
