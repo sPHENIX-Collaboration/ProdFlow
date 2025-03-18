@@ -199,8 +199,10 @@ done
 echo "ls -l *.list"
 ls -l *.list
 
+ncosmics=$( grep cosmic *.list | wc -l )
 nlist=$( ls *.list | wc -l )
-if [[ $nlist -lt 21 ]]; then
+
+if [[ $nlist -lt 21 && $ncosmics -eq 0 ]]; then
    echo "Input file lists were not properly filled.  Aborting the job"
    ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e 2 --nevents 0 --inc 
     exit 2
