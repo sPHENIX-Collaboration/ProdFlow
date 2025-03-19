@@ -260,3 +260,132 @@ DST_CALOFITTING_run3auau:
 
 
 
+#_____________________________________________________________________________________________
+DST_CALO_run3auau:
+   params:
+     name:       DST_CALO_run3auau
+     build:      new
+     build_name: new
+     dbtag:      2024p012
+     version :   0
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
+     script  :   runy2calib.sh
+     payload :   ./ProdFlow/run3auau/CaloProduction/
+     mem     :   4096MB
+     neventsper: 50000
+     rsync  : "./ProdFlow/run3auau/CaloProduction/*"
+
+   input:
+     db: filecatalog
+     query: |-
+         select 
+                'filecatalog/datasets'                                  as source      , 
+                runnumber                                                              , 
+                segment                                                                ,
+                filename                                                as files       ,
+                filename || ':' || 0 || ':' || events                   as fileranges 
+         from  
+                datasets
+         where 
+                dataset='new_2024p012_v000' and dsttype='DST_CALOFITTING_run3auau'
+                {run_condition}
+
+         {limit_condition}
+
+         ;
+   job:
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '3900'
+
+
+# Downstream products
+DST_JETS_run3auau:
+   params:
+     name:       DST_JETS_run3auau
+     build:      new
+     build_name: new
+     dbtag:      2024p012
+     version : 0
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
+     script  :   runjets.sh
+     payload :   ./ProdFlow/run3auau/JetProduction/
+     mem     :   2096MB
+     neventsper: 50000
+     rsync  : "./ProdFlow/run3auau/JetProduction/*"
+
+   input:
+     db: filecatalog
+     query: |-
+         select 
+                'filecatalog/datasets'                                  as source      , 
+                runnumber                                                              , 
+                segment                                                                ,
+                filename                                                as files       ,
+                'NA'                   as fileranges 
+         from  
+                datasets
+         where 
+                dsttype='DST_CALO_run3auau' and dataset='new_2024p012_v000'
+                {run_condition}
+           
+         {limit_condition}
+
+         ;
+   job:
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '3900'
+
+
+
+
+# Downstream products
+DST_JETCALO_run3auau:
+   params:
+     name:       DST_JETCALO_run3auau
+     build:      new
+     build_name: new
+     dbtag:      2024p012
+     version:    0
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
+     script  :   runy2jetskim.sh
+     payload :   ./ProdFlow/run3auau/JetProduction/
+     mem     :   4096MB
+     neventsper: 50000
+     rsync  : "./ProdFlow/run3auau/JetProduction/*"
+
+   input:
+     db: filecatalog
+     query: |-
+         select
+                'filecatalog/datasets'                                  as source      ,
+                runnumber                                                              ,
+                segment                                                                ,
+                filename                                                as files       ,
+                filename || ':' || 0 || ':' || events                   as fileranges
+         from
+                datasets
+         where
+                dataset='new_2024p012_v000' and dsttype='DST_CALOFITTING_run3auau'
+                {run_condition}
+
+         {limit_condition}
+
+         ;
+   job:
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '3900'
