@@ -95,8 +95,10 @@ status_f4a=0
 
 for infile_ in ${inputs[@]}; do
 
-    infile=$( basename ${infile_} )
-    cp -v ${infile_} .
+#   infile=$( basename ${infile_} )
+#   cp -v ${infile_} .
+    infile=$infile_
+    
     outfile=${logbase}.root
     outhist=${outfile/DST_CALOFITTING/HIST_CALOFITTINGQA}
     root.exe -q -b Fun4All_Year2_Fitting.C\(${nevents},\"${infile}\",\"${outfile}\",\"${outhist}\",\"${dbtag}\"\);  status_f4a=$?
