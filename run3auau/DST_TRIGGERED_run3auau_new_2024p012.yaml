@@ -399,8 +399,7 @@ DST_TRIGGERED_EVENT_run3cosmics:
           order by runnumber desc, segment;
 
    job:
-     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync} $(firstevent) $(la
-stevent) $(runs_last_event) {PWD} {rsync}"
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync} $(firstevent) $(lastevent) $(runs_last_event) {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
      accounting_group      : "group_sphenix.mdc2"
