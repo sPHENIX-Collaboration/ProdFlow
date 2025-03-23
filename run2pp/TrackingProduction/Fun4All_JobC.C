@@ -42,6 +42,9 @@ void Fun4All_JobC(
 {
   gSystem->Load("libg4dst.so");
 
+  ACTSGEOM::mvtx_applymisalignment = true;
+  Enable::MVTX_APPLYMISALIGNMENT = true;
+  
   auto se = Fun4AllServer::instance();
   se->Verbosity(1);
   auto rc = recoConsts::instance();
@@ -182,7 +185,6 @@ void Fun4All_JobC(
   
   auto tpcsiliconqa = new TpcSiliconQA;
   se->registerSubsystem(tpcsiliconqa);
-
   
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfilename);
   out->AddNode("Sync");
