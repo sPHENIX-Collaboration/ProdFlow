@@ -53,12 +53,6 @@ OS=$( hostnamectl | awk '/Operating System/{ print $3" "$4 }' )
 
 echo OFFLINE_MAIN: $OFFLINE_MAIN
 
-# user has supplied an odbc.ini file.  use it.
-if [ -e odbc.ini ]; then
-echo "Setting user provided odbc.ini file"
-export ODBCINI=./odbc.ini
-fi
-
 echo ..............................................................................................
 echo $@
 echo .............................................................................................. 
@@ -77,8 +71,24 @@ echo payload: ${payload[@]}
 echo .............................................................................................. 
 
 for i in ${payload[@]}; do
+    echo "Stage in $i:"
     cp --verbose ${subdir}/${i} .
 done
+
+# user has supplied an odbc.ini file.  use it.
+if [ -e odbc.ini ]; then
+echo "Setting user provided odbc.ini file"
+export ODBCINI=./odbc.ini
+fi
+
+
+ls *.json
+if [ -e sPHENIX_newcdb_test.json ]; then
+    echo "... setting user provided conditions database config"
+    export NOPAYLOADCLIENT_CONF=./sPHENIX_newcdb_test.json
+fi
+
+echo NOPAYLOADCLIENT_CONF=${NOPAYLOADCLIENT_CONF}
 
 #______________________________________________________________________________________ started __
 #
