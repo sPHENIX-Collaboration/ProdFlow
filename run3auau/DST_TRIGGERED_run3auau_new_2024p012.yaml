@@ -460,10 +460,10 @@ DST_CALOFITTING_run3auau:
 
 
      
- # Downstream products for cosmics
+ # Downstream products for cosmics... we will output into the run3auau namespace so that downstream jobs remain common.
 DST_CALOFITTING_run3cosmics:
    params:
-     name:       DST_CALOFITTING_run3cosmics
+     name:       DST_CALOFITTING_run3auau
      nevents:    0
      build:      new
      build_name: new
