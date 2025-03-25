@@ -18,7 +18,7 @@ DST_STREAMING_EVENT_run3auau_streams:
 
    input:
       db: daqdb
-      direct_path: /sphenix/lustre01/sphnxpro/{mode}/*/cosmics/
+      direct_path: /sphenix/lustre01/sphnxpro/{mode}/*/*/
       query: |-
          with run2pp as (
               select 56900 as firstrun,
@@ -60,8 +60,8 @@ DST_STREAMING_EVENT_run3auau_streams:
            transferred_to_sdcc='true' and
            runnumber>=run2pp.firstrun and runnumber<=run2pp.lastrun and
            (
-               (filename  like '/bbox%/GL1_cosmics%.evt'   and lastevent>2 ) or
-               (filename  like '%'||all_streams.streamfile||'%' and filename like '%cosmics%' )           
+               (filename  similar to '/bbox%/GL1_(physics|beam|cosmics)%.evt'   and lastevent>2 ) or
+               (filename  similar to '%'||all_streams.streamfile||'%' and filename similar to '%(physics|beam|cosmics)%' )           
            )
 
            {run_condition}
@@ -70,7 +70,7 @@ DST_STREAMING_EVENT_run3auau_streams:
 
            having
                 max(lastevent)>1000          and
-                sum( case when filename like '/bbox%/GL1_cosmics%.evt' then 1 else 0 end )>0 and
+                sum( case when filename similar to '/bbox%/GL1_(physics|beam|cosmics)%.evt' then 1 else 0 end )>0 and
                 (
                    sum( case when filename like '/bbox%/TPC%'   then 1 else 0 end )>0 or
                    sum( case when filename like '/bbox%/%intt%' then 1 else 0 end )>0 or
