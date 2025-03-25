@@ -60,8 +60,8 @@ out1=HIST_HCALOUT_${logbase#DST_}.root
 out2=HIST_HCALIN_${logbase#DST_}.root
 
 
-echo root.exe -q -b Fun4All_HCalCosmics.C\(${nevents},\"input.list\",\"${outdir}\",\"${out0}\",\"${out1}\",\"${out2}\"\);
-     root.exe -q -b Fun4All_HCalCosmics.C\(${nevents},\"input.list\",\"${outdir}\",\"${out0}\",\"${out1}\",\"${out2}\"\);
+echo root.exe -q -b Fun4All_HCalCosmics.C\(${nevents},\"input.list\",\"${outdir}\",\"${out0}\",\"${out1}\",\"${out2}\",\"${dbtag}\"\);
+     root.exe -q -b Fun4All_HCalCosmics.C\(${nevents},\"input.list\",\"${outdir}\",\"${out0}\",\"${out1}\",\"${out2}\",\"${dbtag}\"\);
 
 
 ls -lah
