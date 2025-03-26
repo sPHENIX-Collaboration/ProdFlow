@@ -52,6 +52,7 @@ void Fun4All_JobA(
   auto rc = recoConsts::instance();
   CDBInterface::instance()->Verbosity(1);
 
+  
   rc->set_StringFlag("CDB_GLOBALTAG", dbtag ); 
 
   FlagHandler *flag = new FlagHandler();
@@ -93,6 +94,10 @@ void Fun4All_JobA(
   /*
    * Flags for seeding macro
    */
+  
+  Enable::MVTX_APPLYMISALIGNMENT = true;
+  ACTSGEOM::mvtx_applymisalignment = Enable::MVTX_APPLYMISALIGNMENT;
+  
   G4TPC::ENABLE_MODULE_EDGE_CORRECTIONS = true;
   G4TRACKING::SC_CALIBMODE = false;
   G4TPC::REJECT_LASER_EVENTS = true;
@@ -204,8 +209,8 @@ void Fun4All_JobA(
 
   auto finder = new PHSimpleVertexFinder("SiliconVertexFinder");
   finder->Verbosity(0);
-  finder->setDcaCut(0.5);
-  finder->setTrackPtCut(-99999.);
+  finder->setDcaCut(0.1);
+  finder->setTrackPtCut(0.1);
   finder->setBeamLineCut(1);
   finder->setTrackQualityCut(1000000000);
   finder->setNmvtxRequired(3);
@@ -231,7 +236,7 @@ void Fun4All_JobA(
   auto findertpc = new PHSimpleVertexFinder("TpcSimpleVertexFinder");
   findertpc->Verbosity(0);
   findertpc->setDcaCut(0.5);
-  findertpc->setTrackPtCut(-99999.);
+  findertpc->setTrackPtCut(0.2);
   findertpc->setBeamLineCut(1);
   findertpc->setTrackQualityCut(1000000000);
   //findertpc->setNmvtxRequired(3);

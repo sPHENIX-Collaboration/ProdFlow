@@ -73,12 +73,58 @@ void Fun4All_JobC(
   Fun4AllRunNodeInputManager *ingeo = new Fun4AllRunNodeInputManager("GeoIn");
   ingeo->AddFile(geofile);
   se->registerInputManager(ingeo);
+    
+  G4TPC::ENABLE_MODULE_EDGE_CORRECTIONS = true;
 
+  // to turn on the default static corrections, enable the two lines below
+  G4TPC::ENABLE_STATIC_CORRECTIONS = true;
+  G4TPC::USE_PHI_AS_RAD_STATIC_CORRECTIONS = false;
+
+  //to turn on the average corrections, enable the three lines below
+  //note: these are designed to be used only if static corrections are also applied
+  G4TPC::ENABLE_AVERAGE_CORRECTIONS = false;
+  G4TPC::USE_PHI_AS_RAD_AVERAGE_CORRECTIONS = false;
+  G4TPC::average_correction_filename = CDBInterface::instance()->getUrl("TPC_LAMINATION_FIT_CORRECTION");
+  ACTSGEOM::mvtx_applymisalignment = true;
+  Enable::MVTX_APPLYMISALIGNMENT = true;
+  G4TPC::REJECT_LASER_EVENTS=true;
+  
   TrackingInit();
 
   // reject laser events if G4TPC::REJECT_LASER_EVENTS is true 
   Reject_Laser_Events();
 
+
+  
+  /*
+   * Track Matching between silicon and TPC
+   */
+  // The normal silicon association methods
+  // Match the TPC track stubs from the CA seeder to silicon track stubs from PHSiliconTruthTrackSeeding
+  auto silicon_match = new PHSiliconTpcTrackMatching;
+  silicon_match->Verbosity(0);
+  silicon_match->set_x_search_window(2.);
+  silicon_match->set_y_search_window(2.);
+  silicon_match->set_z_search_window(5.);
+  silicon_match->set_phi_search_window(0.2);
+  silicon_match->set_eta_search_window(0.1);
+  silicon_match->set_pp_mode(TRACKING::pp_mode);
+  silicon_match->set_test_windows_printout(false);  // used for tuning search windows
+  se->registerSubsystem(silicon_match);
+
+  // Match TPC track stubs from CA seeder to clusters in the micromegas layers
+  auto mm_match = new PHMicromegasTpcTrackMatching;
+  mm_match->Verbosity(0);
+  mm_match->set_rphi_search_window_lyr1(0.4);
+  mm_match->set_rphi_search_window_lyr2(13.0);
+  mm_match->set_z_search_window_lyr1(26.0);
+  mm_match->set_z_search_window_lyr2(0.4);
+
+  mm_match->set_min_tpc_layer(38);             // layer in TPC to start projection fit
+  mm_match->set_test_windows_printout(false);  // used for tuning search windows only
+  se->registerSubsystem(mm_match);
+
+  
   auto deltazcorr = new PHTpcDeltaZCorrection;
   deltazcorr->Verbosity(0);
   se->registerSubsystem(deltazcorr);
@@ -105,16 +151,25 @@ void Fun4All_JobC(
   PHSimpleVertexFinder *finder = new PHSimpleVertexFinder;
   finder->Verbosity(0);
   finder->setDcaCut(0.5);
-  finder->setTrackPtCut(-99999.);
+  finder->setTrackPtCut(0.1);
   finder->setBeamLineCut(1);
-  finder->setTrackQualityCut(1000000000);
+  finder->setTrackQualityCut(1000);
   finder->setNmvtxRequired(3);
   finder->setOutlierPairCut(0.1);
   se->registerSubsystem(finder);
 
+  
+  auto vtxProp = new PHActsVertexPropagator;
+  vtxProp->Verbosity(0);
+  vtxProp->fieldMap(G4MAGNET::magfield_tracking);
+  se->registerSubsystem(vtxProp);
+  
+  
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfilename);
   out->AddNode("Sync");
   out->AddNode("EventHeader");
+  out->AddNode("GL1RAWHIT");
+  out->AddNode("SvtxTrackSeedContainer");
   out->AddNode("SvtxTrackMap");
   out->AddNode("SvtxVertexMap");
   se->registerOutputManager(out);

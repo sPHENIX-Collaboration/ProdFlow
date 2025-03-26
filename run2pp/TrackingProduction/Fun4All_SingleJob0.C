@@ -64,7 +64,8 @@ void Fun4All_SingleJob0(
 
   TRACKING::tpc_zero_supp = true;
   G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING = true;
-  
+  Enable::MVTX_APPLYMISALIGNMENT = true;
+  ACTSGEOM::mvtx_applymisalignment = Enable::MVTX_APPLYMISALIGNMENT;
   int i = 0;
   
   while(std::getline(ifs,filepath))
