@@ -40,7 +40,7 @@ DST_TRIGGERED_EVENT_run3auau:
    # based on (optional) command line options.
    #
    # For now, require GL1 files...
-   #
+   # 
    input:
       db: daqdb
       direct_path: /sphenix/lustre01/sphnxpro/physics/*/*/
@@ -54,7 +54,7 @@ DST_TRIGGERED_EVENT_run3auau:
          fullevents as (
               select runnumber,max(lastevent)    as lastevent
               from filelist, config
-              where (filename similar to '/bbox%/GL1_(beam|physics%.evt'        and lastevent>2 )
+              where (filename similar to '/bbox%/GL1_(beam|physics)%.evt'        and lastevent>2 )
 
                  {run_condition} and runnumber>46000
 
@@ -95,10 +95,10 @@ DST_TRIGGERED_EVENT_run3auau:
          having
                 every(transferred_to_sdcc)   and
                 max(lastevent)>1000          and
-                sum( case when filename similar to '/bbox%/GL1_(beam|physics|cosmics)%' then 1 else 0 end )>0 and
+                sum( case when filename similar to '/bbox%/GL1_(beam|physics)%' then 1 else 0 end )>0 and
                 (
-                   sum( case when filename similar to '/bbox%/%emcal%(beam|physics|cosmics)%'  then 1 else 0 end )>0 or
-                   sum( case when filename similar to '/bbox%/%HCal%(beam|physics|cosmics)%'   then 1 else 0 end )>0 
+                   sum( case when filename similar to '/bbox%/%emcal%(beam|physics)%'  then 1 else 0 end )>0 or
+                   sum( case when filename similar to '/bbox%/%HCal%(beam|physics)%'   then 1 else 0 end )>0 
                 )
 
          order by runnumber
