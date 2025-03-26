@@ -252,6 +252,11 @@ dstname=${logbase%%-*} # dstname is needed for production status, but not relate
 echo $outbase
 echo $logbase
 
+for hfile in `ls HIST_*.root`; do
+    echo Stageout ${hfile} to ${histdir}
+    ./stageout.sh ${hfile} ${histdir}
+done
+
 # Any leftover DSTs and histograms are staged out at the end of the job.  We
 #status_stageout=0
 #for r in $( ls DST*.root ); do
@@ -270,6 +275,10 @@ echo $logbase
 #    status_f4a=${status_stageout}
 #fi
 
+
+
+#cp stderr.log ${logbase}.err
+#cp stdout.log ${logbase}.out
 
 
 # Cleanup any stray root and/or list files leftover from stageout
