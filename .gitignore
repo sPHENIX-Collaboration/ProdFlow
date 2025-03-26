@@ -2,3 +2,8 @@
 RHIC2023/CALOR/tests/__pycache__/test_rhic2023_sphenix_calor_events.cpython-310-pytest-7.2.0.pyc
 run2pp/meh
 *.*~
+.slurp
+run3auau.trig
+run3auau/CaloProduction/.run.sh.swp
+run3auau/CaloProduction/.runhcalcosmics.sh.swp
+test.cmd

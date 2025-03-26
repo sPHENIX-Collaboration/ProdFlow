@@ -17,11 +17,23 @@ comment=${13}
 histdir=${14:-.}
 subdir=${15}
 payload=(`echo ${16} | tr ","  " "`) # array of files to be rsynced
+
+export cupsid=${@: -1}
+echo CUPSID=${cupsid}
+
+## Verify that we can write to the log file.  If not, early exit and flag the error.  Otherwise, message that we were able to succeed.
+#echo ${0} started `date`> ${logdir#file:/}/${logbase}.out
+#if [ $? -ne 0 ]; then
+#    ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} message "Unable to write test file to gpfs." --error 'gpfs-failure'
+#    exit 10
+#else
+#    ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} message f"Initialized logfile {logdir}/{logbase}.out"    
+#fi
+
+
 # ---
 {
     
-export cupsid=${@: -1}
-echo CUPSID=${cupsid}
 
 export USER="$(id -u -n)"
 export LOGNAME=${USER}
@@ -30,13 +42,16 @@ hostname
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
 
-echo OFFLINE_MAIN: $OFFLINE_MAIN
+OS=$( hostnamectl | awk '/Operating System/{ print $3" "$4 }' )
+#if [[ $OS =~ "Alma" ]]; then
+#    echo "Can live with stock pyton on alma9"
+#else
+#    echo "Need older python on SL7"
+#   source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/stow/opt_sphenix_scripts/bin/setup_python-3.6.sh
+#fi
 
-# user has supplied an odbc.ini file.  use it.
-if [ -e odbc.ini ]; then
-echo "Setting user provided odbc.ini file"
-export ODBCINI=./odbc.ini
-fi
+
+echo OFFLINE_MAIN: $OFFLINE_MAIN
 
 echo ..............................................................................................
 echo $@
@@ -56,8 +71,24 @@ echo payload: ${payload[@]}
 echo .............................................................................................. 
 
 for i in ${payload[@]}; do
+    echo "Stage in $i:"
     cp --verbose ${subdir}/${i} .
 done
+
+# user has supplied an odbc.ini file.  use it.
+if [ -e odbc.ini ]; then
+echo "Setting user provided odbc.ini file"
+export ODBCINI=./odbc.ini
+fi
+
+
+ls *.json
+if [ -e sPHENIX_newcdb_test.json ]; then
+    echo "... setting user provided conditions database config"
+    export NOPAYLOADCLIENT_CONF=./sPHENIX_newcdb_test.json
+fi
+
+echo NOPAYLOADCLIENT_CONF=${NOPAYLOADCLIENT_CONF}
 
 #______________________________________________________________________________________ started __
 #
@@ -71,14 +102,14 @@ if [[ "${9}" == *"dbinput"* ]]; then
     ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs
     
     for i in $(./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs); do
-       cp -v ${i} .
-       echo $( basename $i ) >> inlist   
+       #cp -v ${i} .
+       #echo $( basename $i ) >> inlist
+       echo $i >> inlist          
     done
 else
-    echo WFT???
+  echo WFT???  We should not be running this way
   for i in ${inputs[@]}; do
-     cp -v ${i} .
-     echo $( basename $i ) >> inlist   
+     echo $i  >> inlist   
   done
 fi
 
@@ -111,8 +142,7 @@ echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${stat
 
 echo "bdee bdee bdee, That's All Folks!"
 
-} 
-#>${logdir#file:/}/${logbase}.out  2>${logdir#file:/}/${logbase}.err
+} >> ${logdir#file:/}/${logbase}.out  2>${logdir#file:/}/${logbase}.err
 
 
-exit $status_f4a
+exit ${status_f4a:-1}

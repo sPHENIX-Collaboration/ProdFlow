@@ -1,5 +1,6 @@
 #!/usr/bin/bash
 
+#     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
 nevents=${1}
 outbase=${2}
 logbase=${3}
@@ -10,12 +11,15 @@ build=${7/./}
 dbtag=${8}
 inputs=(`echo ${9} | tr "," " "`)  # array of input files 
 ranges=(`echo ${10} | tr "," " "`)  # array of input files with ranges appended
-logdir=${11:-.}
-histdir=${12:-.}
-subdir=${13}
-payload=(`echo ${14} | tr ","  " "`) # array of files to be rsynced
-#----
+neventsper=${11}
+logdir=${12:-.}
+comment=${13}
+histdir=${14:-.}
+subdir=${15}
+payload=(`echo ${16} | tr ","  " "`) # array of files to be rsynced
+
 export cupsid=${@: -1}
+echo CUPSID=${cupsid}
 
 sighandler()
 {
@@ -107,10 +111,10 @@ echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${stat
 echo "bdee bdee bdee, That's All Folks!"
 
 
-} >${logdir#file:/}/${logbase}.out  2>${logdir#file:/}/${logbase}.err 
+}>${logdir#file:/}/${logbase}.out  2>${logdir#file:/}/${logbase}.err 
 
 if [ -e cups.stat ]; then
     cp cups.stat ${logdir#file:/}/${logbase}.dbstat
 fi
 
-exit $status_f4a
+exit ${status_f4a:-1}

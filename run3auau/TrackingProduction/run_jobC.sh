@@ -1,5 +1,6 @@
 #!/usr/bin/bash
 
+#     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
 nevents=${1}
 outbase=${2}
 logbase=${3}
@@ -10,11 +11,15 @@ build=${7/./}
 dbtag=${8}
 inputs=(`echo ${9} | tr "," " "`)  # array of input files 
 ranges=(`echo ${10} | tr "," " "`)  # array of input files with ranges appended
-logdir=${11:-.}
-subdir=${13}
-payload=(`echo ${14} | tr ","  " "`) # array of files to be rsynced
-#-----
+neventsper=${11}
+logdir=${12:-.}
+comment=${13}
+histdir=${14:-.}
+subdir=${15}
+payload=(`echo ${16} | tr ","  " "`) # array of files to be rsynced
+
 export cupsid=${@: -1}
+echo CUPSID=${cupsid}
 
 sighandler()
 {
@@ -72,13 +77,15 @@ fi
 
 if [[ "${9}" == *"dbinput"* ]]; then
   for i in $( ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs ); do
-     cp -v ${i} .
-     echo $( basename $i ) >> inlist   
+     #cp -v ${i} .
+      #echo $( basename $i ) >> inlist
+      echo $i >> inlist
   done
 else
   for i in ${inputs[@]}; do
-     cp -v ${i} .
-     echo $( basename $i ) >> inlist   
+     #cp -v ${i} .
+      #echo $( basename $i ) >> inlist
+      echo $i >> inlist
   done
 fi
 
@@ -116,4 +123,4 @@ if [ -e cups.stat ]; then
     cp cups.stat ${logdir#file:/}/${logbase}.dbstat
 fi
 
-exit $status_f4a
+exit ${status_f4a:-1}

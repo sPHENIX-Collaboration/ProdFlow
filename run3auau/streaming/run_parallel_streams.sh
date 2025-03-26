@@ -41,6 +41,14 @@ export HOME=/sphenix/u/${USER}
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
 
+OS=$( hostnamectl | awk '/Operating System/{ print $3" "$4 }' )
+#if [[ $OS =~ "Alma" ]]; then
+#    echo "Can live with stock pyton on alma9"
+#else
+#    echo "Need older python on SL7"
+#   source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/stow/opt_sphenix_scripts/bin/setup_python-3.6.sh
+#fi
+
 echo "Offline main "${OFFLINE_MAIN}
 
 
@@ -109,7 +117,7 @@ cat inputfiles.list | while read -r f; do
        echo ${f} >> ${l}.list
        echo Add ${f} to ${l}.list
        inputlist="${f} ${inputlist}"
-       neventsper=$(neventsperintt)
+       neventsper=${neventsperintt}
     fi
     if [[ $b =~ "cosmics_mvtx" ]]; then
        l=${b#*cosmics_}
@@ -130,7 +138,7 @@ cat inputfiles.list | while read -r f; do
        echo ${f} >> ${l}.list
        echo Add ${f} to ${l}.list
        inputlist="${f} ${inputlist}"
-       neventsper=$(neventsperintt)
+       neventsper=${neventsperintt}
     fi
     if [[ $b =~ "beam_mvtx" ]]; then
        l=${b#*beam_}
@@ -151,7 +159,7 @@ cat inputfiles.list | while read -r f; do
        echo ${f} >> ${l}.list
        echo Add ${f} to ${l}.list
        inputlist="${f} ${inputlist}"
-       neventsper=$(neventsperintt)
+       neventsper=${neventsperintt}
     fi
     if [[ $b =~ "calib_mvtx" ]]; then
        l=${b#*calib_}
@@ -172,7 +180,7 @@ cat inputfiles.list | while read -r f; do
        echo ${f} >> ${l}.list
        echo Add ${f} to ${l}.list
        inputlist="${f} ${inputlist}"
-       neventsper=$(neventsperintt)
+       neventsper=${neventsperintt}
     fi
     if [[ $b =~ "physics_mvtx" ]]; then
        l=${b#*physics_}
@@ -238,7 +246,7 @@ echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${stat
 # Close the dataset
 
 dstname=${logbase%%-*} # dstname is needed for production status, but not related to the dataset we are registering
-./cups.py -r ${runnumber} -s ${segment} -d ${dstname} closeout ${dstname}-${runnumber} ${destination} --dsttype ${dsttype} --dataset ${build}_${dbtag}
+#./cups.py -r ${runnumber} -s ${segment} -d ${dstname} closeout ${dstname}-${runnumber} ${destination} --dsttype ${dsttype} --dataset ${build}_${dbtag}
 
 
 echo $outbase
@@ -249,8 +257,29 @@ for hfile in `ls HIST_*.root`; do
     ./stageout.sh ${hfile} ${histdir}
 done
 
+# Any leftover DSTs and histograms are staged out at the end of the job.  We
+#status_stageout=0
+#for r in $( ls DST*.root ); do
+#    echo "${r} was not successfully staged out, trying again."
+#    stageout.sh ${r} ${outdir}
+#    if [[ $?>0 ]]; then status_stageout=$? ; fi
+#done
+#for r in $( ls HIST*.root ); do
+#    echo "${r} was not successfully staged out, trying again."
+#    stageout.sh ${r} ${histdir}
+#    #if [[ $?>0 ]]; then status_stageout=$? ; fi    
+#done
+#
+## If any stageout failed, the job will fail and go on hold.
+#if [[ $status_stageout>0 ]]; then
+#    status_f4a=${status_stageout}
+#fi
+
+
+
 #cp stderr.log ${logbase}.err
 #cp stdout.log ${logbase}.out
+
 
 # Cleanup any stray root and/or list files leftover from stageout
 rm *.root *.list

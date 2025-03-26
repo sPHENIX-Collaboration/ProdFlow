@@ -4,9 +4,6 @@ filename=`basename ${1}`   # must be a local file
 destination=${2}
 
 echo stageout ${filename} ${destination} start `date`
-echo ls -lah 
-ls -lah 
-
 
 # An option version number is optionally added to the filenaming convention.  It is made part of the dataset name.
 # We add the optional _vxxx tag to the dbtag portion of this regex... so note well that 'dbtag' is overloaded in
@@ -14,6 +11,7 @@ ls -lah
 
 regex_dsttype_run="([A-Z]+_[A-Z0-9_]+[a-z0-9]+)_([a-z0-9]+)_(202[345]p[0-9][0-9][0-9][_v0-9]*|nocdbtag[_v0-9]*)-([0-9]+)-([0-9]+)"
 regex_dsttype_range="([A-Z]+_[A-Z_]+[a-z0-9]+)_([a-z0-9]+)_(202[3456789]p[0-9][0-9][0-9][_v0-9]*|nocdbtag[_v0-9]*)-([0-9]+)-([0-9]+)-([0-9]+)"
+
 
 # decode filename
 base=${filename/.root/}
@@ -51,13 +49,27 @@ fi
 nevents_=$( root.exe -q -b GetEntries.C\(\"${filename}\"\) | awk '/Number of Entries/{ print $4; }' )
 nevents=${nevents_:--1}
 
+#if [[ "${dsttype}" == "HIST_"* ]]; then
+#    mv --verbose ${filename} ${destination} 
+#
+#    # cleanup the file once it is staged so the condor's copy back does not get it
+#    rm ${filename}
+#
+#    echo stageout ${filename} ${destination} finish `date`
+#    exit 0
+#fi
+
 # prodtype is required... specifies whether the production status entry manages a single output file (only) or many output files (many).
-echo ./cups.py -r ${runnumber} -s ${segment} -d ${dstname}  stageout ${filename} ${destination} --dsttype ${dsttype} --dataset ${build}_${dbtag} --nevents ${nevents} --inc --prodtype many
-     ./cups.py -r ${runnumber} -s ${segment} -d ${dstname}  stageout ${filename} ${destination} --dsttype ${dsttype} --dataset ${build}_${dbtag} --nevents ${nevents} --inc --prodtype many
+echo ./cups.py -r ${runnumber} -s ${segment} -d ${dstname}  stageout ${filename} ${destination} --dsttype ${dsttype} --dataset ${build}_${dbtag} --nevents ${nevents} --inc --prodtype only
+     ./cups.py -r ${runnumber} -s ${segment} -d ${dstname}  stageout ${filename} ${destination} --dsttype ${dsttype} --dataset ${build}_${dbtag} --nevents ${nevents} --inc --prodtype only
+
+mv --verbose ${filename} ${destination} 
+
+# cleanup the file once it is staged so the condor's copy back does not get it
+rm ${filename}
 
 echo stageout ${filename} ${destination} finish `date`
 
-exit 0 # stageout should never propagate a failed error code...
 
 
 
