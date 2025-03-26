@@ -460,10 +460,12 @@ DST_CALOFITTING_run3auau:
 
 
      
- # Downstream products for cosmics... we will output into the run3auau namespace so that downstream jobs remain common.
+ # Downstream products for cosmics...
+ # ... we will output into the run3auau namespace so that downstream jobs remain common.
+ # ... no.  we will run the full chain off of the run3auau pipeline.  this is for hcal calibration only.
 DST_CALOFITTING_run3cosmics:
    params:
-     name:       DST_CALOFITTING_run3auau
+     name:       DST_CALOFITTING_run3cosmics
      nevents:    0
      build:      new
      build_name: new
