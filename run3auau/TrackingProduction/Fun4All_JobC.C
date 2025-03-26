@@ -103,12 +103,16 @@ void Fun4All_JobC(
   // Match the TPC track stubs from the CA seeder to silicon track stubs from PHSiliconTruthTrackSeeding
   auto silicon_match = new PHSiliconTpcTrackMatching;
   silicon_match->Verbosity(0);
-  silicon_match->set_x_search_window(2.);
-  silicon_match->set_y_search_window(2.);
-  silicon_match->set_z_search_window(5.);
-  silicon_match->set_phi_search_window(0.2);
-  silicon_match->set_eta_search_window(0.1);
+  silicon_match->set_use_legacy_windowing(false);
   silicon_match->set_pp_mode(TRACKING::pp_mode);
+  if(G4TPC::ENABLE_AVERAGE_CORRECTIONS)
+    {
+      // reset phi matching window to be centered on zero
+      // it defaults to being centered on -0.1 radians for the case of static corrections only
+      std::array<double,3> arrlo = {-0.15,0,0};
+      std::array<double,3> arrhi = {0.15,0,0};
+      silicon_match->window_dphi.set_QoverpT_range(arrlo, arrhi);
+    }
   silicon_match->set_test_windows_printout(false);  // used for tuning search windows
   se->registerSubsystem(silicon_match);
 
@@ -164,6 +168,9 @@ void Fun4All_JobC(
   vtxProp->fieldMap(G4MAGNET::magfield_tracking);
   se->registerSubsystem(vtxProp);
   
+  auto tpcsiliconqa = new TpcSiliconQA;
+  se->registerSubsystem(tpcsiliconqa);
+  
   
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfilename);
   out->AddNode("Sync");
@@ -176,6 +183,12 @@ void Fun4All_JobC(
 
   se->run(nEvents);
   se->End();
+
+  TString qaname = "HIST_" + outfilename;
+  std::string qaOutputFileName(qaname.Data());
+  QAHistManagerDef::saveQARootFile(qaOutputFileName);
+
+
   CDBInterface::instance()->Print();
   se->PrintTimer();
 
