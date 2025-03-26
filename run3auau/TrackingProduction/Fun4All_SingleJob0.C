@@ -54,16 +54,19 @@ void Fun4All_SingleJob0(
   //char filename[500];
   //sprintf(filename, "%s%08d-0000.root", inputRawHitFile.c_str(), runnumber);
  
-
+  Enable::MVTX_APPLYMISALIGNMENT = true;
+  ACTSGEOM::mvtx_applymisalignment = Enable::MVTX_APPLYMISALIGNMENT;
+  
+  TRACKING::tpc_zero_supp = true;
+  G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING = true;
+  
   auto se = Fun4AllServer::instance();
   se->Verbosity(1);
   auto rc = recoConsts::instance();
   
   std::ifstream ifs(filelist);
   std::string filepath;
-
-  TRACKING::tpc_zero_supp = true;
-  G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING = false;  
+ 
   
   int i = 0;
   
@@ -165,6 +168,7 @@ void Fun4All_SingleJob0(
   out->AddNode("TRKR_CLUSTER");
   out->AddNode("TRKR_CLUSTERCROSSINGASSOC");
   out->AddNode("LaserEventInfo");
+  out->AddNode("GL1RAWHIT");
   if(G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING)
   {
     out->AddNode("LASER_CLUSTER");
