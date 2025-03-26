@@ -102,14 +102,14 @@ if [[ "${9}" == *"dbinput"* ]]; then
     ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs
     
     for i in $(./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs); do
-       cp -v ${i} .
-       echo $( basename $i ) >> inlist   
+       #cp -v ${i} .
+       #echo $( basename $i ) >> inlist
+       echo $i >> inlist          
     done
 else
-    echo WFT???
+  echo WFT???  We should not be running this way
   for i in ${inputs[@]}; do
-     cp -v ${i} .
-     echo $( basename $i ) >> inlist   
+     echo $i  >> inlist   
   done
 fi
 
