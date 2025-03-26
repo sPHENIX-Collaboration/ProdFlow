@@ -42,6 +42,9 @@ void Fun4All_JobC(
 {
   gSystem->Load("libg4dst.so");
 
+  ACTSGEOM::mvtx_applymisalignment = true;
+  Enable::MVTX_APPLYMISALIGNMENT = true;
+  
   auto se = Fun4AllServer::instance();
   se->Verbosity(1);
   auto rc = recoConsts::instance();
@@ -79,7 +82,18 @@ void Fun4All_JobC(
 	   << " vdrift: " << G4TPC::tpc_drift_velocity_reco
 	   << std::endl;
   
+  G4TPC::ENABLE_MODULE_EDGE_CORRECTIONS = true;
 
+  // to turn on the default static corrections, enable the two lines below
+  G4TPC::ENABLE_STATIC_CORRECTIONS = true;
+  G4TPC::USE_PHI_AS_RAD_STATIC_CORRECTIONS = false;
+
+  //to turn on the average corrections, enable the three lines below
+  //note: these are designed to be used only if static corrections are also applied
+  G4TPC::ENABLE_AVERAGE_CORRECTIONS = true;
+  G4TPC::USE_PHI_AS_RAD_AVERAGE_CORRECTIONS = false;
+  G4TPC::average_correction_filename = CDBInterface::instance()->getUrl("TPC_LAMINATION_FIT_CORRECTION");
+  
   std::string geofile = CDBInterface::instance()->getUrl("Tracking_Geometry");
   Fun4AllRunNodeInputManager *ingeo = new Fun4AllRunNodeInputManager("GeoIn");
   ingeo->AddFile(geofile);
@@ -88,7 +102,7 @@ void Fun4All_JobC(
   /*
    * flags for tracking
    */
-
+  G4TPC::REJECT_LASER_EVENTS=true;
   TRACKING::pp_mode = true;
   TrackingInit();
 
@@ -106,6 +120,14 @@ void Fun4All_JobC(
   silicon_match->Verbosity(0);
   silicon_match->set_use_legacy_windowing(false);
   silicon_match->set_pp_mode(TRACKING::pp_mode);
+  if(G4TPC::ENABLE_AVERAGE_CORRECTIONS)
+    {
+      // reset phi matching window to be centered on zero
+      // it defaults to being centered on -0.1 radians for the case of static corrections only
+      std::array<double,3> arrlo = {-0.15,0,0};
+      std::array<double,3> arrhi = {0.15,0,0};
+      silicon_match->window_dphi.set_QoverpT_range(arrlo, arrhi);
+    }
   se->registerSubsystem(silicon_match);
 
   // Match TPC track stubs from CA seeder to clusters in the micromegas layers
@@ -147,22 +169,27 @@ void Fun4All_JobC(
 
   PHSimpleVertexFinder *finder = new PHSimpleVertexFinder;
   finder->Verbosity(0);
-  finder->setDcaCut(0.5);
-  finder->setTrackPtCut(-99999.);
+  finder->setDcaCut(0.05);
+  finder->setTrackPtCut(0.1);
   finder->setBeamLineCut(1);
-  finder->setTrackQualityCut(1000000000);
+  finder->setTrackQualityCut(300);
   finder->setNmvtxRequired(3);
   finder->setOutlierPairCut(0.1);
   se->registerSubsystem(finder);
 
-    auto tpcsiliconqa = new TpcSiliconQA;
+  auto vtxProp = new PHActsVertexPropagator;
+  vtxProp->Verbosity(0);
+  vtxProp->fieldMap(G4MAGNET::magfield_tracking);
+  se->registerSubsystem(vtxProp);
+  
+  
+  auto tpcsiliconqa = new TpcSiliconQA;
   se->registerSubsystem(tpcsiliconqa);
-
   
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfilename);
   out->AddNode("Sync");
   out->AddNode("EventHeader");
-  
+  out->AddNode("GL1RAWHIT");
   out->AddNode("SvtxTrackSeedContainer");
   out->AddNode("SvtxTrackMap");
   out->AddNode("SvtxVertexMap");
