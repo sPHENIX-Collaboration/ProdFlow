@@ -118,7 +118,7 @@ void Fun4All_JobA(
    * Silicon Seeding
    */
   auto silicon_Seeding = new PHActsSiliconSeeding;
-  silicon_Seeding->Verbosity(5);
+  silicon_Seeding->Verbosity(0);
   silicon_Seeding->seedAnalysis(false);
   silicon_Seeding->setinttRPhiSearchWindow(0.2);
   silicon_Seeding->setinttZSearchWindow(1.0);
