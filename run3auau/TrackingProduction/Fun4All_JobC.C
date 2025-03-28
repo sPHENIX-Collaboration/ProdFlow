@@ -3,6 +3,7 @@
  * example showing how to unpack the raw hits into the offline tracker hit
  * format. No other reconstruction or analysis is performed
  */
+#include <QA.C>
 #include <GlobalVariables.C>
 #include <Trkr_Clustering.C>
 #include <Trkr_RecoInit.C>
@@ -19,6 +20,7 @@
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
 
+#include <trackingqa/TpcSiliconQA.h>
 #include <phool/recoConsts.h>
 
 #include <stdio.h>
@@ -30,6 +32,7 @@ R__LOAD_LIBRARY(libintt.so)
 R__LOAD_LIBRARY(libtpc.so)
 R__LOAD_LIBRARY(libmicromegas.so)
 R__LOAD_LIBRARY(libtrack_reco.so)
+R__LOAD_LIBRARY(libtrackingqa.so)
 void Fun4All_JobC(
     const int nEvents = 2,
     const int runnumber = 41626,
