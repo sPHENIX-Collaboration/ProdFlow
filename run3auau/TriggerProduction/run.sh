@@ -78,7 +78,13 @@ echo firstevent: $firstevent
 echo lastevent: $lastevent
 echo lasteventinrun: $lasteventinrun
 echo cupsid: $cupsid
-echo .............................................................................................. 
+echo ..............................................................................................
+
+echo INPUTS
+if [[ "${9}" == *"dbinput"* ]]; then
+    inputs=( $(./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs)   )
+    ranges=( $(./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getranges)   )    
+fi
 
 # Size of the inputs array
 leni=${#inputs[@]}
@@ -208,8 +214,7 @@ if [[ $nlist -lt 21 && $ncosmics -eq 0 ]]; then
     exit 2
 fi
 
-# Register the input list and set state to running
-./cups.py -r ${runnumber} -s ${segment} -d ${outbase} inputs --files ${inputlist}
+# Set state to running
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
 
 # Flag the creation of a new dataset in dataset_status
