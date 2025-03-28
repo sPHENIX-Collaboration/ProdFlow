@@ -78,7 +78,13 @@ echo firstevent: $firstevent
 echo lastevent: $lastevent
 echo lasteventinrun: $lasteventinrun
 echo cupsid: $cupsid
-echo .............................................................................................. 
+echo ..............................................................................................
+
+echo INPUTS
+if [[ "${9}" == *"dbinput"* ]]; then
+    inputs=( $(./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs)   )
+    ranges=( $(./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getranges)   )    
+fi
 
 # Size of the inputs array
 leni=${#inputs[@]}
