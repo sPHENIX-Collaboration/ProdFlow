@@ -35,7 +35,6 @@ trap sighandler SIGTERM SIGINT SIGKILL
 export USER="$(id -u -n)"
 export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
-echo "cupsid=${cupsid}"
 hostname
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
@@ -62,7 +61,6 @@ fi
 # Debugging info
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
 
-
 echo ..............................................................................................
 echo $@
 echo .............................................................................................. 
@@ -85,48 +83,44 @@ echo ...........................................................................
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
 #_________________________________________________________________________________________________
 
-
-dstname=${logbase%%-*}
-
-out0=${logbase}.root
-out1=HIST_${logbase#DST_}.root
-
 nevents=-1
 status_f4a=0
 
-for infile_ in ${inputs[@]}; do
-    infile=$( basename ${infile_} )
-    cp -v ${infile_} .
-    outfile=${logbase}.root
-    outhist=${outfile/DST_CALO/HIST_CALOQA}
-    root.exe -q -b Fun4All_Year2_Calib.C\(${nevents},\"${infile}\",\"${outfile}\",\"${outhist}\",\"${dbtag}\"\);  status_f4a=$?
+echo "The DST_CALO_run2pp_ana462_2024p010_v001 production was created with the wrong output filename."
+echo "Renaming each file for run ${runnumber}.  Catalog to be updated one all files are moved."
 
-    # Stageout the (single) DST created in the macro run
-    #for rfile in ${outfile}; do 
-    #    #nevents_=$( root.exe -q -b GetEntries.C\(\"${filename}\"\) | awk '/Number of Entries/{ print $4; }' )
-        nevents=${nevents_:--1}
-	echo Stageout ${outfile} to ${outdir}
-        ./stageout.sh ${outfile} ${outdir}
-    #done
-    for hfile in `ls HIST_*.root`; do
-	echo Stageout ${hfile} to ${histdir}
-        ./stageout.sh ${hfile} ${histdir}
-	#mv --verbose ${hfile} ${histdir}
-    done
+for infile_ in ${inputs[@]}; do
+
+    base=$( basename ${infile_} )
+
+    export dst0=${infile_}
+    export dstB=${base/DST_CALO_run2pp_ana446_2024p007/${outbase}}
+    export dstF=${outdir}/${dstB}
+    
+    export hist0=${histdir}/${base/DST_CALO/HIST_CALOQA}
+    export histF=${histdir}/${dstB/DST_CALO/HIST_CALOQA}
+
+#   echo mv --verbose ${dst0}  ${dstF}
+    mv --verbose ${dst0}  ${dstF}
+#   echo mv --verbose ${hist0} ${histF}
+    mv --verbose ${hist0} ${histF}
+
+#   random sleep for up to 30s between copies
+    sleep $(( RANDOM % 30 ))
+
 done
 
 ls -lah
 
 #______________________________________________________________________________________ finished __
-echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${nevents} --inc 
-     ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${nevents} --inc 
+echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents -1 
+     ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents -1 
 #_________________________________________________________________________________________________
 
 
 
 echo "bdee bdee bdee, That's All Folks!"
-
-} >  ${logdir#file:/}/${logbase}.out 2>  ${logdir#file:/}/${logbase}.err
+} >  ${logdir#file:/}/${logbase}.out 2> ${logdir#file:/}/${logbase}.err
 
 if [ -e cups.stat ]; then
     cp cups.stat ${logdir#file:/}/${logbase}.dbstat

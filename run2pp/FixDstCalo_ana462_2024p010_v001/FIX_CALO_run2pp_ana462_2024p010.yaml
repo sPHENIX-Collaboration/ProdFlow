@@ -1,0 +1,52 @@
+# -------------------------------------------------------------------------------------------------
+# Fix the filenames.  The output was staged with the wrong filename, based on the input file rather
+# than the logbase name.
+RENAME_CALO_run2pp_ana462_2024p010:
+   params:
+     name:       DST_CALO_run2pp
+     build:      ana.462
+     build_name: ana462
+     dbtag:      2024p010
+     version :   1
+     logbase :   RENAME_CALO_run2pp_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   DST_CALO_run2pp_$(build)_$(tag)_$(version)
+     script  :   fixy2calib.sh
+#    payload :   ./ProdFlow/run2pp/CaloProduction/
+     payload :   ./ProdFlow/run2pp/FixDstCalo_ana462_2024p010_v001/
+     mem     :   4096MB
+     neventsper: 50000
+#     rsync  : "./ProdFlow/run2pp/CaloProduction/*,cups.py"
+#     rsync  : "./ProdFlow/run2pp/test/*,cups.py"
+     rsync  : "./ProdFlow/run2pp/FixDstCalo_ana462_2024p010_v001/*,cups.py"
+
+   input:
+     db: filecatalog
+     query: |-
+         select 
+                'filecatalog/datasets'                                   as source      , 
+                runnumber                                                               , 
+                0                                                        as segment     ,
+                string_agg( distinct split_part(filename,'/',-1), ' ' )  as files       ,                   
+                'na'                                                     as fileranges 
+         from  
+                datasets
+         where 
+                dataset='ana446_2024p007' and dsttype='DST_CALO_run2pp'
+                {run_condition}
+
+                 and runnumber<=53880
+
+         group by runnumber
+           
+         {limit_condition}
+
+         ;
+   job:
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '3900'
+
+
