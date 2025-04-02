@@ -15,6 +15,8 @@ DST_STREAMING_EVENT_run3auau_streams:
      comment :    "---"
      rsync   : "./ProdFlow/run3auau/streaming/*"
      mem     :   4000MB
+     mnrun   :   59000
+     mxrun   :   99999
 
    input:
       db: daqdb
@@ -23,6 +25,8 @@ DST_STREAMING_EVENT_run3auau_streams:
          with run2pp as (
               select 56900 as firstrun,
                      99999 as lastrun
+              select {mnrun} as firstrun,
+                     {mxrun} as lastrun
          ),
          streams as (select distinct split_part( split_part(filename,'/',-1), '-', 1 ) as streamfile, hostname                     from filelist,run2pp where runnumber>=run2pp.firstrun and runnumber<=run2pp.lastrun),
 
