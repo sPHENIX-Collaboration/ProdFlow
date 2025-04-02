@@ -23,6 +23,8 @@ DST_TRIGGERED_EVENT_run3auau:
      mem     :   2048M
      neventsper: 100000
      noverflow:   20000
+     mnrun    : 59000
+     mxrun    : 99999
      rsync  : "ProdFlow/run3auau/TriggerProduction/*,cups.py"
 
 
@@ -49,6 +51,8 @@ DST_TRIGGERED_EVENT_run3auau:
             select 
                {neventsper} as nevents,
                {noverflow} as noverflow
+               {mnrun} as firstrun,
+               {mxrun} as lastrun
          ),
 
          fullevents as (
