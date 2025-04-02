@@ -11,7 +11,7 @@ DST_STREAMING_EVENT_run3auau_streams:
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run_parallel_streams.sh
      payload :   ./ProdFlow/run3auau/streaming/
-     neventsper:  10000
+     neventsper:  100000
      comment :    "---"
      rsync   : "./ProdFlow/run3auau/streaming/*"
      mem     :   4000MB
