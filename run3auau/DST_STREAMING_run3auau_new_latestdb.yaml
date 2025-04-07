@@ -128,7 +128,7 @@ DST_TRKR_CLUSTER_run3auau_streams:
      neventsper:      10000
      comment :    "---"
      rsync   : "./ProdFlow/run3auau/TrackingProduction/*"
-     mem     :   4000MB
+     mem     :   8192MB
      mnrun   : 56900
      mxrun   : 99999
      dstin   : 'DST_STREAMING_EVENT_%_run3auau'
@@ -465,7 +465,7 @@ DST_TRKR_CLUSTER_run3calib_streams:
      neventsper:      10000
      comment :    "---"
      rsync   : "./ProdFlow/run3auau/TrackingProduction/*"
-     mem     :   4000MB
+     mem     :   8192MB
      mnrun   : 56900
      mxrun   : 99999
      dstin   : 'DST_STREAMING_EVENT_%_run3calib'
