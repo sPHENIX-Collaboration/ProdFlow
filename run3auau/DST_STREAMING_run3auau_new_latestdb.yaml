@@ -15,7 +15,7 @@ DST_STREAMING_EVENT_run3auau_streams:
      comment :    "---"
      rsync   : "./ProdFlow/run3auau/streaming/*"
      mem     :   4000MB
-     mnrun   :   59000
+     mnrun   :   56900
      mxrun   :   99999
 
    input:
