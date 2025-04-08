@@ -133,6 +133,7 @@ DST_TRKR_CLUSTER_run3auau_streams:
      mxrun   : 99999
      dstin   : 'DST_STREAMING_EVENT_%_run3auau'
      dataset : 'new_nocdbtag_v000'
+     mninputs: 39
 
    input:
       db: fc
@@ -158,7 +159,7 @@ DST_TRKR_CLUSTER_run3auau_streams:
          order by runnumber {limit_condition}
          )
 
-         select * from allruns where allruns.ninputs>=39 order by runnumber, segment
+         select * from allruns where allruns.ninputs>={mninputs} order by runnumber, segment
 
 
    #
