@@ -67,7 +67,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   tpot_infile.push_back(input_tpotfile);
 
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(1);
+//  se->Verbosity(1);
   recoConsts *rc = recoConsts::instance();
   CDBInterface::instance()->Verbosity(1);
   rc->set_StringFlag("CDB_GLOBALTAG", dbtag );
