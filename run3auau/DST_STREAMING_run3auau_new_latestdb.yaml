@@ -15,7 +15,7 @@ DST_STREAMING_EVENT_run3auau_streams:
      comment :    "---"
      rsync   : "./ProdFlow/run3auau/streaming/*"
      mem     :   4000MB
-     mnrun   :   59000
+     mnrun   :   56900
      mxrun   :   99999
 
    input:
@@ -80,6 +80,7 @@ DST_STREAMING_EVENT_run3auau_streams:
 
            having
                 max(lastevent)>1000          and
+                every(transferred_to_sdcc) and
                 sum( case when filename like '%GL1%.evt' then 1 else 0 end )>0 and
                 (
                    sum( case when filename like '%TPC%'   then 1 else 0 end )>0 or
@@ -118,7 +119,7 @@ DST_TRKR_CLUSTER_run3auau_streams:
      name:       DST_TRKR_CLUSTER_run3auau
      build:      new
      build_name: new
-     dbtag:      2024p017
+     dbtag:      2025p000
      version:    0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
@@ -127,23 +128,37 @@ DST_TRKR_CLUSTER_run3auau_streams:
      neventsper:      10000
      comment :    "---"
      rsync   : "./ProdFlow/run3auau/TrackingProduction/*"
-     mem     :   4000MB
+     mem     :   8192MB
      mnrun   : 56900
      mxrun   : 99999
      dstin   : 'DST_STREAMING_EVENT_%_run3auau'
      dataset : 'new_nocdbtag_v000'
+     mninputs: 39
+     required: >
+       TPC00 TPC01 TPC02 TPC03 TPC04 TPC05
+       TPC06 TPC07 TPC08 TPC09 TPC10 TPC11
+       TPC12 TPC13 TPC14 TPC15 TPC16 TPC17
+       TPC18 TPC19 TPC20 TPC21 TPC22 TPC23
+       INTT0 INTT1 INTT2 INTT3 INTT4 INTT5 INTT6 INTT7
+       MVTX0 MVTX1 MVTX2 MVTX3 MVTX4 MVTX5
+       TPOT
+
 
    input:
       db: fc
       query: |-
-         with allruns as (
+         with required as (
+            select string_to_array( '{required}',' ' ) as subsystems
+         ),
+         allruns as (
          select
                 'filecatalog/datasets'         as source        ,
                 runnumber                                       ,
                 segment                                         ,
                 string_agg( distinct filename, ' ' ) as files   ,
-                'NA'  as fileranges,
-                count(distinct filename) as ninputs
+                'NA'  as fileranges                             ,
+                count(distinct filename) as ninputs             ,
+                array_agg( split_part(filename,'_',4)		   ) as subsystems                
          from
                 datasets
          where
@@ -157,7 +172,14 @@ DST_TRKR_CLUSTER_run3auau_streams:
          order by runnumber {limit_condition}
          )
 
-         select * from allruns where allruns.ninputs>0 order by runnumber, segment
+         --         select * from allruns where allruns.ninputs>={mninputs} order by runnumber, segment
+
+         select source, runnumber, segment, files, fileranges from allruns,required
+
+         where
+             -- requires that the two arrays have the same set of arguments --
+             allruns.subsystems @> required.subsystems and
+             allruns.subsystems <@ required.subsystems;
 
 
    #
@@ -182,7 +204,7 @@ DST_TRKR_SEED_run3auau_streams:
      name:       DST_TRKR_SEED_run3auau
      build:      new
      build_name: new
-     dbtag:      2024p017
+     dbtag:      2025p000
      version:    0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
@@ -195,7 +217,7 @@ DST_TRKR_SEED_run3auau_streams:
      mnrun   : 56900
      mxrun   : 99999
      dstin   : 'DST_TRKR_CLUSTER_run3auau'
-     dataset : 'new_2024p017_v000'     
+     dataset : 'new_2025p000_v000'     
 
    input:
       db: fc
@@ -247,7 +269,7 @@ DST_TRKR_TRACKS_run3auau_streams:
      name:       DST_TRKR_TRACKS_run3auau
      build:      new
      build_name: new
-     dbtag:      2024p017
+     dbtag:      2025p000
      version:    0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
@@ -464,7 +486,7 @@ DST_TRKR_CLUSTER_run3calib_streams:
      neventsper:      10000
      comment :    "---"
      rsync   : "./ProdFlow/run3auau/TrackingProduction/*"
-     mem     :   4000MB
+     mem     :   8192MB
      mnrun   : 56900
      mxrun   : 99999
      dstin   : 'DST_STREAMING_EVENT_%_run3calib'
