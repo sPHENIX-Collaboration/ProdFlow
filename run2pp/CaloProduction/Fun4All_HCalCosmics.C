@@ -132,7 +132,6 @@ void Fun4All_HCalCosmics(int nEvents = 100,
   wt3->Detector("HCALOUT");
   wt3->TowerPrefix("TOWERINFO_CALIB_");
   se->registerSubsystem(wt3);
-
 /*
   ///////////////////////////////////
   // Validation 
