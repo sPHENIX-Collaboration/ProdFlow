@@ -81,7 +81,7 @@ fi
 
 #______________________________________________________________________________________ running __
 #
-./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
 #_________________________________________________________________________________________________
 
 
@@ -101,6 +101,8 @@ for infile_ in ${inputs[@]}; do
     
     outfile=${logbase}.root
     outhist=${outfile/DST_CALOFITTING/HIST_CALOFITTINGQA}
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
+    
     root.exe -q -b Fun4All_Year2_Fitting.C\(${nevents},\"${infile}\",\"${outfile}\",\"${outhist}\",\"${dbtag}\"\);  status_f4a=$?
 
     nevents=${nevents_:--1}
