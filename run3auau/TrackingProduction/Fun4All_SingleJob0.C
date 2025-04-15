@@ -28,6 +28,7 @@
 #include <mvtxrawhitqa/MvtxRawHitQA.h>
 #include <inttrawhitqa/InttRawHitQA.h>
 #include <tpcqa/TpcRawHitQA.h>
+#include <tpcqa/TpcLaserQA.h>
 #include <phool/recoConsts.h>
 
 #include <stdio.h>
@@ -162,6 +163,9 @@ void Fun4All_SingleJob0(
   auto tpc = new TpcRawHitQA;
   se->registerSubsystem(tpc);
 
+  auto LaserQA = new TpcLaserQA;
+  se->registerSubsystem(LaserQA);
+  
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfilename);
   out->AddNode("Sync");
   out->AddNode("EventHeader");
@@ -172,6 +176,7 @@ void Fun4All_SingleJob0(
   if(G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING)
   {
     out->AddNode("LASER_CLUSTER");
+    out->AddNode("LAMINATION_CLUSTER");
   }
   se->registerOutputManager(out);
 
