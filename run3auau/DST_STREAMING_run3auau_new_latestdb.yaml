@@ -119,7 +119,7 @@ DST_TRKR_CLUSTER_run3auau_streams:
      name:       DST_TRKR_CLUSTER_run3auau
      build:      new
      build_name: new
-     dbtag:      2025p000
+     dbtag:      2025p001
      version:    0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
@@ -204,7 +204,7 @@ DST_TRKR_SEED_run3auau_streams:
      name:       DST_TRKR_SEED_run3auau
      build:      new
      build_name: new
-     dbtag:      2025p000
+     dbtag:      2025p001
      version:    0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
@@ -217,7 +217,7 @@ DST_TRKR_SEED_run3auau_streams:
      mnrun   : 56900
      mxrun   : 99999
      dstin   : 'DST_TRKR_CLUSTER_run3auau'
-     dataset : 'new_2025p000_v000'     
+     dataset : 'new_2025p001_v000'     
 
    input:
       db: fc
@@ -269,7 +269,7 @@ DST_TRKR_TRACKS_run3auau_streams:
      name:       DST_TRKR_TRACKS_run3auau
      build:      new
      build_name: new
-     dbtag:      2025p000
+     dbtag:      2025p001
      version:    0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
@@ -282,9 +282,9 @@ DST_TRKR_TRACKS_run3auau_streams:
      mnrun   : 56900
      mxrun   : 99999
      dstin1   : 'DST_TRKR_CLUSTER_run3auau'
-     dataset1 : 'new_2025p000_v000'
+     dataset1 : 'new_2025p001_v000'
      dstin2   : 'DST_TRKR_SEED_run3auau'
-     dataset2 : 'new_2025p000_v000'          
+     dataset2 : 'new_2025p001_v000'          
 
    input:
       db: fc
@@ -477,7 +477,7 @@ DST_TRKR_CLUSTER_run3calib_streams:
      name:       DST_TRKR_CLUSTER_run3calib
      build:      new
      build_name: new
-     dbtag:      2025p000
+     dbtag:      2025p001
      version:    0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
