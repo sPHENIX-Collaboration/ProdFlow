@@ -424,7 +424,7 @@ DST_CALOFITTING_run3auau:
      nevents:    0
      build:      new
      build_name: new
-     dbtag:      2025p000
+     dbtag:      2025p001
      version : 0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
@@ -477,7 +477,7 @@ DST_CALOFITTING_run3cosmics:
      nevents:    0
      build:      new
      build_name: new
-     dbtag:      2025p000
+     dbtag:      2025p001
      version : 0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
@@ -523,7 +523,7 @@ DST_CALO_run3auau:
      name:       DST_CALO_run3auau
      build:      new
      build_name: new
-     dbtag:      2025p000
+     dbtag:      2025p001
      version :   0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
@@ -545,7 +545,7 @@ DST_CALO_run3auau:
          from  
                 datasets
          where 
-                dataset='new_2025p000_v000' and dsttype='DST_CALOFITTING_run3auau'
+                dataset='new_2025p001_v000' and dsttype='DST_CALOFITTING_run3auau'
                 {run_condition}
 
          {limit_condition}
@@ -566,7 +566,7 @@ DST_JETS_run3auau:
      name:       DST_JETS_run3auau
      build:      new
      build_name: new
-     dbtag:      2025p000
+     dbtag:      2025p001
      version : 0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
@@ -588,7 +588,7 @@ DST_JETS_run3auau:
          from  
                 datasets
          where 
-                dsttype='DST_CALO_run3auau' and dataset='new_2025p000_v000'
+                dsttype='DST_CALO_run3auau' and dataset='new_2025p001_v000'
                 {run_condition}
            
          {limit_condition}
@@ -611,7 +611,7 @@ DST_JETCALO_run3auau:
      name:       DST_JETCALO_run3auau
      build:      new
      build_name: new
-     dbtag:      2025p000
+     dbtag:      2025p001
      version:    0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
@@ -633,7 +633,7 @@ DST_JETCALO_run3auau:
          from
                 datasets
          where
-                dataset='new_2025p000_v000' and dsttype='DST_CALOFITTING_run3auau'
+                dataset='new_2025p001_v000' and dsttype='DST_CALOFITTING_run3auau'
                 {run_condition}
 
          {limit_condition}
