@@ -63,7 +63,7 @@ void Fun4All_SingleJob0(
   std::string filepath;
 
   TRACKING::tpc_zero_supp = true;
-  G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING = false;  
+  G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING = true;  
   
   int i = 0;
   
