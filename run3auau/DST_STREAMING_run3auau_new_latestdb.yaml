@@ -105,8 +105,8 @@ DST_STREAMING_EVENT_run3auau_streams:
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
-     accounting_group      : "group_sphenix.mdc2"
-     accounting_group_user : "sphnxpro"
+     #accounting_group      : "group_sphenix.mdc2"
+     #accounting_group_user : "sphnxpro"
      priority : '3900'
      request_xferslots: '0'
 
@@ -190,8 +190,8 @@ DST_TRKR_CLUSTER_run3auau_streams:
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
-     accounting_group      : "group_sphenix.mdc2"
-     accounting_group_user : "sphnxpro"
+     #accounting_group      : "group_sphenix.mdc2"
+     #accounting_group_user : "sphnxpro"
      priority : '3900'
      request_xferslots: '0'
 
@@ -254,8 +254,8 @@ DST_TRKR_SEED_run3auau_streams:
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
-     accounting_group      : "group_sphenix.mdc2"
-     accounting_group_user : "sphnxpro"
+     #accounting_group      : "group_sphenix.mdc2"
+     #accounting_group_user : "sphnxpro"
      priority : '3900'
      request_xferslots: '0'
 
@@ -331,8 +331,8 @@ DST_TRKR_TRACKS_run3auau_streams:
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
-     accounting_group      : "group_sphenix.mdc2"
-     accounting_group_user : "sphnxpro"
+     #accounting_group      : "group_sphenix.mdc2"
+     #accounting_group_user : "sphnxpro"
      priority : '3900'
      request_xferslots: '0'
 
@@ -465,8 +465,8 @@ DST_STREAMING_EVENT_run3calib_streams:
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
-     accounting_group      : "group_sphenix.mdc2"
-     accounting_group_user : "sphnxpro"
+     #accounting_group      : "group_sphenix.mdc2"
+     #accounting_group_user : "sphnxpro"
      priority : '13900'
      request_xferslots: '0'
 
@@ -527,7 +527,7 @@ DST_TRKR_CLUSTER_run3calib_streams:
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
-     accounting_group      : "group_sphenix.mdc2"
-     accounting_group_user : "sphnxpro"
+     #accounting_group      : "group_sphenix.mdc2"
+     #accounting_group_user : "sphnxpro"
      priority : '13900'
      request_xferslots: '0'     
