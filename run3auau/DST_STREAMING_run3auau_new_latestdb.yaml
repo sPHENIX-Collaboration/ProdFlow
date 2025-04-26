@@ -214,7 +214,7 @@ DST_TRKR_SEED_run3auau_streams:
      comment :    "---"
      rsync   : "./ProdFlow/run3auau/TrackingProduction/*"
      mem     :   4000MB
-     mnrun   : 56900
+     mnrun   : 61988
      mxrun   : 99999
      dstin   : 'DST_TRKR_CLUSTER_run3auau'
      dataset : 'new_2025p001_v000'     
