@@ -20,6 +20,7 @@
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
 
+#include <tpcqa/TpcLaserQA.h>
 #include <trackingqa/InttClusterQA.h>
 #include <trackingqa/MicromegasClusterQA.h>
 #include <trackingqa/MvtxClusterQA.h>
@@ -107,7 +108,7 @@ void Fun4All_Job0(
   se->registerSubsystem(new InttClusterQA);
   se->registerSubsystem(new TpcClusterQA);
   se->registerSubsystem(new MicromegasClusterQA);
-
+  se->registerSubsystem(new TpcLaserQA);
 
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfilename);
   //out->StripNode("TRKR_HITSET");

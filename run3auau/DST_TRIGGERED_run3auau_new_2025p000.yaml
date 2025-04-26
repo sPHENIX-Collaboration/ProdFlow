@@ -24,7 +24,7 @@ DST_TRIGGERED_EVENT_run3auau:
      neventsper: 100000
      noverflow:   20000
      mnrun    : 59000
-     mxrun    : 99999
+     mxrun    : 61987
      rsync  : "ProdFlow/run3auau/TriggerProduction/*,cups.py"
 
 
@@ -44,97 +44,104 @@ DST_TRIGGERED_EVENT_run3auau:
    # For now, require GL1 files...
    # 
    input:
-      db: raw
-      lfn2pfn: lfn2lfn
+      db: daqdb
+      direct_path: /sphenix/lustre01/sphnxpro/physics/*/*/
       query: |-
-        with config as (
-        select {neventsper} as nevents,
-            {noverflow}  as noverflow,
-            {mnrun}      as firstrun,
-            {mxrun}      as lastrun
-            ),
-        -- filter datasets limiting to the given run range
-        alldatasets as (
+         with config as (
+            select 
+               {neventsper} as nevents,
+                {noverflow} as noverflow,
+               {mnrun} as firstrun,
+               {mxrun} as lastrun
+         ),
 
-        select datasets.* from datasets,config
+         runnumbers as (
+              select runnumber from run, config where runnumber>=config.firstrun and runnumber<= config.lastrun and runtype in ( 'cosmics', 'physics', 'beam' ) {run_condition}
+         ),
 
-        where datasets.runnumber>=config.firstrun and
-           datasets.runnumber<=config.lastrun
-           and
-           datasets.dataset in ( 'physics', 'cosmics', 'beam' )
-           {run_condition}
-           ),
-        -- join with the files table limiting to the files on disk (lustre)
-        allfiles as (
-           select alldatasets.*,files.full_host_name from alldatasets
-              join
-           files on files.lfn=alldatasets.filename where files.full_host_name='lustre'
-           ),
-        -- for each run get the total number of events (per GL1) 
-        fullevents as (
-        select runnumber,
-            max(lastevent) as lastevent
-            from allfiles
-            where ( filename like 'GL1%' and lastevent>2 )
-        group by runnumber
-        having
-          max(lastevent)>1000 and
-          sum( case when filename like 'GL1%' then 1 else 0 end )>0
-          ),
-        -- setup the job processing the full thing
-        fulljobs as (
-        select 'rawdata' as source,
-            runnumber,
-            0 as segment,
-            string_agg( filename, ' ' order by filename ) as files,
-            string_agg( firstevent::text ||':'|| lastevent::text ||':'|| filename, ' ' order by filename ) as fileranges,
-            dataset as runtype
+         filelistfilt as (
+              select * from filelist where runnumber in ( select * from runnumbers )
+         ),	 
 
-        from allfiles,config
+         fullevents as (
+              select runnumber,max(lastevent)    as lastevent
+              from filelistfilt, config
+              where (filename like '%GL1%.evt'        and lastevent>2 ) and
 
-        where daqhost in (
-            'seb00','seb01','seb02','seb03','seb04','seb05','seb06','seb07',
-            'seb08','seb09','seb10','seb11','seb12','seb13','seb14','seb15',
-            'seb16','seb17',
-            'seb18',
-            'seb19',
-            'seb20',
-            'gl1daq'
-            )
-        group by runnumber,dataset
-        having
-            max(lastevent)>1000 and
-            sum( case when daqhost='gl1daq' then 1 else 0 end )>0 and
-            (
-               sum( case when daqhost in (
-                   'seb00','seb01','seb02','seb03','seb04','seb05','seb06','seb07',
-                   'seb08','seb09','seb10','seb11','seb12','seb13','seb14','seb15',
-                   'seb16','seb17' ) then 1 else 0 end ) > 0
-                  )
-            ),
-        -- dont recall why we needed the full run
-        fullrun as (
-            select fulljobs.*,fullevents.lastevent from fulljobs join fullevents on fulljobs.runnumber=fullevents.runnumber
-        ),
-        -- not entirely sure why this level of copying is going on here...     
-        unsegmented as ( 
-           select * from fullrun where true 
-           ),
-        -- builds jobs in segments of nevents each.  note that all files in the run are passed.  it is the job
-        -- of the production script to trim the leading files off of the job
-        segmented as (
+                 runnumber in ( select * from runnumbers )
+
+              group by runnumber
+              having
+                     every(transferred_to_sdcc)   and
+                     max(lastevent)>1000          and
+                     sum( case when filename like '%GL1%.evt' then 1 else 0 end )>0
+
+              order by runnumber
+         ),
+
+         fulljobs as (
+         select 
+                'daqdb/filelist'                                                                                    as source      , 
+                runnumber                                                                                                          , 
+                0                                                                                                   as segment     , 
+                string_agg( split_part(filename,'/',-1), ' ' order by filename)                                             as files       ,   
+                string_agg( firstevent::text || ':' || lastevent::text || ':' || split_part(filename,'/',-1), ' ' order by filename )                    as fileranges  
+
+         from  
+                filelistfilt,config
+         where 
+           ( 
+             (filename  like '%emcal%.prdf'    and lastevent>2 ) or 
+             (filename  like '%HCal%.prdf'     and lastevent>2 ) or
+             (filename  like '%LL1%.prdf'      and lastevent>2 ) or
+             (filename  like '%GL1%.evt'       and lastevent>2 ) or
+             (filename  like '%mbd%.prdf'      and lastevent>2 ) or
+             (filename  like '%ZDC%.prdf'      and lastevent>2 ) 
+
+           )
+
+         group by runnumber
+
+         having
+                every(transferred_to_sdcc)   and
+                max(lastevent)>1000          and
+                sum( case when filename like '%GL1%.evt' then 1 else 0 end )>0 and
+                (
+                   sum( case when filename like '%emcal%'  then 1 else 0 end )>0 or
+                   sum( case when filename like '%HCal%'   then 1 else 0 end )>0 
+                )
+
+         --         order by runnumber
+
+         ),
+
+         fullrun as (
+
+             select fulljobs.*,fullevents.lastevent from fulljobs join fullevents on fulljobs.runnumber=fullevents.runnumber
+
+         ),
+
+         unsegmented as ( 
+
+             select *,'full run' as runtype from fullrun where true 
+         ),
+
+         segmented as (
+
             select source, 
                    runnumber,
                    generate_series(0,unsegmented.lastevent/config.nevents) as segment,
                    files,
                    fileranges,
                    lastevent,
-                   nevents,
-                   runtype
+                   nevents
+
              from unsegmented,config
+
          ),
-         -- adds the first and last event for each segment into the job
-         segmentedA as (
+
+         segmentedA as ( 
+
          select source,
                 runnumber,
                 segment,
@@ -143,23 +150,29 @@ DST_TRIGGERED_EVENT_run3auau:
                 lastevent, 
                 segment*config.nevents as myfirstevent,
                 least( (segment+1)*config.nevents - 1, lastevent ) as mylastevent,
-                config.nevents,
-                runtype
-         from segmented,config
-         ),
-         -- gets the number of events actually in this segment and the total number of events left to be processed
-         segmentedB as (
-         select *,
-               mylastevent-myfirstevent as nprocessing,
-               lastevent-mylastevent-1  as nremaining from segmentedA,config  -- b/c we count from zero       
-               ),
-          -- account for the overflow segment (last segment may be <= nevents + noverflow)
+                config.nevents 
+ 
+                from segmented,config
+
+          ),
+
+
+          segmentedB as (
+
+               select *,
+                      mylastevent-myfirstevent as nprocessing,
+                      lastevent-mylastevent-1  as nremaining from segmentedA,config  -- b/c we count from zero
+       
+          ),
+
           segmentedC as (
-          select source, runnumber,
-                segment,
-                files,
-                fileranges,
-                myfirstevent,
+
+
+               select source, runnumber,
+                      segment,
+                      files,
+                      fileranges,
+                      myfirstevent,
                       (
                           select 
                              case
@@ -172,34 +185,26 @@ DST_TRIGGERED_EVENT_run3auau:
                       ) as mylastevent,
                       lastevent,
                       nprocessing,
-                      nremaining,
-                      runtype
+                      nremaining
 
-             from segmentedB,config
+                      from segmentedB,config
 
-             ),
-        -- final segmented jobs
-        segmentedjobs as (
+          )
+
+
           select 
-                 source,
+               source,
                  runnumber,
                  segment,
                  files,
                  fileranges,
                  myfirstevent as firstevent,
                  mylastevent  as lastevent,
-                 lastevent    as runs_last_event,
-                 runtype
+                 lastevent    as runs_last_event
 
                  from segmentedC
 
-                 order by runnumber desc, segment desc
-                 )
-
-                 select * from segmentedjobs
-
-
-
+          order by runnumber desc, segment;
 
    job:
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync} $(firstevent) $(lastevent) $(runs_last_event) {PWD} {rsync}"
@@ -419,7 +424,7 @@ DST_CALOFITTING_run3auau:
      nevents:    0
      build:      new
      build_name: new
-     dbtag:      2025p001
+     dbtag:      2025p000
      version : 0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
@@ -447,6 +452,8 @@ DST_CALOFITTING_run3auau:
                 dsttype='{dstin}' and dataset='{dataset}'
                 
                 {run_condition}
+
+                and runnumber<=61987
            
          {limit_condition}
 
@@ -472,7 +479,7 @@ DST_CALOFITTING_run3cosmics:
      nevents:    0
      build:      new
      build_name: new
-     dbtag:      2025p001
+     dbtag:      2025p000
      version : 0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
@@ -501,6 +508,8 @@ DST_CALOFITTING_run3cosmics:
 
                 {run_condition}
 
+                and runnumber<=61987                
+
          {limit_condition}
 
          ;
@@ -518,7 +527,7 @@ DST_CALO_run3auau:
      name:       DST_CALO_run3auau
      build:      new
      build_name: new
-     dbtag:      2025p001
+     dbtag:      2025p000
      version :   0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
@@ -540,8 +549,10 @@ DST_CALO_run3auau:
          from  
                 datasets
          where 
-                dataset='new_2025p001_v000' and dsttype='DST_CALOFITTING_run3auau'
+                dataset='new_2025p000_v000' and dsttype='DST_CALOFITTING_run3auau'
                 {run_condition}
+
+                                and runnumber<=61987
 
          {limit_condition}
 
@@ -561,7 +572,7 @@ DST_JETS_run3auau:
      name:       DST_JETS_run3auau
      build:      new
      build_name: new
-     dbtag:      2025p001
+     dbtag:      2025p000
      version : 0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
@@ -583,10 +594,12 @@ DST_JETS_run3auau:
          from  
                 datasets
          where 
-                dsttype='DST_CALO_run3auau' and dataset='new_2025p001_v000'
+                dsttype='DST_CALO_run3auau' and dataset='new_2025p000_v000'
                 {run_condition}
            
          {limit_condition}
+
+                         and runnumber<=61987
 
          ;
    job:
@@ -606,7 +619,7 @@ DST_JETCALO_run3auau:
      name:       DST_JETCALO_run3auau
      build:      new
      build_name: new
-     dbtag:      2025p001
+     dbtag:      2025p000
      version:    0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
@@ -628,8 +641,10 @@ DST_JETCALO_run3auau:
          from
                 datasets
          where
-                dataset='new_2025p001_v000' and dsttype='DST_CALOFITTING_run3auau'
+                dataset='new_2025p000_v000' and dsttype='DST_CALOFITTING_run3auau'
                 {run_condition}
+
+                                and runnumber<=61987
 
          {limit_condition}
 

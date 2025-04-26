@@ -100,8 +100,10 @@ for infile_ in ${inputs[@]}; do
 
     infile=$infile_
     
-    outfile=${infile/CALOFITTING/CALO}
-    outhist=${outfile/DST_CALO/HIST_CALOQA}
+    outfile=${infile//CALOFITTING/CALO}
+    outhist=${outfile//DST_CALO/HIST_CALOQA}
+    outfile=$(basename "$outfile")
+    outhist=$(basename "$outhist")
     root.exe -q -b Fun4All_Year2_Calib.C\(${nevents},\"${infile}\",\"${outfile}\",\"${outhist}\",\"${dbtag}\"\);  status_f4a=$?
 
     # Stageout the (single) DST created in the macro run

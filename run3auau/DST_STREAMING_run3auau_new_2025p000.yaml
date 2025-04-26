@@ -16,7 +16,7 @@ DST_STREAMING_EVENT_run3auau_streams:
      rsync   : "./ProdFlow/run3auau/streaming/*"
      mem     :   4000MB
      mnrun   :   56900
-     mxrun   :   99999
+     mxrun   :   61987
 
    input:
       db: daqdb
@@ -119,7 +119,7 @@ DST_TRKR_CLUSTER_run3auau_streams:
      name:       DST_TRKR_CLUSTER_run3auau
      build:      new
      build_name: new
-     dbtag:      2025p001
+     dbtag:      2025p000
      version:    0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
@@ -130,24 +130,27 @@ DST_TRKR_CLUSTER_run3auau_streams:
      rsync   : "./ProdFlow/run3auau/TrackingProduction/*"
      mem     :   8192MB
      mnrun   : 56900
-     mxrun   : 99999
+     mxrun   : 61987
      dstin   : 'DST_STREAMING_EVENT_%_run3auau'
      dataset : 'new_nocdbtag_v000'
-     mninputs: 24
+     mninputs: 39
      required: >
        TPC00 TPC01 TPC02 TPC03 TPC04 TPC05
        TPC06 TPC07 TPC08 TPC09 TPC10 TPC11
        TPC12 TPC13 TPC14 TPC15 TPC16 TPC17
        TPC18 TPC19 TPC20 TPC21 TPC22 TPC23
-       #INTT0 INTT1 INTT2 INTT3 INTT4 INTT5 INTT6 INTT7
-       #MVTX0 MVTX1 MVTX2 MVTX3 MVTX4 MVTX5
-       #TPOT
+       INTT0 INTT1 INTT2 INTT3 INTT4 INTT5 INTT6 INTT7
+       MVTX0 MVTX1 MVTX2 MVTX3 MVTX4 MVTX5
+       TPOT
 
 
    input:
       db: fc
       query: |-
-         with allruns as (
+         with required as (
+            select string_to_array( '{required}',' ' ) as subsystems
+         ),
+         allruns as (
          select
                 'filecatalog/datasets'         as source        ,
                 runnumber                                       ,
@@ -171,7 +174,12 @@ DST_TRKR_CLUSTER_run3auau_streams:
 
          --         select * from allruns where allruns.ninputs>={mninputs} order by runnumber, segment
 
-         select source, runnumber, segment, files, fileranges from allruns;
+         select source, runnumber, segment, files, fileranges from allruns,required
+
+         where
+             -- requires that the two arrays have the same set of arguments --
+             allruns.subsystems @> required.subsystems and
+             allruns.subsystems <@ required.subsystems;
 
 
    #
@@ -196,7 +204,7 @@ DST_TRKR_SEED_run3auau_streams:
      name:       DST_TRKR_SEED_run3auau
      build:      new
      build_name: new
-     dbtag:      2025p001
+     dbtag:      2025p000
      version:    0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
@@ -206,10 +214,10 @@ DST_TRKR_SEED_run3auau_streams:
      comment :    "---"
      rsync   : "./ProdFlow/run3auau/TrackingProduction/*"
      mem     :   4000MB
-     mnrun   : 61988
-     mxrun   : 99999
+     mnrun   : 56900
+     mxrun   : 61987
      dstin   : 'DST_TRKR_CLUSTER_run3auau'
-     dataset : 'new_2025p001_v000'     
+     dataset : 'new_2025p000_v000'     
 
    input:
       db: fc
@@ -225,7 +233,8 @@ DST_TRKR_SEED_run3auau_streams:
          from
                 datasets
          where
-                dsttype like '{dstin}' and dataset='{dataset}' {run_condition}
+                dsttype like '{dstin}' and dataset='{dataset}'
+                {run_condition}
                 and runnumber>={mnrun}
                 and runnumber<={mxrun}
 
@@ -234,7 +243,7 @@ DST_TRKR_SEED_run3auau_streams:
          order by runnumber {limit_condition}
          )
 
-         select * from allruns where allruns.ninputs>0 order by runnumber, segment;
+         select * from allruns where allruns.ninputs>0 order by runnumber, segment
 
 
    #
@@ -260,7 +269,7 @@ DST_TRKR_TRACKS_run3auau_streams:
      name:       DST_TRKR_TRACKS_run3auau
      build:      new
      build_name: new
-     dbtag:      2025p001
+     dbtag:      2025p000
      version:    0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
@@ -271,11 +280,11 @@ DST_TRKR_TRACKS_run3auau_streams:
      rsync   : "./ProdFlow/run3auau/TrackingProduction/*"
      mem     :   4000MB
      mnrun   : 56900
-     mxrun   : 99999
+     mxrun   : 61987
      dstin1   : 'DST_TRKR_CLUSTER_run3auau'
-     dataset1 : 'new_2025p001_v000'
+     dataset1 : 'new_2025p000_v000'
      dstin2   : 'DST_TRKR_SEED_run3auau'
-     dataset2 : 'new_2025p001_v000'          
+     dataset2 : 'new_2025p000_v000'          
 
    input:
       db: fc
@@ -382,7 +391,7 @@ DST_STREAMING_EVENT_run3calib_streams:
       query: |-
          with run2pp as (
               select 56900 as firstrun,
-                     99999 as lastrun
+                     61987 as lastrun
          ),
          streams as (select distinct split_part( split_part(filename,'/',-1), '-', 1 ) as streamfile, hostname                     from filelist,run2pp where runnumber>=run2pp.firstrun and runnumber<=run2pp.lastrun),
 
@@ -468,7 +477,7 @@ DST_TRKR_CLUSTER_run3calib_streams:
      name:       DST_TRKR_CLUSTER_run3calib
      build:      new
      build_name: new
-     dbtag:      2025p001
+     dbtag:      2025p000
      version:    0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
@@ -479,7 +488,7 @@ DST_TRKR_CLUSTER_run3calib_streams:
      rsync   : "./ProdFlow/run3auau/TrackingProduction/*"
      mem     :   8192MB
      mnrun   : 56900
-     mxrun   : 99999
+     mxrun   : 61987
      dstin   : 'DST_STREAMING_EVENT_%_run3calib'
      dataset : 'new_nocdbtag_v000'
 
