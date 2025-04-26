@@ -147,10 +147,7 @@ DST_TRKR_CLUSTER_run3auau_streams:
    input:
       db: fc
       query: |-
-         with required as (
-            select string_to_array( '{required}',' ' ) as subsystems
-         ),
-         allruns as (
+         with allruns as (
          select
                 'filecatalog/datasets'         as source        ,
                 runnumber                                       ,
@@ -174,12 +171,7 @@ DST_TRKR_CLUSTER_run3auau_streams:
 
          --         select * from allruns where allruns.ninputs>={mninputs} order by runnumber, segment
 
-         select source, runnumber, segment, files, fileranges from allruns,required
-
-         where
-             -- requires that the two arrays have the same set of arguments --
-             allruns.subsystems @> required.subsystems and
-             allruns.subsystems <@ required.subsystems;
+         select source, runnumber, segment, files, fileranges from allruns;
 
 
    #
@@ -233,8 +225,7 @@ DST_TRKR_SEED_run3auau_streams:
          from
                 datasets
          where
-                dsttype like '{dstin}' and dataset='{dataset}'
-                {run_condition}
+                dsttype like '{dstin}' and dataset='{dataset}' {run_condition}
                 and runnumber>={mnrun}
                 and runnumber<={mxrun}
 
@@ -243,7 +234,7 @@ DST_TRKR_SEED_run3auau_streams:
          order by runnumber {limit_condition}
          )
 
-         select * from allruns where allruns.ninputs>0 order by runnumber, segment
+         select * from allruns where allruns.ninputs>0 order by runnumber, segment;
 
 
    #
