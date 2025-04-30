@@ -33,7 +33,7 @@ DST_STREAMING_EVENT_run3auau_streams:
          ),
 
          filelistfilt as (
-              select * from filelist where runnumber in ( select * from runnumbers ) and transferred_to_sdcc='t'
+              select * from filelist where runnumber in ( select * from runnumbers )
          ),
 
          streams as (select distinct split_part( split_part(filename,'/',-1), '-', 1 ) as streamfile, hostname                     from filelistfilt),
