@@ -42,7 +42,7 @@ hostname
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
 
-OS=$( hostnamectl | awk '/Operating System/{ print $3" "$4 }' )
+#OS=$( hostnamectl | awk '/Operating System/{ print $3" "$4 }' )
 #if [[ $OS =~ "Alma" ]]; then
 #    echo "Can live with stock pyton on alma9"
 #else

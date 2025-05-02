@@ -41,14 +41,6 @@ export HOME=/sphenix/u/${USER}
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
 
-OS=$( hostnamectl | awk '/Operating System/{ print $3" "$4 }' )
-#if [[ $OS =~ "Alma" ]]; then
-#    echo "Can live with stock pyton on alma9"
-#else
-#    echo "Need older python on SL7"
-#   source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/stow/opt_sphenix_scripts/bin/setup_python-3.6.sh
-#fi
-
 echo "Offline main "${OFFLINE_MAIN}
 
 
