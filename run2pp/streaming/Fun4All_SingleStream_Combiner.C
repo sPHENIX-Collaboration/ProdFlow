@@ -68,6 +68,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
+  se->VerbosityDownscale(10000); // only print every 10000th event
   recoConsts *rc = recoConsts::instance();
   CDBInterface::instance()->Verbosity(1);
   rc->set_StringFlag("CDB_GLOBALTAG", dbtag );
