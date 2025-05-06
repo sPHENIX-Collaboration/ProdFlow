@@ -1,3 +1,4 @@
+
 #
 #FileCatalog=# select dataset,dsttype,count(filename),sum(events) from datasets where dsttype='DST_CALOFITTING_run2pp' group by dataset,dsttype;
 #     dataset     |        dsttype         | count  |     sum     
@@ -11,202 +12,121 @@
 # Disable the DST_TRIGGERED_EVENT rule
 DST_TRIGGERED_EVENT_run3auau:
    params:
-     name:       DST_TRIGGERED_EVENT_run3auau
+     name:       DST_TRIGGERED_EVENT_$(streamname)_run3auau
      build:      new
      build_name: new
      dbtag:      nocdbtag
      version :   0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
-     script  :   run.sh
+     script  :   run_parallel.sh
      payload :   ./ProdFlow/run3auau/TriggerProduction/
      mem     :   2048M
      neventsper: 100000
      noverflow:   20000
-     mnrun    : 59000
+     mnrun    : 63751
      mxrun    : 99999
-     rsync  : "ProdFlow/run3auau/TriggerProduction/*,cups.py"
+     rsync  : "ProdFlow/run3auau/TriggerProduction/*"
 
 
-   #
-   # input query:
-   #
-   # This builds a list of all runs known to the file catalog "datasets" table.
-   # The query should return:
-   # 1. The source of the information (formatted as database name/table name)
-   # 2. The run number
-   # 3. A sequence number (a placeholder fixed at zero for event builders)
-   # 4. And a space-separated list of logical filenames 
-   #
-   # The {*_condition} parameters (run, seg, limit) are substituted by kaedama
-   # based on (optional) command line options.
-   #
-   # For now, require GL1 files...
-   # 
+   import_tables:
+     - runselection:
+         db: daq
+         query: |-
+           with runselection as (
+           select run.*,hostinfo.hostname from run join hostinfo on run.runnumber=hostinfo.runnumber
+           where
+              run.runnumber>={mnrun}
+              and
+              run.runnumber<={mxrun}
+              and
+              runtype in ( 'cosmics', 'physics', 'beam' )
+              and
+              hostname != 'gl1daq'
+              and
+              hostname like '%seb%'
+           )
+           select runnumber, string_agg(hostname,',' order by hostname) as hosts from runselection group by runnumber
+           
    input:
       db: raw
       lfn2pfn: lfn2lfn
       query: |-
         with config as (
-        select {neventsper} as nevents,
-            {noverflow}  as noverflow,
-            {mnrun}      as firstrun,
-            {mxrun}      as lastrun
-            ),
-        -- filter datasets limiting to the given run range
-        alldatasets as (
-
-        select datasets.* from datasets,config
-
-        where datasets.runnumber>=config.firstrun and
-           datasets.runnumber<=config.lastrun
-           and
-           datasets.dataset in ( 'physics', 'cosmics', 'beam' )
-           {run_condition}
-           ),
-        -- join with the files table limiting to the files on disk (lustre)
-        allfiles as (
-           select alldatasets.*,files.full_host_name from alldatasets
-              join
-           files on files.lfn=alldatasets.filename where files.full_host_name='lustre'
-           ),
-        -- for each run get the total number of events (per GL1) 
-        fullevents as (
-        select runnumber,
-            max(lastevent) as lastevent
-            from allfiles
-            where ( filename like 'GL1%' and lastevent>2 )
-        group by runnumber
-        having
-          max(lastevent)>1000 and
-          sum( case when filename like 'GL1%' then 1 else 0 end )>0
-          ),
-        -- setup the job processing the full thing
-        fulljobs as (
-        select 'rawdata' as source,
-            runnumber,
-            0 as segment,
-            string_agg( filename, ' ' order by filename ) as files,
-            string_agg( firstevent::text ||':'|| lastevent::text ||':'|| filename, ' ' order by filename ) as fileranges,
-            dataset as runtype
-
-        from allfiles,config
-
-        where daqhost in (
-            'seb00','seb01','seb02','seb03','seb04','seb05','seb06','seb07',
-            'seb08','seb09','seb10','seb11','seb12','seb13','seb14','seb15',
-            'seb16','seb17',
-            'seb18',
-            'seb19',
-            'seb20',
-            'gl1daq'
-            )
-        group by runnumber,dataset
-        having
-            max(lastevent)>1000 and
-            sum( case when daqhost='gl1daq' then 1 else 0 end )>0 and
-            (
-               sum( case when daqhost in (
-                   'seb00','seb01','seb02','seb03','seb04','seb05','seb06','seb07',
-                   'seb08','seb09','seb10','seb11','seb12','seb13','seb14','seb15',
-                   'seb16','seb17' ) then 1 else 0 end ) > 0
-                  )
-            ),
-        -- dont recall why we needed the full run
-        fullrun as (
-            select fulljobs.*,fullevents.lastevent from fulljobs join fullevents on fulljobs.runnumber=fullevents.runnumber
+        select {mnrun} as firstrun,
+        {mxrun} as lastrun
         ),
-        -- not entirely sure why this level of copying is going on here...     
-        unsegmented as ( 
-           select * from fullrun where true 
-           ),
-        -- builds jobs in segments of nevents each.  note that all files in the run are passed.  it is the job
-        -- of the production script to trim the leading files off of the job
-        segmented as (
-            select source, 
-                   runnumber,
-                   generate_series(0,unsegmented.lastevent/config.nevents) as segment,
-                   files,
-                   fileranges,
-                   lastevent,
-                   nevents,
-                   runtype
-             from unsegmented,config
-         ),
-         -- adds the first and last event for each segment into the job
-         segmentedA as (
-         select source,
-                runnumber,
-                segment,
-                files,
-                fileranges,
-                lastevent, 
-                segment*config.nevents as myfirstevent,
-                least( (segment+1)*config.nevents - 1, lastevent ) as mylastevent,
-                config.nevents,
-                runtype
-         from segmented,config
-         ),
-         -- gets the number of events actually in this segment and the total number of events left to be processed
-         segmentedB as (
-         select *,
-               mylastevent-myfirstevent as nprocessing,
-               lastevent-mylastevent-1  as nremaining from segmentedA,config  -- b/c we count from zero       
-               ),
-          -- account for the overflow segment (last segment may be <= nevents + noverflow)
-          segmentedC as (
-          select source, runnumber,
-                segment,
-                files,
-                fileranges,
-                myfirstevent,
-                      (
-                          select 
-                             case
-                                when nprocessing<config.noverflow  then -1
-                                when nremaining>=config.nevents    then mylastevent
-                                when nremaining>=config.noverflow  then mylastevent
-                                when nremaining<config.noverflow   then lastevent
-                                else                                    -2             -- unhandled, should be an error condition
-                             end
-                      ) as mylastevent,
-                      lastevent,
-                      nprocessing,
-                      nremaining,
-                      runtype
-
-             from segmentedB,config
-
-             ),
-        -- final segmented jobs
-        segmentedjobs as (
-          select 
-                 source,
-                 runnumber,
-                 segment,
-                 files,
-                 fileranges,
-                 myfirstevent as firstevent,
-                 mylastevent  as lastevent,
-                 lastevent    as runs_last_event,
-                 runtype
-
-                 from segmentedC
-
-                 order by runnumber desc, segment desc
-                 )
-
-                 select * from segmentedjobs
-
-
+        alldatasets as (
+        select * from datasets,config where runnumber in ( select runnumber from runselection )
+        ),
+        allfiles as (
+        select alldatasets.*,files.* from alldatasets join files on files.lfn=alldatasets.filename
+        ),
+        allstreams as (
+        select runnumber,
+        filename as streamfile,
+        daqhost as streamname,
+        full_host_name,
+        dataset as runtype
+        from allfiles    
+        where
+        daqhost in ( 'seb00','seb01','seb02','seb03','seb04','seb05',
+        'seb06','seb07','seb08','seb09','seb10','seb11',
+        'seb12','seb13','seb14','seb15','seb16','seb17',
+        'seb18','seb19','seb20' )          
+        and
+        full_host_name='lustre'
+        ),
+        allgl1 as (
+        select runnumber,
+        filename as streamfile,
+        --upper( daqhost ) as streamname,
+        daqhost as streamname,
+        full_host_name,
+        dataset as runtype        
+        from allfiles     
+        where
+        daqhost='gl1daq' 
+        and
+        full_host_name='lustre'
+        ),
+        alljobs1 as (
+        select 'rawdata' as source,
+        runnumber,
+        0 as segment,
+        string_agg( distinct streamfile, ' ' ) as files,
+        'na' as fileranges,
+        streamname,
+        runtype
+        from allstreams
+        group by runnumber,allstreams.streamname,runtype
+        ),
+        alljobs2 as (
+        select 'rawdata' as source,
+        runnumber,
+        0 as segment,
+        string_agg( distinct streamfile, ' ' ) as gl1files,
+        'na' as gl1fileranges
+        from allgl1
+        group by runnumber,allgl1.streamname,runtype
+        ),
+        alljobs as (
+        select alljobs1.source,
+        alljobs1.runnumber,
+        alljobs1.segment,
+        files||' '||gl1files as files,
+        alljobs1.fileranges, 
+        alljobs1.streamname,
+        alljobs1.runtype
+        from alljobs1 join alljobs2 on alljobs1.runnumber=alljobs2.runnumber
+        )
+        select * from alljobs
 
 
    job:
-     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync} $(firstevent) $(lastevent) $(runs_last_event) {PWD} {rsync}"
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync} $(firstevent)"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
-     #accounting_group      : "group_sphenix.mdc2"
-     #accounting_group_user : "sphnxpro"
      priority              : '3900'
      request_xferslots     : '1'
      periodicremove        : '(JobStatus==2)&&(time()-EnteredCurrentStatus)>(3*24*3600)'
@@ -214,199 +134,121 @@ DST_TRIGGERED_EVENT_run3auau:
 #cosmic event combining:
 DST_TRIGGERED_EVENT_run3cosmics:
    params:
-     name:       DST_TRIGGERED_EVENT_run3cosmics
+     name:       DST_TRIGGERED_EVENT_$(streamname)_run3cosmics
      build:      new
      build_name: new
      dbtag:      nocdbtag
      version :   0
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
-     script  :   run.sh
+     script  :   run_parallel.sh
      payload :   ./ProdFlow/run3auau/TriggerProduction/
      mem     :   2048M
      neventsper: 100000
      noverflow:   20000
-     rsync  : "ProdFlow/run3auau/TriggerProduction/*,cups.py"
+     mnrun: 63751
+     mxrun: 99999
+     rsync  : "ProdFlow/run3auau/TriggerProduction/*"
 
 
-   #
-   # input query:
-   #
-   # This builds a list of all runs known to the file catalog "datasets" table.
-   # The query should return:
-   # 1. The source of the information (formatted as database name/table name)
-   # 2. The run number
-   # 3. A sequence number (a placeholder fixed at zero for event builders)
-   # 4. And a space-separated list of logical filenames
-   #
-   # The {*_condition} parameters (run, seg, limit) are substituted by kaedama
-   # based on (optional) command line options.
-   #
-   # For now, require GL1 files...
-   #
-   input:
-      db: daqdb
-      direct_path: /sphenix/lustre01/sphnxpro/physics/*/cosmics/
-      query: |-
-         with config as (
-            select
-               {neventsper} as nevents,
-               {noverflow} as noverflow
-         ),
-
-         fullevents as (
-              select runnumber,max(lastevent)    as lastevent
-              from filelist, config
-              where (filename similar to '/bbox%/GL1_(physics|cosmics)%.evt'        and lastevent>2 )
-
-                 {run_condition} and runnumber>46000
-
-              group by runnumber
-              having
-                     every(transferred_to_sdcc)   and
-                     max(lastevent)>1000          and
-                     sum( case when filename similar to '/bbox%/GL1_(physics|cosmics)%' then 1 else 0 end )>0
-
-              order by runnumber
-         ),
-
-         fulljobs as (
-         select
-                'daqdb/filelist'                                                                                    as source      ,
-                runnumber                                                                                                          ,
-                0                                                                                                   as segment     ,
-                string_agg( split_part(filename,'/',-1), ' ' order by filename)                                             as files       ,
-                string_agg( firstevent::text || ':' || lastevent::text || ':' || split_part(filename,'/',-1), ' ' order by filename )                    as fileranges
-
-         from
-                filelist,config
-         where
-           (
-             (filename  similar to '/bbox%/%emcal%(physics|cosmics)%.prdf'    and lastevent>2 ) or
-             (filename  similar to '/bbox%/%HCal%(physics|cosmics)%.prdf'     and lastevent>2 ) or
-             (filename  similar to '/bbox%/%LL1%(physics|cosmics)%.prdf'      and lastevent>2 ) or
-             (filename  similar to '/bbox%/GL1_(physics|cosmics)%.evt'       and lastevent>2 ) or
-             (filename  similar to '/bbox%/%mbd%(physics|cosmics)%.prdf'      and lastevent>2 ) or
-             (filename  similar to '/bbox%/%ZDC%(physics|cosmics)%.prdf'      and lastevent>2 )
-
+   import_tables:
+     - runselection:
+         db: daq
+         query: |-
+           with runselection as (
+           select run.*,hostinfo.hostname from run join hostinfo on run.runnumber=hostinfo.runnumber
+           where
+              run.runnumber>={mnrun}
+              and
+              run.runnumber<={mxrun}
+              and
+              runtype in ( 'cosmics', 'physics', 'beam' )
+              and
+              hostname != 'gl1daq'
+              and
+              hostname like '%seb%'
            )
+           select runnumber, string_agg(hostname,',' order by hostname) as hosts from runselection group by runnumber
+           
+   input:
+      db: raw
+      lfn2pfn: lfn2lfn
+      query: |-
+        with config as (
+        select {mnrun} as firstrun,
+        {mxrun} as lastrun
+        ),
+        alldatasets as (
+        select * from datasets,config where runnumber in ( select runnumber from runselection )
+        ),
+        allfiles as (
+        select alldatasets.*,files.* from alldatasets join files on files.lfn=alldatasets.filename
+        ),
+        allstreams as (
+        select runnumber,
+        filename as streamfile,
+        daqhost as streamname,
+        full_host_name,
+        dataset as runtype
+        from allfiles    
+        where
+        daqhost in ( 'seb00','seb01','seb02','seb03','seb04','seb05',
+        'seb06','seb07','seb08','seb09','seb10','seb11',
+        'seb12','seb13','seb14','seb15','seb16','seb17',
+        'seb18','seb19','seb20' )          
+        and
+        full_host_name='lustre'
+        ),
+        allgl1 as (
+        select runnumber,
+        filename as streamfile,
+        --upper( daqhost ) as streamname,
+        daqhost as streamname,
+        full_host_name,
+        dataset as runtype        
+        from allfiles     
+        where
+        daqhost='gl1daq' 
+        and
+        full_host_name='lustre'
+        ),
+        alljobs1 as (
+        select 'rawdata' as source,
+        runnumber,
+        0 as segment,
+        string_agg( distinct streamfile, ' ' ) as files,
+        'na' as fileranges,
+        streamname,
+        runtype
+        from allstreams
+        group by runnumber,allstreams.streamname,runtype
+        ),
+        alljobs2 as (
+        select 'rawdata' as source,
+        runnumber,
+        0 as segment,
+        string_agg( distinct streamfile, ' ' ) as gl1files,
+        'na' as gl1fileranges
+        from allgl1
+        group by runnumber,allgl1.streamname,runtype
+        ),
+        alljobs as (
+        select alljobs1.source,
+        alljobs1.runnumber,
+        alljobs1.segment,
+        files||' '||gl1files as files,
+        alljobs1.fileranges, 
+        alljobs1.streamname,
+        alljobs1.runtype
+        from alljobs1 join alljobs2 on alljobs1.runnumber=alljobs2.runnumber
+        )
+        select * from alljobs
 
-           {run_condition}
-
-         group by runnumber
-
-         having
-                every(transferred_to_sdcc)   and
-                max(lastevent)>1000          and
-                sum( case when filename similar to '/bbox%/GL1_(physics|cosmics)%' then 1 else 0 end )>0 and
-                (
-                   sum( case when filename similar to '/bbox%/%emcal%(physics|cosmics)%'  then 1 else 0 end )>0 or
-                   sum( case when filename similar to '/bbox%/%HCal%(physics|cosmics)%'   then 1 else 0 end )>0
-                )
-
-         order by runnumber
-         ),
-
-         fullrun as (
-
-             select fulljobs.*,fullevents.lastevent from fulljobs join fullevents on fulljobs.runnumber=fullevents.runnumber
-
-         ),
-
-         unsegmented as (
-
-             select *,'full run' as runtype from fullrun where true
-         ),
-
-         segmented as (
-
-            select source,
-                   runnumber,
-                   generate_series(0,unsegmented.lastevent/config.nevents) as segment,
-                   files,
-                   fileranges,
-                   lastevent,
-                   nevents
-
-             from unsegmented,config
-
-         ),
-
-         segmentedA as (
-
-         select source,
-                runnumber,
-                segment,
-                files,
-                fileranges,
-                lastevent,
-                segment*config.nevents as myfirstevent,
-                least( (segment+1)*config.nevents - 1, lastevent ) as mylastevent,
-                config.nevents
-
-                from segmented,config
-
-          ),
-
-
-          segmentedB as (
-
-               select *,
-                      mylastevent-myfirstevent as nprocessing,
-                      lastevent-mylastevent-1  as nremaining from segmentedA,config  -- b/c we count from zero
-
-          ),
-
-          segmentedC as (
-
-
-               select source, runnumber,
-                      segment,
-                      files,
-                      fileranges,
-                      myfirstevent,
-                      (
-                          select
-                             case
-                                when nprocessing<config.noverflow  then -1
-                                when nremaining>=config.nevents    then mylastevent
-                                when nremaining>=config.noverflow  then mylastevent
-                                when nremaining<config.noverflow   then lastevent
-                                else                                    -2             -- unhandled, should be an error condition
-                             end
-                      ) as mylastevent,
-                      lastevent,
-                      nprocessing,
-                      nremaining
-
-                      from segmentedB,config
-
-          )
-
-
-          select
-               source,
-                 runnumber,
-                 segment,
-                 files,
-                 fileranges,
-
-                 (select count(*) from regexp_matches( files,      ' ', 'g' ))::integer =
-                 (select count(*) from regexp_matches( fileranges, ' ', 'g' ))::integer as sanity,
-                 myfirstevent as firstevent,
-                 mylastevent  as lastevent,
-                 lastevent    as runs_last_event
-
-                 from segmentedC
-
-          order by runnumber desc, segment;
 
    job:
-     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync} $(firstevent) $(lastevent) $(runs_last_event) {PWD} {rsync}"
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync} $(firstevent)"     
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
-     #accounting_group      : "group_sphenix.mdc2"
-     #accounting_group_user : "sphnxpro"
      priority              : '3900'
      request_xferslots     : '1'
      periodicremove        : '(JobStatus==2)&&(time()-EnteredCurrentStatus)>(3*24*3600)'
@@ -428,35 +270,61 @@ DST_CALOFITTING_run3auau:
      mem     :   1024MB
      neventsper: 50000
      rsync  : "./ProdFlow/run3auau/CaloProduction/*,cups.py"
-     dstin  : 'DST_TRIGGERED_EVENT_run3auau'
+     dstin  : 'DST_TRIGGERED_EVENT_%_run3auau'
      dataset : 'new_nocdbtag_v000'
+     mnrun    : 63751
+     mxrun    : 99999     
 
+   import_tables:
+     # Get the list of runs taken, and for each run, the list of daqhosts for the run... restricted to calorimeters
+     - hosttable:
+         db: daq
+         query: |-
+           select hostinfo.runnumber,string_agg(hostinfo.hostname,' ' order by hostname) as hosts,run.runtype from hostinfo join run on run.runnumber=hostinfo.runnumber where run.runnumber>={mnrun} and run.runnumber<={mxrun} and hostinfo.hostname like 'seb%' and runtype in ( 'physics', 'beam', 'cosmics' ) group by hostinfo.runnumber, run.runtype
+           
+     - runtable:
+         db: daq
+         query: |-           
+           select runnumber as thisrun, runtype from run where runnumber>={mnrun} and runnumber<={mxrun} {run_condition} and runtype in ( 'cosmics', 'physics', 'beam' )
+
+           
    input:
      db: filecatalog
+     lfn2pfn: lfn2lfn
      query: |-
+       with allruns as (
          select 
                 'filecatalog/datasets'                                  as source      , 
                 runnumber                                                              , 
                 segment                                                                ,
-                filename                                                as files       ,
-                filename || ':' || 0 || ':' || events                   as fileranges 
+                string_agg( distinct filename,' ')                      as files       ,
+                'na'                                                    as fileranges  ,
+                string_agg( split_part(filename,'_',4), ' ' order by filename ) as hosts
+
          from  
-                datasets
+                datasets 
          where 
 
-                dsttype='{dstin}' and dataset='{dataset}'
-                
+                dsttype like '{dstin}' and dataset='{dataset}'
+              
                 {run_condition}
+
+         group by runnumber,segment
            
          {limit_condition}
 
+         )
+
+         select allruns.*,hosttable.runtype from allruns join hosttable on allruns.runnumber=hosttable.runnumber and allruns.hosts=hosttable.hosts         
+
          ;
+
+#--              and runnumber in ( select thisrun from runtable )
+         
    job:
      arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
-     #accounting_group      : "group_sphenix.mdc2"
-     #accounting_group_user : "sphnxpro"
      priority : '3900'
 
 
@@ -480,36 +348,59 @@ DST_CALOFITTING_run3cosmics:
      payload :   ./ProdFlow/run3auau/CaloProduction/
      mem     :   1024MB
      neventsper: 50000
-     rsync  : "./ProdFlow/run3auau/CaloProduction/*,cups.py"
-     dstin  : 'DST_TRIGGERED_EVENT_run3cosmics'
+     rsync  : "./ProdFlow/run3auau/CaloProduction/*"
+     dstin  : 'DST_TRIGGERED_EVENT_%_run3cosmics'
      dataset : 'new_nocdbtag_v000'
+     mnrun    : 63751
+     mxrun    : 99999          
 
+   import_tables:
+     # Get the list of runs taken, and for each run, the list of daqhosts for the run... restricted to calorimeters
+     - hosttable:
+         db: daq
+         query: |-
+           select hostinfo.runnumber,string_agg(hostinfo.hostname,' ' order by hostname) as hosts,run.runtype from hostinfo join run on run.runnumber=hostinfo.runnumber where run.runnumber>={mnrun} and run.runnumber<={mxrun} and hostinfo.hostname like 'seb%' and runtype in ( 'physics', 'beam', 'cosmics' ) group by hostinfo.runnumber, run.runtype
+           
+     - runtable:
+         db: daq
+         query: |-           
+           select runnumber as thisrun, runtype from run where runnumber>={mnrun} and runnumber<={mxrun} {run_condition} and runtype in ( 'cosmics', 'physics', 'beam' )
+
+           
    input:
      db: filecatalog
+     lfn2pfn: lfn2lfn
      query: |-
-         select
-                'filecatalog/datasets'                                  as source      ,
-                runnumber                                                              ,
+       with allruns as (
+         select 
+                'filecatalog/datasets'                                  as source      , 
+                runnumber                                                              , 
                 segment                                                                ,
-                filename                                                as files       ,
-                filename || ':' || 0 || ':' || events                   as fileranges
-         from
-                datasets
-         where
+                string_agg( distinct filename,' ')                      as files       ,
+                'na'                                                    as fileranges  ,
+                string_agg( split_part(filename,'_',4), ' ' order by filename ) as hosts
 
-                dsttype='{dstin}' and dataset='{dataset}'
+         from  
+                datasets 
+         where 
 
+                dsttype like '{dstin}' and dataset='{dataset}'
+              
                 {run_condition}
 
+         group by runnumber,segment
+           
          {limit_condition}
+
+         )
+
+         select allruns.*,hosttable.runtype from allruns join hosttable on allruns.runnumber=hosttable.runnumber and allruns.hosts=hosttable.hosts         
 
          ;
    job:
      arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
-     #accounting_group      : "group_sphenix.mdc2"
-     #accounting_group_user : "sphnxpro"
      priority : '3900'
 
 #_____________________________________________________________________________________________

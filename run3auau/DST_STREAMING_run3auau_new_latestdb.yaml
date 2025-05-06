@@ -15,85 +15,99 @@ DST_STREAMING_EVENT_run3auau_streams:
      comment :    "---"
      rsync   : "./ProdFlow/run3auau/streaming/*"
      mem     :   4000MB
-     mnrun   :   56900
+     mnrun   :   63758
      mxrun   :   99999
 
+   # Generates a set of temporary tables which may be utilized in the input query below.
+   # The name of the temp table is the dictionary key specified in each list element.  (e.g. runnumbers)
+   import_tables:
+     - runselection:
+         db: daqdb
+         query: |-
+           select runnumber from run where runnumber>={mnrun} and runnumber<={mxrun} and runtype in ( 'cosmics', 'physics', 'beam' )
+           {run_condition}                       
+            
+      
    input:
-      db: daqdb
-      direct_path: /sphenix/lustre01/sphnxpro/{mode}/*/*/
+      db: raw
+      lfn2pfn: lfn2lfn
       query: |-
-         with run2pp as (
-              select {mnrun} as firstrun,
-                     {mxrun} as lastrun
-         ),
+        with config as (
+        select {mnrun} as firstrun,
+               {mxrun} as lastrun
+        ),
+        alldatasets as (
+        select * from datasets,config where runnumber>=config.firstrun and runnumber<=config.lastrun and runnumber in ( select runnumber from runselection )
+        ),
+        allfiles as (
+        select alldatasets.*,files.* from alldatasets join files on files.lfn=alldatasets.filename
+        ),
+        allstreams as (
+        select runnumber,
+            filename as streamfile,
+            daqhost as streamname,
+            full_host_name,
+            dataset as runtype
+        from allfiles    
+            where
+             daqhost in ( 'ebdc00','ebdc01','ebdc02','ebdc03','ebdc04','ebdc05',
+                          'ebdc06','ebdc07','ebdc08','ebdc09','ebdc10','ebdc11',
+                          'ebdc12','ebdc13','ebdc14','ebdc15','ebdc16','ebdc17',
+                          'ebdc18','ebdc19','ebdc20','ebdc21','ebdc22','ebdc23',
+                          'ebdc39',
+                          'intt0','intt1','intt2','intt3','intt4','intt5','intt6','intt7',
+                          'mvtx0','mvtx1','mvtx2','mvtx3','mvtx4','mvtx5'
+                          )
+                  and
+                  full_host_name='lustre'
+                  ),
+                  allgl1 as (
+                  select runnumber,
+                  filename as streamfile,
+                  upper( daqhost ) as streamname,
+                  full_host_name,
+                  dataset as runtype
+                  from allfiles     
+                  where
+                  daqhost='gl1daq' 
+                  and
+                  full_host_name='lustre'
+                  ),
+                  alljobs1 as (
+                  select 'rawdata' as source,
+                  runnumber,
+          0 as segment,
+          string_agg( distinct streamfile, ' ' ) as files,
+          'na' as fileranges,
+          streamname,
+          runtype
+          from allstreams
+          group by runnumber,allstreams.streamname,runtype
+          ),
+          alljobs2 as (
+          select 'rawdata' as source,
+          runnumber,
+          0 as segment,
+          string_agg( distinct streamfile, ' ' ) as gl1files,
+          'na' as gl1fileranges
+          from allgl1
+          group by runnumber,allgl1.streamname,runtype
+          ),
+          alljobs as (
+          select alljobs1.source,
+          alljobs1.runnumber,
+          alljobs1.segment,
+          files||' '||gl1files as files,
+          alljobs1.fileranges, 
+          alljobs1.streamname,
+          alljobs1.runtype as runtype
+          from alljobs1 join alljobs2 on alljobs1.runnumber=alljobs2.runnumber
+          )
 
-         runnumbers as (
-              select runnumber from run, run2pp where runnumber>=run2pp.firstrun and runnumber<= run2pp.lastrun and runtype in ( 'cosmics', 'physics', 'beam' )
-              {run_condition}              
-         ),
+          select * from alljobs
 
-         filelistfilt as (
-              select * from filelist where runnumber in ( select * from runnumbers )
-         ),
 
-         streams as (select distinct split_part( split_part(filename,'/',-1), '-', 1 ) as streamfile, hostname                     from filelistfilt),
 
-         intt_stream as (
-              select streamfile, hostname as names from streams where hostname in ( 'intt0', 'intt1', 'intt2', 'intt3', 'intt4', 'intt5', 'intt6', 'intt7' )
-         ),
-         mvtx_stream as (
-              select streamfile, hostname as names from streams where hostname in ( 'mvtx0',  'mvtx1',  'mvtx2',  'mvtx3',  'mvtx4',  'mvtx5' )
-         ),
-         tpot_stream as ( 
-              select streamfile, 'TPOT' as names from streams where hostname in ( 'ebdc39' ) 
-         ),
-         tpc_stream as (
-              select streamfile, replace( hostname, 'ebdc', 'TPC' ) as streamname from streams where hostname in ( 'ebdc00', 'ebdc01', 'ebdc02', 'ebdc03', 'ebdc04', 'ebdc05', 'ebdc06', 'ebdc07', 'ebdc08', 'ebdc09', 
-                                                                                    'ebdc10', 'ebdc11', 'ebdc12', 'ebdc13', 'ebdc14', 'ebdc15', 'ebdc16', 'ebdc17', 'ebdc18', 'ebdc19', 
-                                                                                    'ebdc20', 'ebdc21', 'ebdc22', 'ebdc23' ) 
-         ),
-         all_streams as ( 
-             select * from tpc_stream
-                 union
-             select * from intt_stream
-                 union 
-             select * from mvtx_stream
-                 union
-             select * from tpot_stream
-         ),
-
-         all_jobs as (
-
-           select 'daqdb/filelist' as source, runnumber, 0 as segment, string_agg( distinct split_part(filename,'/',-1), ' ' ) as files, 'na' as fileranges, UPPER(all_streams.streamname) as streamname, all_streams.streamfile
- 
-           from filelistfilt, run2pp, all_streams
-
-           where 
-           --         transferred_to_sdcc='true' and
-           --         runnumber>=run2pp.firstrun and runnumber<=run2pp.lastrun and
-           (
-               (filename  like '%GL1%.evt'   and lastevent>2 ) or
-               (filename  like '%'||all_streams.streamfile||'%'  )           
-           )
-
-           group by runnumber,all_streams.streamfile,all_streams.streamname
-
-           having
-                max(lastevent)>1000          and
-                every(transferred_to_sdcc) and
-                sum( case when filename like '%GL1%.evt' then 1 else 0 end )>0 and
-                (
-                   sum( case when filename like '%TPC%'   then 1 else 0 end )>0 or
-                   sum( case when filename like '%intt%' then 1 else 0 end )>0 or
-                   sum( case when filename like '%mvtx%' then 1 else 0 end )>0 or
-                   sum( case when filename like '%TPOT%'  then 1 else 0 end )>0 
-                )
-
-           )        
-
-           select * from all_jobs 
-
-           ;
 
 
    #
@@ -105,8 +119,6 @@ DST_STREAMING_EVENT_run3auau_streams:
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
-     #accounting_group      : "group_sphenix.mdc2"
-     #accounting_group_user : "sphnxpro"
      priority : '3900'
      request_xferslots: '0'
 
@@ -129,25 +141,36 @@ DST_TRKR_CLUSTER_run3auau_streams:
      comment :    "---"
      rsync   : "./ProdFlow/run3auau/TrackingProduction/*"
      mem     :   8192MB
-     mnrun   : 56900
+     mnrun   : 63758
      mxrun   : 99999
-     dstin   : 'DST_STREAMING_EVENT_%_run3auau'
+     dstin   : 'DST_STREAMING_EVENT_[a-z]%_run3auau'
      dataset : 'new_nocdbtag_v000'
-     mninputs: 24
-     required: >
-       TPC00 TPC01 TPC02 TPC03 TPC04 TPC05
-       TPC06 TPC07 TPC08 TPC09 TPC10 TPC11
-       TPC12 TPC13 TPC14 TPC15 TPC16 TPC17
-       TPC18 TPC19 TPC20 TPC21 TPC22 TPC23
 
-#INTT0 INTT1 INTT2 INTT3 INTT4 INTT5 INTT6 INTT7
-#MVTX0 MVTX1 MVTX2 MVTX3 MVTX4 MVTX5
-#TPOT
+   import_tables:
+     # Get the list of runs taken, and for each run, the list of daqhosts for the run... restricted to calorimeters
+     - hosttable:
+         db: daq
+         query: |-
+           select
+               hostinfo.runnumber,string_agg(hostinfo.hostname,' ' order by hostname) as hosts,run.runtype
+           from
+              hostinfo join run on run.runnumber=hostinfo.runnumber
+           where
+              run.runnumber>={mnrun} and
+              run.runnumber<={mxrun} and
+              (
+                 hostinfo.hostname like 'ebdc%' or
+                 hostinfo.hostname like 'intt%' or
+                 hostinfo.hostname like 'mvtx%'
+              ) and
+              runtype in ( 'physics', 'beam', 'cosmics' ) group by hostinfo.runnumber, run.runtype
 
-
+       
    input:
       db: fc
+      lfn2pfn: lfn2lfn
       query: |-
+        
          with allruns as (
          select
                 'filecatalog/datasets'         as source        ,
@@ -156,11 +179,11 @@ DST_TRKR_CLUSTER_run3auau_streams:
                 string_agg( distinct filename, ' ' ) as files   ,
                 'NA'  as fileranges                             ,
                 count(distinct filename) as ninputs             ,
-                array_agg( split_part(filename,'_',4)		   ) as subsystems                
+                string_agg( split_part(filename,'_',4), ' ' order by filename ) as hosts
          from
                 datasets
          where
-                dsttype like '{dstin}' and dataset='{dataset}' and dsttype not like '%TEST%'
+                dsttype similar to '{dstin}' and dataset='{dataset}'
                 {run_condition}
                 and runnumber>={mnrun}
                 and runnumber<={mxrun}
@@ -170,9 +193,8 @@ DST_TRKR_CLUSTER_run3auau_streams:
          order by runnumber {limit_condition}
          )
 
-         --         select * from allruns where allruns.ninputs>={mninputs} order by runnumber, segment
+         select allruns.*,hosttable.runtype from allruns join hosttable on allruns.runnumber=hosttable.runnumber and allruns.hosts=hosttable.hosts
 
-         select source, runnumber, segment, files, fileranges from allruns;
 
 
    #
@@ -183,8 +205,6 @@ DST_TRKR_CLUSTER_run3auau_streams:
      arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
-     #accounting_group      : "group_sphenix.mdc2"
-     #accounting_group_user : "sphnxpro"
      priority : '3900'
      request_xferslots: '0'
 
@@ -207,7 +227,7 @@ DST_TRKR_SEED_run3auau_streams:
      comment :    "---"
      rsync   : "./ProdFlow/run3auau/TrackingProduction/*"
      mem     :   4000MB
-     mnrun   : 61988
+     mnrun   : 63758
      mxrun   : 99999
      dstin   : 'DST_TRKR_CLUSTER_run3auau'
      dataset : 'new_2025p001_v000'     
@@ -226,7 +246,8 @@ DST_TRKR_SEED_run3auau_streams:
          from
                 datasets
          where
-                dsttype like '{dstin}' and dataset='{dataset}' {run_condition}
+                dsttype like '{dstin}' and dataset='{dataset}'
+                {run_condition}
                 and runnumber>={mnrun}
                 and runnumber<={mxrun}
 
@@ -235,7 +256,7 @@ DST_TRKR_SEED_run3auau_streams:
          order by runnumber {limit_condition}
          )
 
-         select * from allruns where allruns.ninputs>0 order by runnumber, segment;
+         select * from allruns where allruns.ninputs>0 order by runnumber, segment
 
 
    #
@@ -271,7 +292,7 @@ DST_TRKR_TRACKS_run3auau_streams:
      comment :    "---"
      rsync   : "./ProdFlow/run3auau/TrackingProduction/*"
      mem     :   4000MB
-     mnrun   : 56900
+     mnrun   : 63758
      mxrun   : 99999
      dstin1   : 'DST_TRKR_CLUSTER_run3auau'
      dataset1 : 'new_2025p001_v000'
@@ -360,7 +381,7 @@ DST_TRKR_TRACKS_run3auau_streams:
 #__________________________________________________________________________________________________________________________________________
 #__________________________________________________________________________________________________________________________________________
 #__________________________________________________________________________________________________________________________________________
-DST_STREAMING_EVENT_run3calib_streams:
+deprecated_DST_STREAMING_EVENT_run3calib_streams:
 
    params:
      name:       DST_STREAMING_EVENT_$(streamname)_run3calib
@@ -382,7 +403,7 @@ DST_STREAMING_EVENT_run3calib_streams:
       direct_path: /sphenix/lustre01/sphnxpro/{mode}/*/*/
       query: |-
          with run2pp as (
-              select 56900 as firstrun,
+              select 63758 as firstrun,
                      99999 as lastrun
          ),
          streams as (select distinct split_part( split_part(filename,'/',-1), '-', 1 ) as streamfile, hostname                     from filelist,run2pp where runnumber>=run2pp.firstrun and runnumber<=run2pp.lastrun),
@@ -463,7 +484,7 @@ DST_STREAMING_EVENT_run3calib_streams:
      request_xferslots: '0'
 
 #__________________________________________________________________________________________________________________________________________
-DST_TRKR_CLUSTER_run3calib_streams:
+deprecated_DST_TRKR_CLUSTER_run3calib_streams:
 
    params:
      name:       DST_TRKR_CLUSTER_run3calib
@@ -479,7 +500,7 @@ DST_TRKR_CLUSTER_run3calib_streams:
      comment :    "---"
      rsync   : "./ProdFlow/run3auau/TrackingProduction/*"
      mem     :   8192MB
-     mnrun   : 56900
+     mnrun   : 63758
      mxrun   : 99999
      dstin   : 'DST_STREAMING_EVENT_%_run3calib'
      dataset : 'new_nocdbtag_v000'
