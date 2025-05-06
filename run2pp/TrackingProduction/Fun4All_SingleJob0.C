@@ -135,7 +135,9 @@ void Fun4All_SingleJob0(
   Tpc_LaserEventIdentifying();
   
   TPC_LaminationClustering();
-  
+
+  TPC_LaserClustering();
+
   auto tpcclusterizer = new TpcClusterizer;
   tpcclusterizer->Verbosity(0);
   tpcclusterizer->set_do_hit_association(G4TPC::DO_HIT_ASSOCIATION);
@@ -169,6 +171,7 @@ void Fun4All_SingleJob0(
   out->AddNode("GL1RAWHIT");
   if(G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING)
   {
+    out->AddNode("LASER_CLUSTER");
     out->AddNode("LAMINATION_CLUSTER");
   }
   se->registerOutputManager(out);

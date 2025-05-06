@@ -52,6 +52,7 @@ void Fun4All_JobA(
   ACTSGEOM::mvtx_applymisalignment = Enable::MVTX_APPLYMISALIGNMENT;
   auto se = Fun4AllServer::instance();
   se->Verbosity(1);
+  se->VerbosityDownscale(1000); // only print every 1000th event
   auto rc = recoConsts::instance();
   CDBInterface::instance()->Verbosity(1);
 

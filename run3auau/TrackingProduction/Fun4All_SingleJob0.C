@@ -63,6 +63,7 @@ void Fun4All_SingleJob0(
   
   auto se = Fun4AllServer::instance();
   se->Verbosity(1);
+  se->VerbosityDownscale(1000); // only print every 1000th event
   auto rc = recoConsts::instance();
   
   std::ifstream ifs(filelist);
