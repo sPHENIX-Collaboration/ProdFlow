@@ -263,7 +263,7 @@ DST_TRKR_SEED_run3auau_streams:
          order by runnumber {limit_condition}
          )
 
-         select allruns.* from allruns join runselection on allruns.runnumber=runselection.run where allruns.ninputs>0 order by runnumber, segment
+         select allruns.* from allruns join runselection on allruns.runnumber=runselection.runnumber where allruns.ninputs>0 order by runnumber, segment
 
 
    #
@@ -347,7 +347,7 @@ DST_TRKR_TRACKS_run3auau_streams:
          order by runnumber {limit_condition}
          )
 
-         select allruns.* from allruns join runselection on allruns.runnumber=runselection.run where allruns.ninputs>0 order by runnumber, segment         
+         select allruns.* from allruns join runselection on allruns.runnumber=runselection.runnumber where allruns.ninputs>0 order by runnumber, segment         
 
 
    #
