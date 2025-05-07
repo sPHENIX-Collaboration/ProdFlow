@@ -16,7 +16,7 @@ DST_TRIGGERED_EVENT_run3auau:
      build:      ana.484
      build_name: ana484
      dbtag:      nocdbtag
-     version :   0
+     version :   1
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run_parallel.sh
@@ -138,7 +138,7 @@ DST_TRIGGERED_EVENT_run3cosmics:
      build:      ana.484
      build_name: ana484
      dbtag:      nocdbtag
-     version :   0
+     version :   1
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run_parallel.sh
@@ -261,7 +261,7 @@ DST_CALOFITTING_run3auau:
      build:      ana.484
      build_name: ana484
      dbtag:      2025p001
-     version : 0
+     version : 1
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   runy2fitting.sh
@@ -333,7 +333,7 @@ DST_CALOFITTING_run3cosmics:
      build:      ana.484
      build_name: ana484
      dbtag:      2025p001
-     version : 0
+     version : 1
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   runhcalcosmics.sh
@@ -402,7 +402,7 @@ DST_CALO_run3auau:
      build:      ana.484
      build_name: ana484
      dbtag:      2025p001
-     version :   0
+     version :   1
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   runy2calib.sh
@@ -443,7 +443,7 @@ DST_JETS_run3auau:
      build:      ana.484
      build_name: ana484
      dbtag:      2025p001
-     version : 0
+     version : 1
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   runjets.sh
@@ -486,7 +486,7 @@ DST_JETCALO_run3auau:
      build:      ana.484
      build_name: ana484
      dbtag:      2025p001
-     version:    0
+     version:    1
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   runy2jetskim.sh

@@ -6,7 +6,7 @@ DST_STREAMING_EVENT_run3auau_streams:
      build:      ana.484
      build_name: ana484
      dbtag:      nocdbtag
-     version:    0
+     version:    1
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run_parallel_streams.sh
@@ -122,7 +122,7 @@ DST_TRKR_CLUSTER_run3auau_streams:
      build:      ana.484
      build_name: ana484
      dbtag:      2025p001
-     version:    0
+     version:    1
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run_singlejob0.sh
@@ -202,7 +202,7 @@ DST_TRKR_SEED_run3auau_streams:
      build:      ana.484
      build_name: ana484
      dbtag:      2025p001
-     version:    0
+     version:    1
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run_jobA.sh
@@ -265,7 +265,7 @@ DST_TRKR_TRACKS_run3auau_streams:
      build:      ana.484
      build_name: ana484
      dbtag:      2025p001
-     version:    0
+     version:    1
      logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   run_jobC.sh
