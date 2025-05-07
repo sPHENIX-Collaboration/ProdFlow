@@ -24,7 +24,7 @@ DST_STREAMING_EVENT_run3auau_streams:
      - runselection:
          db: daqdb
          query: |-
-           select runnumber from run where runnumber>={mnrun} and runnumber<={mxrun} and runtype in ( 'cosmics', 'physics', 'beam' )
+           select runnumber from run where runnumber>={mnrun} and runnumber<={mxrun} and runtype in ( 'cosmics', 'physics', 'beam', 'calib' )
            {run_condition}                       
             
       
@@ -163,7 +163,7 @@ DST_TRKR_CLUSTER_run3auau_streams:
                  hostinfo.hostname like 'intt%' or
                  hostinfo.hostname like 'mvtx%'
               ) and
-              runtype in ( 'physics', 'beam', 'cosmics' ) group by hostinfo.runnumber, run.runtype
+              runtype in ( 'physics', 'beam', 'cosmics', 'calib' ) group by hostinfo.runnumber, run.runtype
 
        
    input:
@@ -230,7 +230,14 @@ DST_TRKR_SEED_run3auau_streams:
      mnrun   : 63758
      mxrun   : 99999
      dstin   : 'DST_TRKR_CLUSTER_run3auau'
-     dataset : 'new_2025p001_v000'     
+     dataset : 'new_2025p001_v000'
+
+   import_tables:
+     - runselection:
+         db: daqdb
+         query: |-
+           select runnumber from run where runnumber>={mnrun} and runnumber<={mxrun} and runtype in ( 'physics', 'beam', 'cosmics' )
+           {run_condition}                            
 
    input:
       db: fc
@@ -256,7 +263,7 @@ DST_TRKR_SEED_run3auau_streams:
          order by runnumber {limit_condition}
          )
 
-         select * from allruns where allruns.ninputs>0 order by runnumber, segment
+         select allruns.* from allruns join runselection on allruns.runnumber=runselection.run where allruns.ninputs>0 order by runnumber, segment
 
 
    #
@@ -297,7 +304,14 @@ DST_TRKR_TRACKS_run3auau_streams:
      dstin1   : 'DST_TRKR_CLUSTER_run3auau'
      dataset1 : 'new_2025p001_v000'
      dstin2   : 'DST_TRKR_SEED_run3auau'
-     dataset2 : 'new_2025p001_v000'          
+     dataset2 : 'new_2025p001_v000'
+
+   import_tables:
+     - runselection:
+         db: daqdb
+         query: |-
+           select runnumber from run where runnumber>={mnrun} and runnumber<={mxrun} and runtype in ( 'physics', 'beam', 'cosmics' )
+           {run_condition}                            
 
    input:
       db: fc
@@ -333,7 +347,7 @@ DST_TRKR_TRACKS_run3auau_streams:
          order by runnumber {limit_condition}
          )
 
-         select * from allruns where allruns.ninputs>0 order by runnumber, segment
+         select allruns.* from allruns join runselection on allruns.runnumber=runselection.run where allruns.ninputs>0 order by runnumber, segment         
 
 
    #
