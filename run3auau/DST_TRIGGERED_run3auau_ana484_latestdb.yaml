@@ -342,7 +342,7 @@ DST_CALOFITTING_run3cosmics:
      neventsper: 50000
      rsync  : "./ProdFlow/run3auau/CaloProduction/*"
      dstin  : 'DST_TRIGGERED_EVENT_%_run3cosmics'
-     dataset : 'ana484_nocdbtag_v000'
+     dataset : 'ana484_nocdbtag_v001'
      mnrun    : 57287
      mxrun    : 63758          
 
