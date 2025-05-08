@@ -24,7 +24,7 @@ DST_STREAMING_EVENT_run3auau_streams:
      - runselection:
          db: daqdb
          query: |-
-           select runnumber from run where runnumber>={mnrun} and runnumber<={mxrun} and runtype in ( 'cosmics', 'physics', 'beam', 'calib' )
+           select runnumber from run where runnumber>={mnrun} and runnumber<={mxrun} and runtype in ( 'cosmics', 'physics', 'beam', 'calib', 'dryrun' )
            {run_condition}                       
             
       
@@ -163,7 +163,7 @@ DST_TRKR_CLUSTER_run3auau_streams:
                  hostinfo.hostname like 'intt%' or
                  hostinfo.hostname like 'mvtx%'
               ) and
-              runtype in ( 'physics', 'beam', 'cosmics', 'calib' ) group by hostinfo.runnumber, run.runtype
+              runtype in ( 'physics', 'beam', 'cosmics', 'calib', 'dryrun' ) group by hostinfo.runnumber, run.runtype
 
        
    input:
@@ -236,7 +236,7 @@ DST_TRKR_SEED_run3auau_streams:
      - runselection:
          db: daqdb
          query: |-
-           select runnumber from run where runnumber>={mnrun} and runnumber<={mxrun} and runtype in ( 'physics', 'beam', 'cosmics' )
+           select runnumber from run where runnumber>={mnrun} and runnumber<={mxrun} and runtype in ( 'physics', 'beam', 'cosmics', 'dryrun' )
            {run_condition}                            
 
    input:
@@ -310,7 +310,7 @@ DST_TRKR_TRACKS_run3auau_streams:
      - runselection:
          db: daqdb
          query: |-
-           select runnumber from run where runnumber>={mnrun} and runnumber<={mxrun} and runtype in ( 'physics', 'beam', 'cosmics' )
+           select runnumber from run where runnumber>={mnrun} and runnumber<={mxrun} and runtype in ( 'physics', 'beam', 'cosmics', 'dryrun' )
            {run_condition}                            
 
    input:

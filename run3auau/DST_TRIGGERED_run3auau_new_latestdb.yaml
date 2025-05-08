@@ -40,7 +40,7 @@ DST_TRIGGERED_EVENT_run3auau:
               and
               run.runnumber<={mxrun}
               and
-              runtype in ( 'cosmics', 'physics', 'beam' )
+              runtype in ( 'cosmics', 'physics', 'beam', 'dryrun' )
               and
               hostname != 'gl1daq'
               and
@@ -162,7 +162,7 @@ DST_TRIGGERED_EVENT_run3cosmics:
               and
               run.runnumber<={mxrun}
               and
-              runtype in ( 'cosmics', 'physics', 'beam' )
+              runtype in ( 'cosmics', 'physics', 'beam', 'dryrun' )
               and
               hostname != 'gl1daq'
               and
@@ -280,12 +280,12 @@ DST_CALOFITTING_run3auau:
      - hosttable:
          db: daq
          query: |-
-           select hostinfo.runnumber,string_agg(hostinfo.hostname,' ' order by hostname) as hosts,run.runtype from hostinfo join run on run.runnumber=hostinfo.runnumber where run.runnumber>={mnrun} and run.runnumber<={mxrun} and hostinfo.hostname like 'seb%' and runtype in ( 'physics', 'beam', 'cosmics' ) group by hostinfo.runnumber, run.runtype
+           select hostinfo.runnumber,string_agg(hostinfo.hostname,' ' order by hostname) as hosts,run.runtype from hostinfo join run on run.runnumber=hostinfo.runnumber where run.runnumber>={mnrun} and run.runnumber<={mxrun} and hostinfo.hostname like 'seb%' and runtype in ( 'physics', 'beam', 'cosmics', 'dryrun' ) group by hostinfo.runnumber, run.runtype
            
      - runtable:
          db: daq
          query: |-           
-           select runnumber as thisrun, runtype from run where runnumber>={mnrun} and runnumber<={mxrun} {run_condition} and runtype in ( 'cosmics', 'physics', 'beam' )
+           select runnumber as thisrun, runtype from run where runnumber>={mnrun} and runnumber<={mxrun} {run_condition} and runtype in ( 'cosmics', 'physics', 'beam', 'dryrun' )
 
            
    input:
@@ -359,12 +359,12 @@ DST_CALOFITTING_run3cosmics:
      - hosttable:
          db: daq
          query: |-
-           select hostinfo.runnumber,string_agg(hostinfo.hostname,' ' order by hostname) as hosts,run.runtype from hostinfo join run on run.runnumber=hostinfo.runnumber where run.runnumber>={mnrun} and run.runnumber<={mxrun} and hostinfo.hostname like 'seb%' and runtype in ( 'physics', 'beam', 'cosmics' ) group by hostinfo.runnumber, run.runtype
+           select hostinfo.runnumber,string_agg(hostinfo.hostname,' ' order by hostname) as hosts,run.runtype from hostinfo join run on run.runnumber=hostinfo.runnumber where run.runnumber>={mnrun} and run.runnumber<={mxrun} and hostinfo.hostname like 'seb%' and runtype in ( 'physics', 'beam', 'cosmics', 'dryrun' ) group by hostinfo.runnumber, run.runtype
            
      - runtable:
          db: daq
          query: |-           
-           select runnumber as thisrun, runtype from run where runnumber>={mnrun} and runnumber<={mxrun} {run_condition} and runtype in ( 'cosmics', 'physics', 'beam' )
+           select runnumber as thisrun, runtype from run where runnumber>={mnrun} and runnumber<={mxrun} {run_condition} and runtype in ( 'cosmics', 'physics', 'beam', 'dryrun' )
 
            
    input:
