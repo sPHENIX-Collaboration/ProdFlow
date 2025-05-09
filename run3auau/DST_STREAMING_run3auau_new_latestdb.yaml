@@ -16,7 +16,7 @@ DST_STREAMING_EVENT_run3auau_streams:
      rsync   : "./ProdFlow/run3auau/streaming/*"
      mem     :   4000MB
      mnrun   :   63758
-     mxrun   :   99999
+     mxrun   :   98999
 
    # Generates a set of temporary tables which may be utilized in the input query below.
    # The name of the temp table is the dictionary key specified in each list element.  (e.g. runnumbers)
@@ -142,7 +142,7 @@ DST_TRKR_CLUSTER_run3auau_streams:
      rsync   : "./ProdFlow/run3auau/TrackingProduction/*"
      mem     :   8192MB
      mnrun   : 63758
-     mxrun   : 99999
+     mxrun   : 98999
      dstin   : 'DST_STREAMING_EVENT_[a-z]%_run3auau'
      dataset : 'new_nocdbtag_v000'
 
@@ -228,7 +228,7 @@ DST_TRKR_SEED_run3auau_streams:
      rsync   : "./ProdFlow/run3auau/TrackingProduction/*"
      mem     :   4000MB
      mnrun   : 63758
-     mxrun   : 99999
+     mxrun   : 98999
      dstin   : 'DST_TRKR_CLUSTER_run3auau'
      dataset : 'new_2025p001_v000'
 
@@ -300,7 +300,7 @@ DST_TRKR_TRACKS_run3auau_streams:
      rsync   : "./ProdFlow/run3auau/TrackingProduction/*"
      mem     :   4000MB
      mnrun   : 63758
-     mxrun   : 99999
+     mxrun   : 98999
      dstin1   : 'DST_TRKR_CLUSTER_run3auau'
      dataset1 : 'new_2025p001_v000'
      dstin2   : 'DST_TRKR_SEED_run3auau'
@@ -418,7 +418,7 @@ deprecated_DST_STREAMING_EVENT_run3calib_streams:
       query: |-
          with run2pp as (
               select 63758 as firstrun,
-                     99999 as lastrun
+                     98999 as lastrun
          ),
          streams as (select distinct split_part( split_part(filename,'/',-1), '-', 1 ) as streamfile, hostname                     from filelist,run2pp where runnumber>=run2pp.firstrun and runnumber<=run2pp.lastrun),
 
@@ -515,7 +515,7 @@ deprecated_DST_TRKR_CLUSTER_run3calib_streams:
      rsync   : "./ProdFlow/run3auau/TrackingProduction/*"
      mem     :   8192MB
      mnrun   : 63758
-     mxrun   : 99999
+     mxrun   : 98999
      dstin   : 'DST_STREAMING_EVENT_%_run3calib'
      dataset : 'new_nocdbtag_v000'
 

@@ -25,7 +25,7 @@ DST_TRIGGERED_EVENT_run3auau:
      neventsper: 100000
      noverflow:   20000
      mnrun    : 63751
-     mxrun    : 99999
+     mxrun    : 98999
      rsync  : "ProdFlow/run3auau/TriggerProduction/*"
 
 
@@ -147,7 +147,7 @@ DST_TRIGGERED_EVENT_run3cosmics:
      neventsper: 100000
      noverflow:   20000
      mnrun: 63751
-     mxrun: 99999
+     mxrun: 98999
      rsync  : "ProdFlow/run3auau/TriggerProduction/*"
 
 
@@ -267,13 +267,13 @@ DST_CALOFITTING_run3auau:
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   runy2fitting.sh
      payload :   ./ProdFlow/run3auau/CaloProduction/
-     mem     :   1024MB
-     neventsper: 50000
+     mem     :   2048MB
+     neventsper: 100000
      rsync  : "./ProdFlow/run3auau/CaloProduction/*,cups.py"
      dstin  : 'DST_TRIGGERED_EVENT_%_run3auau'
      dataset : 'new_nocdbtag_v000'
      mnrun    : 63751
-     mxrun    : 99999     
+     mxrun    : 98999     
 
    import_tables:
      # Get the list of runs taken, and for each run, the list of daqhosts for the run... restricted to calorimeters
@@ -352,7 +352,7 @@ DST_CALOFITTING_run3cosmics:
      dstin  : 'DST_TRIGGERED_EVENT_%_run3cosmics'
      dataset : 'new_nocdbtag_v000'
      mnrun    : 63751
-     mxrun    : 99999          
+     mxrun    : 98999          
 
    import_tables:
      # Get the list of runs taken, and for each run, the list of daqhosts for the run... restricted to calorimeters
