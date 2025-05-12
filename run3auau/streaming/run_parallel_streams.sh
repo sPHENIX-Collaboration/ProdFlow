@@ -215,7 +215,8 @@ cat inttinputs.list
 cat tpcinputs.list
 
 # If no input files are in the file lists exit with code 111 to indicate a failure
-if [ $(cat *.list|wc -l) -eq 0 ]; then
+if [ $(cat mvtxinputs.list inttinputs.list tpcinputs.list |wc -l) -eq 0 ]; then
+    echo Job self termination due to missing tpc, intt and/or mvtx files
      ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e 111 --nevents 0 --inc 
      exit 111
 fi
