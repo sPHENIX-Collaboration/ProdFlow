@@ -79,18 +79,33 @@ fi
 #______________________________________________________________________________________________
 # Map TPC input files into filelists
 neventsperintt=$(( 10 * neventsper ))
+
+
 inputlist=""
 cat inputfiles.list | while read -r f; do
     b=$( basename $f )
     # TPC files
     if [[ $b =~ "TPC_ebdc" ]]; then
-       l=${b%%_cosmics*}  # handle either cosmic events or calibrations or beam...
-       l=${l%%_calib*}
-       l=${l%%_beam*}
-       l=${l%%_physics*}
+       #l=${b%%_cosmics*}  # handle either cosmic events or calibrations or beam...
+       #l=${l%%_calib*}
+       #l=${l%%_beam*}
+       #l=${l%%_physics*}
+       l=${b%%_0_dryrun*}
+       l=${l%%_1_dryrun*}
+       l=${l%%_0_cosmics*}
+       l=${l%%_1_comsics*}
+       l=${l%%_0_calib*}
+       l=${l%%_1_calib*}       
+       l=${l%%_0_beam*}
+       l=${l%%_1_beam*}
+       l=${l%%_0_physics*}
+       l=${l%%_1_physics*}
+       l=${l%%_0_line_laser*}
+       l=${l%%_1_line_laser*}                     
        echo ${f} >> ${l/TPC_ebdc/tpc}.list
        echo Add ${f} to ${l/TPC_ebdc/tpc}.list
        inputlist="${f} ${inputlist}"
+       valid=1
     fi
     # TPOT files
     if [[ $b =~ "TPOT_ebdc" ]]; then
@@ -98,6 +113,7 @@ cat inputfiles.list | while read -r f; do
        echo Add ${f} to tpot.list
        inputlist="${f} ${inputlist}"
     fi
+    
     if [[ $b =~ "GL1_cosmics" ]]; then
        echo ${f} >> gl1.list
        echo Add ${f} to gl1.list
@@ -181,6 +197,27 @@ cat inputfiles.list | while read -r f; do
        echo Add ${f} to ${l}.list
        inputlist="${f} ${inputlist}"
     fi
+
+    if [[ $b =~ "GL1_dryrun" ]]; then
+       echo ${f} >> gl1.list
+       echo Add ${f} to gl1.list
+       inputlist="${f} ${inputlist}"
+    fi
+    if [[ $b =~ "dryrun_intt" ]]; then
+       l=${b#*dryrun_}
+       l=${l%%-*}
+       echo ${f} >> ${l}.list
+       echo Add ${f} to ${l}.list
+       inputlist="${f} ${inputlist}"
+       neventsper=${neventsperintt}
+    fi
+    if [[ $b =~ "dryrun_mvtx" ]]; then
+       l=${b#*dryrun_}
+       l=${l%%-*}
+       echo ${f} >> ${l}.list
+       echo Add ${f} to ${l}.list
+       inputlist="${f} ${inputlist}"
+    fi
     
 done
 
@@ -208,6 +245,8 @@ ls -la *.list
 cat intt*.list >> inttinputs.list
 cat tpc*.list >> tpcinputs.list
 cat mvtx*.list >> mvtxinputs.list
+
+
 
 cat gl1.list
 cat mvtxinputs.list
