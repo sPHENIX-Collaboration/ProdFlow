@@ -24,7 +24,7 @@ DST_TRIGGERED_EVENT_run3auau:
      mem     :   2048M
      neventsper: 100000
      noverflow:   20000
-     mnrun    : 63751
+     mnrun    : 64058
      mxrun    : 98999
      rsync  : "ProdFlow/run3auau/TriggerProduction/*"
 
@@ -57,7 +57,7 @@ DST_TRIGGERED_EVENT_run3auau:
         {mxrun} as lastrun
         ),
         alldatasets as (
-        select * from datasets,config where runnumber in ( select runnumber from runselection )
+        select * from datasets,config where runnumber in ( select runnumber from runselection where true {run_condition} ) 
         ),
         allfiles as (
         select alldatasets.*,files.* from alldatasets join files on files.lfn=alldatasets.filename
@@ -168,7 +168,7 @@ DST_TRIGGERED_EVENT_run3cosmics:
               and
               hostname like '%seb%'
            )
-           select runnumber, string_agg(hostname,',' order by hostname) as hosts from runselection group by runnumber
+           select runnumber, string_agg(hostname,',' order by hostname) as hosts from runselection where true {run_condition} group by runnumber
            
    input:
       db: raw
@@ -267,7 +267,7 @@ DST_CALOFITTING_run3auau:
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   runy2fitting.sh
      payload :   ./ProdFlow/run3auau/CaloProduction/
-     mem     :   2048MB
+     mem     :   4096MB
      neventsper: 100000
      rsync  : "./ProdFlow/run3auau/CaloProduction/*,cups.py"
      dstin  : 'DST_TRIGGERED_EVENT_%_run3auau'
@@ -346,7 +346,7 @@ DST_CALOFITTING_run3cosmics:
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   runhcalcosmics.sh
      payload :   ./ProdFlow/run3auau/CaloProduction/
-     mem     :   1024MB
+     mem     :   4096MB
      neventsper: 50000
      rsync  : "./ProdFlow/run3auau/CaloProduction/*"
      dstin  : 'DST_TRIGGERED_EVENT_%_run3cosmics'
