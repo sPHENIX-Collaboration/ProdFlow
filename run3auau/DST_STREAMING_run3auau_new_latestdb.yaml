@@ -45,7 +45,7 @@ DST_STREAMING_EVENT_run3auau_streams:
         allstreams as (
         select runnumber,
             filename as streamfile,
-            daqhost as streamname,
+            replace(daqhost,':1','') as streamname,
             full_host_name,
             dataset as runtype
         from allfiles    
@@ -55,13 +55,18 @@ DST_STREAMING_EVENT_run3auau_streams:
                           'ebdc12','ebdc13','ebdc14','ebdc15','ebdc16','ebdc17',
                           'ebdc18','ebdc19','ebdc20','ebdc21','ebdc22','ebdc23',
                           'ebdc39',
+                          'ebdc00:1','ebdc01:1','ebdc02:1','ebdc03:1','ebdc04:1','ebdc05:1',
+                          'ebdc06:1','ebdc07:1','ebdc08:1','ebdc09:1','ebdc10:1','ebdc11:1',
+                          'ebdc12:1','ebdc13:1','ebdc14:1','ebdc15:1','ebdc16:1','ebdc17:1',
+                          'ebdc18:1','ebdc19:1','ebdc20:1','ebdc21:1','ebdc22:1','ebdc23:1',
+                          'ebdc39:1',                          
                           'intt0','intt1','intt2','intt3','intt4','intt5','intt6','intt7',
                           'mvtx0','mvtx1','mvtx2','mvtx3','mvtx4','mvtx5'
                           )
                   and
                   full_host_name='lustre'
                   ),
-                  allgl1 as (
+        allgl1 as (
                   select runnumber,
                   filename as streamfile,
                   upper( daqhost ) as streamname,
@@ -73,7 +78,7 @@ DST_STREAMING_EVENT_run3auau_streams:
                   and
                   full_host_name='lustre'
                   ),
-                  alljobs1 as (
+         alljobs1 as (
                   select 'rawdata' as source,
                   runnumber,
           0 as segment,
@@ -151,6 +156,7 @@ DST_TRKR_CLUSTER_run3auau_streams:
      - hosttable:
          db: daq
          query: |-
+           with allruns as (
            select
                hostinfo.runnumber,string_agg(hostinfo.hostname,' ' order by hostname) as hosts,run.runtype
            from
@@ -164,6 +170,8 @@ DST_TRKR_CLUSTER_run3auau_streams:
                  hostinfo.hostname like 'mvtx%'
               ) and
               runtype in ( 'physics', 'beam', 'cosmics', 'calib', 'dryrun' ) group by hostinfo.runnumber, run.runtype
+              )
+              select * from allruns where true {run_condition}
 
        
    input:
@@ -236,8 +244,22 @@ DST_TRKR_SEED_run3auau_streams:
      - runselection:
          db: daqdb
          query: |-
-           select runnumber from run where runnumber>={mnrun} and runnumber<={mxrun} and runtype in ( 'physics', 'beam', 'cosmics', 'dryrun' )
-           {run_condition}                            
+           with allruns as (
+           select
+               hostinfo.runnumber,string_agg(hostinfo.hostname,' ' order by hostname) as hosts,run.runtype
+           from
+              hostinfo join run on run.runnumber=hostinfo.runnumber
+           where
+              run.runnumber>={mnrun} and
+              run.runnumber<={mxrun} and
+              (
+                 hostinfo.hostname like 'ebdc%' or
+                 hostinfo.hostname like 'intt%' or
+                 hostinfo.hostname like 'mvtx%'
+              ) and
+              runtype in ( 'physics', 'beam', 'cosmics', 'calib', 'dryrun' ) group by hostinfo.runnumber, run.runtype
+              )
+              select * from allruns where true {run_condition}
 
    input:
       db: fc
@@ -263,7 +285,7 @@ DST_TRKR_SEED_run3auau_streams:
          order by runnumber {limit_condition}
          )
 
-         select allruns.* from allruns join runselection on allruns.runnumber=runselection.runnumber where allruns.ninputs>0 order by runnumber, segment
+         select allruns.*,runselection.runtype from allruns join runselection on allruns.runnumber=runselection.runnumber where allruns.ninputs>0 order by runnumber, segment
 
 
    #
@@ -310,8 +332,22 @@ DST_TRKR_TRACKS_run3auau_streams:
      - runselection:
          db: daqdb
          query: |-
-           select runnumber from run where runnumber>={mnrun} and runnumber<={mxrun} and runtype in ( 'physics', 'beam', 'cosmics', 'dryrun' )
-           {run_condition}                            
+           with allruns as (
+           select
+               hostinfo.runnumber,string_agg(hostinfo.hostname,' ' order by hostname) as hosts,run.runtype
+           from
+              hostinfo join run on run.runnumber=hostinfo.runnumber
+           where
+              run.runnumber>={mnrun} and
+              run.runnumber<={mxrun} and
+              (
+                 hostinfo.hostname like 'ebdc%' or
+                 hostinfo.hostname like 'intt%' or
+                 hostinfo.hostname like 'mvtx%'
+              ) and
+              runtype in ( 'physics', 'beam', 'cosmics', 'calib', 'dryrun' ) group by hostinfo.runnumber, run.runtype
+              )
+              select * from allruns where true {run_condition}
 
    input:
       db: fc
@@ -347,7 +383,7 @@ DST_TRKR_TRACKS_run3auau_streams:
          order by runnumber {limit_condition}
          )
 
-         select allruns.* from allruns join runselection on allruns.runnumber=runselection.runnumber where allruns.ninputs>0 order by runnumber, segment         
+         select allruns.*,runselection.runtype from allruns join runselection on allruns.runnumber=runselection.runnumber where allruns.ninputs>0 order by runnumber, segment         
 
 
    #
