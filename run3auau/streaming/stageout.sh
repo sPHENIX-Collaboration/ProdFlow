@@ -15,7 +15,12 @@ echo stageout ${filename} ${destination} start `date`
 # Updating to a new naming convention which places the stream name in lower case.
 # Retiring run range.
 
-regex_dsttype_run="([A-Z]+_[A-Z0-9_]+[a-z0-9]+|[A-Z]+_[A-Z0-9_]+[a-z0-9]+_[a-z0-9]+)_([a-z0-9]+)_(202[345]p[0-9][0-9][0-9][_v0-9]*|nocdbtag[_v0-9]*)-([0-9]+)-([0-9]+)"
+# DST_STREAMING_EVENT_run3auau_ebdc00_0 OR
+# DST_STREAMING_EVENT_run3auau_intt0 ...
+
+#                   DST_STR_EVENT_run3auau     DST_STREAMING_EVENT_intt0_run3auau   DST_STREAMING_EVENT_ebdc00_0_run3auau
+regex_dsttype_run="([A-Z]+_[A-Z0-9_]+[a-z0-9]+|[A-Z]+_[A-Z0-9_]+[a-z0-9]+_[a-z0-9]+|[A-Z]+_[A-Z0-9_]+[a-z0-9]+_[01]_[a-z0-9]+)_([a-z0-9]+)_(202[345]p[0-9][0-9][0-9][_v0-9]*|nocdbtag[_v0-9]*)-([0-9]+)-([0-9]+)"
+
 #regex_dsttype_range="([A-Z]+_[A-Z_]+[a-z0-9]+)_([a-z0-9]+)_(202[3456789]p[0-9][0-9][0-9][_v0-9]*|nocdbtag[_v0-9]*)-([0-9]+)-([0-9]+)-([0-9]+)"
 
 # decode filename
