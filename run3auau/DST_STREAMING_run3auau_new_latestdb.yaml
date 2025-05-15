@@ -45,7 +45,7 @@ DST_STREAMING_EVENT_run3auau_streams:
         allstreams as (
         select runnumber,
             filename as streamfile,
-            replace(daqhost,':1','') as streamname,
+            replace(regexp_replace(daqhost,'(intt|mvtx|ebdc)(\d+)$','\1\2:0'),':','_') as streamname,
             full_host_name,
             dataset as runtype
         from allfiles    
@@ -108,7 +108,6 @@ DST_STREAMING_EVENT_run3auau_streams:
           alljobs1.runtype as runtype
           from alljobs1 join alljobs2 on alljobs1.runnumber=alljobs2.runnumber
           )
-
           select * from alljobs
 
 
@@ -148,7 +147,8 @@ DST_TRKR_CLUSTER_run3auau_streams:
      mem     :   8192MB
      mnrun   : 63758
      mxrun   : 98999
-     dstin   : 'DST_STREAMING_EVENT_[a-z]%_run3auau'
+     #dstin   : 'DST_STREAMING_EVENT_[a-z]%_run3auau'
+     dstin   : '^DST_STREAMING_EVENT_[a-z0-9]+_[01]_run3auau'
      dataset : 'new_nocdbtag_v000'
 
    import_tables:
@@ -158,7 +158,11 @@ DST_TRKR_CLUSTER_run3auau_streams:
          query: |-
            with allruns as (
            select
-               hostinfo.runnumber,string_agg(hostinfo.hostname,' ' order by hostname) as hosts,run.runtype
+               hostinfo.runnumber,
+               string_agg(
+                  hostinfo.hostname||'_'||hostinfo.serverid,' ' order by hostname,serverid
+               ) as hosts,
+               run.runtype
            from
               hostinfo join run on run.runnumber=hostinfo.runnumber
            where
@@ -187,11 +191,13 @@ DST_TRKR_CLUSTER_run3auau_streams:
                 string_agg( distinct filename, ' ' ) as files   ,
                 'NA'  as fileranges                             ,
                 count(distinct filename) as ninputs             ,
-                string_agg( split_part(filename,'_',4), ' ' order by filename ) as hosts
+                string_agg( distinct regexp_replace(filename,'DST_STREAMING_EVENT_([a-z0-9]+_[01])_run3auau[a-z0-9_\-.]+','\1'),' ') as hosts
+                    
+                
          from
                 datasets
          where
-                dsttype similar to '{dstin}' and dataset='{dataset}'
+                dsttype~'{dstin}' and dataset~'{dataset}'
                 {run_condition}
                 and runnumber>={mnrun}
                 and runnumber<={mxrun}
