@@ -267,7 +267,7 @@ DST_CALOFITTING_run3auau:
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   runy2fitting.sh
      payload :   ./ProdFlow/run3auau/CaloProduction/
-     mem     :   4096MB
+     mem     :   2500MB
      neventsper: 100000
      rsync  : "./ProdFlow/run3auau/CaloProduction/*,cups.py"
      dstin  : 'DST_TRIGGERED_EVENT_%_run3auau'
@@ -346,7 +346,7 @@ DST_CALOFITTING_run3cosmics:
      outbase :   $(name)_$(build)_$(tag)_$(version)
      script  :   runhcalcosmics.sh
      payload :   ./ProdFlow/run3auau/CaloProduction/
-     mem     :   4096MB
+     mem     :   2500MB     
      neventsper: 50000
      rsync  : "./ProdFlow/run3auau/CaloProduction/*"
      dstin  : 'DST_TRIGGERED_EVENT_%_run3cosmics'
