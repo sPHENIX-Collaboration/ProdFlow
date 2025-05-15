@@ -242,19 +242,25 @@ touch tpot.list
 
 ls -la *.list
 
+echo Dumping intt*.list
 cat intt*.list >> inttinputs.list
-cat tpc*.list >> tpcinputs.list
-cat mvtx*.list >> mvtxinputs.list
-
-
-
-cat gl1.list
-cat mvtxinputs.list
 cat inttinputs.list
+echo Dumping tpc*.list
+cat tpc*.list >> tpcinputs.list
 cat tpcinputs.list
+echo Dumping mvtx*.list
+cat mvtx*.list >> mvtxinputs.list
+cat mvtxinputs.list
+echo Dumping tpot*.list
+cat tpot.list
+
+#cat gl1.list
+#cat mvtxinputs.list
+#cat inttinputs.list
+#cat tpcinputs.list
 
 # If no input files are in the file lists exit with code 111 to indicate a failure
-if [ $(cat mvtxinputs.list inttinputs.list tpcinputs.list |wc -l) -eq 0 ]; then
+if [ $(cat mvtxinputs.list inttinputs.list tpcinputs.list tpot.list |wc -l) -eq 0 ]; then
     echo Job self termination due to missing tpc, intt and/or mvtx files
      ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e 111 --nevents 0 --inc 
      exit 111
