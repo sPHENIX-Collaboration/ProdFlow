@@ -124,17 +124,16 @@ pwd
 echo root.exe -q -b Fun4All_SingleJob0.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"inlist\"\)
      root.exe -q -b Fun4All_SingleJob0.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"inlist\"\);  status_f4a=$?
 
-ls -la
-
-echo ./stageout.sh ${logbase}.root ${outdir}
-     ./stageout.sh ${logbase}.root ${outdir}
-
-for hfile in `ls HIST_*.root`; do
-    echo Stageout ${hfile} to ${histdir}
-    ./stageout.sh ${hfile} ${histdir}
-done
-
-ls -la
+if [[ $status_f4a -ne 0 ]]; then
+    echo "macro failed, no stageout"
+    ls -l    
+else
+    echo "macro succeeded staging output"
+         ./stageout.sh ${logbase}.root ${outdir}
+    for hfile in `ls HIST_*.root`; do
+	./stageout.sh ${hfile} ${histdir}
+    done    
+fi
 
 # Flag run as finished. 
 echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${nevents}  
