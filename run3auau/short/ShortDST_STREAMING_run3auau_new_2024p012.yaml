@@ -15,13 +15,11 @@ DST_STREAMING_EVENT_run3auau_streams:
 
   job:
     script:                 run_eventcombine.sh
-    arguments:             '{nevents} {outbase} {logbase} {run} {seg} {outdir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {PWD} {payload}'
-    output_destination:    '{logdir}'
+    arguments:             '{nevents} {outbase} {logbase} {run} {seg} {daqhost} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
     payload:                [streaming_code/*]
     mem:                    4000MB
-    # dataset is constructed internally, essentially {build}_{dbtag}_{version}
     batch_name:            'kolja.{rulestem}_{outstub}_{dataset}'
     priority:              '3500'
     # comment :              '---'
