@@ -3,7 +3,7 @@
 ## Logging details
 echo Hostname: `hostname`
 echo This script: $0
-echo Arguments: $@
+#echo Arguments: $@
 echo Working directrory: $_CONDOR_SCRATCH_DIR
 echo
 
@@ -15,6 +15,9 @@ if [ "$#" -ne "$EXPECTED_ARG_COUNT" ]; then
     echo "Usage: $0 <nevents> <outbase> <logbase> <run> <seg> <outdir> <finaldir> <buildarg> <tag> <inputs> <ranges_str> <neventsper> <log_dir> <comment_str> <hist_dir> <condor_rsync_val>"
     exit 1
 fi
+
+# TODO: Need cupsid - assigned at job registration in the prod db for efficient updates
+# echo cupsid:     ${cupsid}
 
 # Parse arguments using shift
 nevents="$1"; shift
@@ -33,7 +36,8 @@ nevents_per_job="$1"; shift    # Corresponds to {neventsper}
 log_directory="$1"; shift      # Corresponds to {logdir}
 job_comment="$1"; shift        # Corresponds to {comment}
 histogram_directory="$1"; shift # Corresponds to {histdir}
-condor_rsync=`echo $1|sed 's/,/ /g'`; shift       # Corresponds to {rsync}, change from comma separation
+condor_rsync="$1"; shift       # Corresponds to {rsync}, change from comma separation
+condor_rsync=`echo $condor_rsync|sed 's/,/ /g'`; shift # Change from comma separation
 
 # Variables for the script
 echo "Processing job with the following parameters:"
@@ -78,8 +82,7 @@ for f in ${condor_rsync}; do
     cp --verbose -r $f . 
 done
 ls -ltra
-
-# OS=$( hostnamectl | awk '/Operating System/{ print $3" "$4 }' ) # doesn't work on some worker nodes
+echo "---------------------------------------------"
 
 OS=$( grep ^PRETTY_NAME /etc/os-release | sed 's/"//g'| cut -f2- -d'=' ) # Works better, though still mostly for RHEL
 if [[ $OS == "" ]]; then
@@ -87,7 +90,6 @@ if [[ $OS == "" ]]; then
 else
     # Set up environment
     if [[ "$_CONDOR_JOB_IWD" =~ "/Users/eickolja" ]]; then
-        echo "Setting up Development software for ${OS} on MacOS"
         source /Users/eickolja/sphenix/sphenixprod/mac_this_sphenixprod.sh
     elif [[ $OS =~ "AlmaLinux" ]]; then
         echo "Setting up Production software for ${OS}"
@@ -96,14 +98,17 @@ else
 fi
 printenv
 
-# TODO: Need cupsid - assigned at job registration in the prod db for efficient updates
-# echo cupsid:     ${cupsid}
-
-echo "Collecting input files for ${run} from ${daqhost}"
-# make input file list
-# perl CreateListFiles.pl $runnumber $daqhost
+echo "---------------------------------------------"
+echo "Running eventcombine for run ${run_number} on ${daqhost}"
+echo "---------------------------------------------"
+echo "--- Collecting input files"
+# make input file list - # perl CreateListFiles.pl $runnumber $daqhost
 ./create_filelist.py $run_number $daqhost
 
-ls -l *list
+for f in *list; do
+    ls -l $f
+    cat $f
+done
+echo "---------------------------------------------"
 
 exit 0
