@@ -162,7 +162,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       while(std::getline(ifs, filepath))
       {
 	auto pos = filepath.find("ebdc");
-	ebdc = filepath.substr(pos+4, 2);
+	ebdc = filepath.substr(pos+4, 4);
 	break;
       }
 
