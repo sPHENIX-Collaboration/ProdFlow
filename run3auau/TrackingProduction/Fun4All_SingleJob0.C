@@ -119,13 +119,16 @@ void Fun4All_SingleJob0(
   ostringstream ebdcname;
   for(int ebdc = 0; ebdc < 24; ebdc++)
     {
-      ebdcname.str("");
-      if(ebdc < 10)
+      for(int endpoint = 0; endpoint <2; endpoint++)
 	{
-	  ebdcname<<"0";
+	  ebdcname.str("");
+	  if(ebdc < 10)
+	    {
+	      ebdcname<<"0";
+	    }
+	  ebdcname<<ebdc <<"_"<<endpoint;
+	  Tpc_HitUnpacking(ebdcname.str());
 	}
-      ebdcname<<ebdc;
-      Tpc_HitUnpacking(ebdcname.str());
     }
 
   Micromegas_HitUnpacking();
