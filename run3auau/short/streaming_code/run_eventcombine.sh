@@ -102,13 +102,18 @@ echo "---------------------------------------------"
 echo "Running eventcombine for run ${run_number} on ${daqhost}"
 echo "---------------------------------------------"
 echo "--- Collecting input files"
-# make input file list - # perl CreateListFiles.pl $runnumber $daqhost
 ./create_filelist.py $run_number $daqhost
-
 for f in *list; do
     ls -l $f
     cat $f
 done
+
+echo "--- Executing macro"
+echo running root.exe -q -b Fun4All_New_Prdf_Combiner.C\(${nevents},\"${daqhost}\",\"${run_number}\"\)
+root.exe -q -b Fun4All_New_Prdf_Combiner.C\(${nevents},\"${daqhost}\",\"${run_number}\"\)
+ls -ltr
+
+echo "script done"
 echo "---------------------------------------------"
 
 exit 0
