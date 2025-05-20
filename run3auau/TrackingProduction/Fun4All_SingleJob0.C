@@ -71,7 +71,7 @@ void Fun4All_SingleJob0(
  
   
   int i = 0;
-  
+  int nTpcFiles = 0;
   while(std::getline(ifs,filepath))
     {
       std::cout << "Adding DST with filepath: " << filepath << std::endl; 
@@ -83,6 +83,10 @@ void Fun4All_SingleJob0(
 	   rc->set_IntFlag("RUNNUMBER", runNumber);
 	   rc->set_uint64Flag("TIMESTAMP", runNumber);
         
+	}
+       if(filepath.find("TPC") != std::string::npos)
+	{
+	  nTpcFiles++;
 	}
       std::string inputname = "InputManager" + std::to_string(i);
       auto hitsin = new Fun4AllDstInputManager(inputname);
@@ -119,15 +123,33 @@ void Fun4All_SingleJob0(
   ostringstream ebdcname;
   for(int ebdc = 0; ebdc < 24; ebdc++)
     {
-      for(int endpoint = 0; endpoint <2; endpoint++)
+      if(nTpcFiles == 24)
 	{
 	  ebdcname.str("");
 	  if(ebdc < 10)
 	    {
 	      ebdcname<<"0";
 	    }
-	  ebdcname<<ebdc <<"_"<<endpoint;
+	  ebdcname<<ebdc;
 	  Tpc_HitUnpacking(ebdcname.str());
+	}
+      else if(nTpcFiles == 48)
+	{
+	  for(int endpoint = 0; endpoint <2; endpoint++)
+	    {
+	      ebdcname.str("");
+	      if(ebdc < 10)
+		{
+		  ebdcname<<"0";
+		}
+	      ebdcname<<ebdc <<"_"<<endpoint;
+	      Tpc_HitUnpacking(ebdcname.str());
+	    }
+	}
+      else
+	{
+	  std::cout << "Wrong number of tpc files input! Exiting now." << std::endl;
+	  gSystem->Exit(1);
 	}
     }
 
