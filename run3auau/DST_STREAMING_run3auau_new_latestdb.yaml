@@ -21,11 +21,40 @@ DST_STREAMING_EVENT_run3auau_streams:
    # Generates a set of temporary tables which may be utilized in the input query below.
    # The name of the temp table is the dictionary key specified in each list element.  (e.g. runnumbers)
    import_tables:
+     #- runselection:
+     #    db: daqdb
+     #    query: |-
+     #      select runnumber from run where runnumber>={mnrun} and runnumber<={mxrun} and runtype in ( 'cosmics', 'physics', 'beam', 'calib', 'dryrun', 'line_laser' )
+     #      {run_condition}
+
+     # Get the list of runs taken, and for each run, the list of daqhosts for the run...
      - runselection:
-         db: daqdb
+         db: daq
          query: |-
-           select runnumber from run where runnumber>={mnrun} and runnumber<={mxrun} and runtype in ( 'cosmics', 'physics', 'beam', 'calib', 'dryrun' )
-           {run_condition}                       
+           with allruns as (
+           select
+               hostinfo.runnumber,
+               string_agg(
+                  hostinfo.hostname||'_'||hostinfo.serverid,' ' order by hostname,serverid
+               ) as hosts,
+               count( hostinfo.serverid ) filter (where hostinfo.hostname like 'ebdc%' ) as nendpoint,
+               run.runtype
+           from
+              hostinfo join run on run.runnumber=hostinfo.runnumber
+           where
+              run.runnumber>={mnrun} and
+              run.runnumber<={mxrun} and
+              {run_condition}
+              (
+                 hostinfo.hostname like 'ebdc%' or
+                 hostinfo.hostname like 'intt%' or
+                 hostinfo.hostname like 'mvtx%'
+              ) and
+              runtype in ( 'physics', 'beam', 'cosmics', 'calib', 'dryrun', 'line_laser' )
+           group by
+              hostinfo.runnumber, run.runtype
+           )
+           select * from allruns where true {run_condition}           
             
       
    input:
@@ -152,7 +181,7 @@ DST_TRKR_CLUSTER_run3auau_streams:
      dataset : 'new_nocdbtag_v000'
 
    import_tables:
-     # Get the list of runs taken, and for each run, the list of daqhosts for the run... restricted to calorimeters
+     # Get the list of runs taken, and for each run, the list of daqhosts for the run...
      - hosttable:
          db: daq
          query: |-
@@ -162,6 +191,7 @@ DST_TRKR_CLUSTER_run3auau_streams:
                string_agg(
                   hostinfo.hostname||'_'||hostinfo.serverid,' ' order by hostname,serverid
                ) as hosts,
+               count( hostinfo.serverid ) filter (where hostinfo.hostname like 'ebdc%' ) as ebdctype,
                run.runtype
            from
               hostinfo join run on run.runnumber=hostinfo.runnumber
@@ -173,9 +203,11 @@ DST_TRKR_CLUSTER_run3auau_streams:
                  hostinfo.hostname like 'intt%' or
                  hostinfo.hostname like 'mvtx%'
               ) and
-              runtype in ( 'physics', 'beam', 'cosmics', 'calib', 'dryrun' ) group by hostinfo.runnumber, run.runtype
-              )
-              select * from allruns where true {run_condition}
+              runtype in ( 'physics', 'beam', 'cosmics', 'calib', 'dryrun' )
+           group by
+              hostinfo.runnumber, run.runtype
+           )
+           select * from allruns where true {run_condition}
 
        
    input:
@@ -207,7 +239,7 @@ DST_TRKR_CLUSTER_run3auau_streams:
          order by runnumber {limit_condition}
          )
 
-         select allruns.*,hosttable.runtype from allruns join hosttable on allruns.runnumber=hosttable.runnumber and allruns.hosts=hosttable.hosts
+         select allruns.*,hosttable.runtype,hosttable.ebdctype from allruns join hosttable on allruns.runnumber=hosttable.runnumber and allruns.hosts=hosttable.hosts
 
 
 
