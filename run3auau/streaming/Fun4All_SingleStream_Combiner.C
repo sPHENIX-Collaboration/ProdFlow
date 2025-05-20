@@ -40,6 +40,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 				   const string &type = "beam",
 				   const int neventsper = 100,
 				   const string &dbtag = "ProdA_2024",
+				   const int nTpcPrdfs = 0,
 				   const string &input_gl1file = "gl1daq.list",
 				   const string &input_tpcfile00 = "tpc00.list",
 				   const string &input_inttfile00 = "intt0.list",
@@ -162,7 +163,20 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       while(std::getline(ifs, filepath))
       {
 	auto pos = filepath.find("ebdc");
-	ebdc = filepath.substr(pos+4, 4);
+	if(nTpcPrdfs == 24)
+	  {
+	    ebdc = filepath.substr(pos+4, 2);
+	  }
+	else if (nTpcPrdfs == 48)
+	  {
+	    ebdc = filepath.substr(pos+4, 4);
+	  }
+	else
+	  {
+	    std::cout << "There is no setup for any non 24 or 48 endpoints. Exiting" << std::endl;
+	    
+	    gSystem->Exit(1);
+	  }
 	break;
       }
 
