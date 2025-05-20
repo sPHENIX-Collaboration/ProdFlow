@@ -15,7 +15,8 @@ DST_STREAMING_EVENT_run3auau_streams:
      comment :    "---"
      rsync   : "./ProdFlow/run3auau/streaming/*"
      mem     :   4000MB
-     mnrun   :   63758
+     #mnrun   :   63758
+     mnrun   : 63360
      mxrun   :   98999
 
    # Generates a set of temporary tables which may be utilized in the input query below.
@@ -37,14 +38,13 @@ DST_STREAMING_EVENT_run3auau_streams:
                string_agg(
                   hostinfo.hostname||'_'||hostinfo.serverid,' ' order by hostname,serverid
                ) as hosts,
-               count( hostinfo.serverid ) filter (where hostinfo.hostname like 'ebdc%' ) as nendpoint,
+               count( hostinfo.serverid ) filter (where hostinfo.hostname like 'ebdc%' and hostinfo.hostname!='ebdc39' ) as nendpoint,
                run.runtype
            from
               hostinfo join run on run.runnumber=hostinfo.runnumber
            where
               run.runnumber>={mnrun} and
               run.runnumber<={mxrun} and
-              {run_condition}
               (
                  hostinfo.hostname like 'ebdc%' or
                  hostinfo.hostname like 'intt%' or
@@ -137,7 +137,7 @@ DST_STREAMING_EVENT_run3auau_streams:
           alljobs1.runtype as runtype
           from alljobs1 join alljobs2 on alljobs1.runnumber=alljobs2.runnumber
           )
-          select * from alljobs
+          select *,runselection.nendpoint from alljobs join runselection on alljobs.runnumber=runselection.runnumber
 
 
 
@@ -149,7 +149,7 @@ DST_STREAMING_EVENT_run3auau_streams:
    #
    job:
      batch_name            : "$(name)_$(build)_$(tag)_$(version)-singlestreams"
-     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} $(nendpoint) {histdir} {PWD} {rsync}"
      output_destination    : '{logdir}'
      log                   : '{condor}/{logbase}.condor'
      priority : '3900'
