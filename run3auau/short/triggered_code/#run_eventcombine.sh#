@@ -92,8 +92,14 @@ else
     if [[ "$_CONDOR_JOB_IWD" =~ "/Users/eickolja" ]]; then
         source /Users/eickolja/sphenix/sphenixprod/mac_this_sphenixprod.sh
     elif [[ $OS =~ "AlmaLinux" ]]; then
-        echo "Setting up Production software for ${OS}"
+	echo "Setting up Production software for ${OS}"
+	export USER="$(id -u -n)"
+	export LOGNAME=${USER}
+	export HOME=/sphenix/u/${LOGNAME}
         source /opt/sphenix/core/bin/sphenix_setup.sh -n $build_argument
+    else
+	echo "Unsupported OS $OS"
+	return 1
     fi
 fi
 printenv

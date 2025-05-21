@@ -1,0 +1,27 @@
+#______________________________________________________________________________________________________________________
+DST_TRIGGERED_EVENT_run3auau_streams:
+  params:
+    rulestem:   DST_TRIGGERED_EVENT
+    period:     run3auau
+    outstub:    run3auau # could be run3cosmics, run3calib, etc.
+    build:      new
+    dbtag:      nocdbtag
+    version:    0
+
+  input:
+    db:          rawr
+    table:       datasets
+#    direct_path: /sphenix/lustre01/sphnxpro/{mode}/*/cosmics/
+
+  job:
+    script:                 run_eventcombine.sh
+    arguments:             '{nevents} {outbase} {logbase} {run} {seg} {daqhost} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
+    log:                   '{condor}/{logbase}.condor'
+    neventsper:             10000
+    payload:                [triggered_code/*]
+    mem:                    4000MB
+    batch_name:            'kolja.{rulestem}_{outstub}_{dataset}'
+    priority:              '3500'
+    # comment :              '---'
+
+#______________________________________________________________________________________________________________________
