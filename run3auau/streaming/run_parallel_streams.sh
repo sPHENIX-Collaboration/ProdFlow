@@ -14,7 +14,7 @@ inputs=(`echo ${9} | tr "," " "`)  # array of input files
 ranges=(`echo ${10} | tr "," " "`)  # array of input files with ranges appended
 neventsper=${11:-1000}
 logdir=${12:-.}
-comment=${13}
+nendpoint=${13}
 histdir=${14:-.}
 subdir=${15}
 payload=(`echo ${16} | tr ","  " "`) # array of files to be rsynced
@@ -278,8 +278,8 @@ fi
 
 
 
-echo root.exe -q -b Fun4All_SingleStream_Combiner.C\(${nevents},${runnumber},\"${outdir}\",\"${histdir}\",\"${outbase}\",${neventsper},\"${dbtag}\",\"gl1.list\",\"tpcinputs.list\",\"inttinputs.list\",\"mvtxinputs.list\",\"tpot.list\"\);
-     root.exe -q -b Fun4All_SingleStream_Combiner.C\(${nevents},${runnumber},\"${outdir}\",\"${histdir}\",\"${outbase}\",${neventsper},\"${dbtag}\",\"gl1.list\",\"tpcinputs.list\",\"inttinputs.list\",\"mvtxinputs.list\",\"tpot.list\"\); status_f4a=$?
+echo root.exe -q -b Fun4All_SingleStream_Combiner.C\(${nevents},${runnumber},\"${outdir}\",\"${histdir}\",\"${outbase}\",${neventsper},\"${dbtag}\",${nendpoint},\"gl1.list\",\"tpcinputs.list\",\"inttinputs.list\",\"mvtxinputs.list\",\"tpot.list\"\);
+     root.exe -q -b Fun4All_SingleStream_Combiner.C\(${nevents},${runnumber},\"${outdir}\",\"${histdir}\",\"${outbase}\",${neventsper},\"${dbtag}\",${nendpoint},\"gl1.list\",\"tpcinputs.list\",\"inttinputs.list\",\"mvtxinputs.list\",\"tpot.list\"\); status_f4a=$?
 
 # There should be no output files hanging around  (TODO add number of root files to exit code)
 ls -la 
