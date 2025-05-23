@@ -107,6 +107,13 @@ cat inputfiles.list | while read -r f; do
        inputlist="${f} ${inputlist}"
        valid=1
     fi
+
+    if [[ $b =~ "GL1_gl1daq_line_laser" ]]; then
+       echo ${f} >> gl1.list
+       echo Add ${f} to gl1.list
+       inputlist="${f} ${inputlist}"
+    fi
+    
     # TPOT files
     if [[ $b =~ "TPOT_ebdc" ]]; then
        echo ${f} >> tpot.list 
