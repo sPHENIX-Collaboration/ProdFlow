@@ -60,7 +60,7 @@ void Fun4All_JetSkimmedProductionYear2(int nEvents=1000,
 {
 
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(1);
+  se->Verbosity(0);
 
   recoConsts *rc = recoConsts::instance();
 

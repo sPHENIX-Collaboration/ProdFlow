@@ -62,7 +62,7 @@ void Fun4All_SingleJob0(
   G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING = true;
   
   auto se = Fun4AllServer::instance();
-  se->Verbosity(1);
+  se->Verbosity(0);
   se->VerbosityDownscale(1000); // only print every 1000th event
   auto rc = recoConsts::instance();
   

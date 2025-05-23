@@ -26,7 +26,7 @@ void Fun4All_New_Prdf_Combiner(int nEvents = 0,
 {
 
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(1);
+  se->Verbosity(0);
   se->VerbosityDownscale(1000);
   Fun4AllTriggeredInputManager *in = new Fun4AllTriggeredInputManager("Tin");
   SingleTriggeredInput *gl1 = new SingleGl1TriggeredInput("Gl1in");
