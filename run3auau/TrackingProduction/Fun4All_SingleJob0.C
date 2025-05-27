@@ -63,7 +63,7 @@ void Fun4All_SingleJob0(
   
   auto se = Fun4AllServer::instance();
   se->Verbosity(0);
-  se->VerbosityDownscale(1000); // only print every 1000th event
+  se->VerbosityDownscale(100); // only print every 1000th event
   auto rc = recoConsts::instance();
   
   std::ifstream ifs(filelist);
@@ -84,7 +84,7 @@ void Fun4All_SingleJob0(
 	   rc->set_uint64Flag("TIMESTAMP", runNumber);
         
 	}
-       if(filepath.find("TPC") != std::string::npos)
+       if(filepath.find("ebdc") != std::string::npos)
 	{
 	  nTpcFiles++;
 	}
@@ -121,7 +121,8 @@ void Fun4All_SingleJob0(
       Intt_HitUnpacking(std::to_string(server));
     }
   ostringstream ebdcname;
-  for(int ebdc = 0; ebdc < 24; ebdc++)
+  //24+1 for tpot
+  for(int ebdc = 0; ebdc < 25; ebdc++)
     {
       if(nTpcFiles == 24)
 	{
@@ -133,7 +134,8 @@ void Fun4All_SingleJob0(
 	  ebdcname<<ebdc;
 	  Tpc_HitUnpacking(ebdcname.str());
 	}
-      else if(nTpcFiles == 48)
+      //48 + 1 for tpot
+      else if(nTpcFiles == 49)
 	{
 	  for(int endpoint = 0; endpoint <2; endpoint++)
 	    {
