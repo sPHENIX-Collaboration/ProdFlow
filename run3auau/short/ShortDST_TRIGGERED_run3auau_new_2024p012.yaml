@@ -11,7 +11,6 @@ DST_TRIGGERED_EVENT_run3auau_streams:
   input:
     db:          rawr
     table:       datasets
-#    direct_path: /sphenix/lustre01/sphnxpro/{mode}/*/cosmics/
 
   job:
     script:                 run_eventcombine.sh
