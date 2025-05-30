@@ -86,7 +86,10 @@ void Fun4All_SingleJob0(
 	}
        if(filepath.find("ebdc") != std::string::npos)
 	{
-	  nTpcFiles++;
+	  if(filepath.find("39") == std::string::npos)
+	    {
+	      nTpcFiles++;
+	    }
 	}
       std::string inputname = "InputManager" + std::to_string(i);
       auto hitsin = new Fun4AllDstInputManager(inputname);
@@ -94,7 +97,6 @@ void Fun4All_SingleJob0(
       se->registerInputManager(hitsin);
       i++;
     }
-
 
   CDBInterface::instance()->Verbosity(1);
 
@@ -109,7 +111,6 @@ void Fun4All_SingleJob0(
   se->registerInputManager(ingeo);
   
 
-  
   TrackingInit();
 
   for(int felix=0; felix < 6; felix++)
@@ -121,10 +122,9 @@ void Fun4All_SingleJob0(
       Intt_HitUnpacking(std::to_string(server));
     }
   ostringstream ebdcname;
-  //24+1 for tpot
-  for(int ebdc = 0; ebdc < 25; ebdc++)
+  for(int ebdc = 0; ebdc < 24; ebdc++)
     {
-      if(nTpcFiles == 24)
+      if(nTpcFiles ==24)
 	{
 	  ebdcname.str("");
 	  if(ebdc < 10)
@@ -134,8 +134,8 @@ void Fun4All_SingleJob0(
 	  ebdcname<<ebdc;
 	  Tpc_HitUnpacking(ebdcname.str());
 	}
-      //48 + 1 for tpot
-      else if(nTpcFiles == 49)
+      
+      else if(nTpcFiles == 48)
 	{
 	  for(int endpoint = 0; endpoint <2; endpoint++)
 	    {
