@@ -99,16 +99,19 @@ echo root.exe -q -b Fun4All_JobC.C\(${nevents},${runnumber},\"${logbase}.root\",
      root.exe -q -b Fun4All_JobC.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"inlist\"\);  status_f4a=$?
      echo "Fun4All exit code: ${status_f4a}"
 
-ls -la
 
-./stageout.sh ${logbase}.root ${outdir}
+if [[ $status_f4a -ne 0 ]]; then
+    echo "macro failed, no stageout"
+    ls -l    
+else
+    echo "macro succeeded staging output"
+    ./stageout.sh ${logbase}.root ${outdir}
 
-for hfile in `ls HIST_*.root`; do
-    echo Stageout ${hfile} to ${histdir}
-    ./stageout.sh ${hfile} ${histdir}
-done
+    for hfile in `ls HIST_*.root`; do
+	./stageout.sh ${hfile} ${histdir}
+    done
+fi
 
-ls -la
 
 # Flag run as finished. 
 echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${nevents}  

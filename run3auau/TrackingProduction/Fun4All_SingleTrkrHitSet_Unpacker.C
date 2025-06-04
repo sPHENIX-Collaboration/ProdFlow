@@ -47,7 +47,7 @@ void Fun4All_SingleTrkrHitSet_Unpacker(
  
 
   auto se = Fun4AllServer::instance();
-  se->Verbosity(1);
+  se->Verbosity(0);
   auto rc = recoConsts::instance();
 
   std::ifstream ifs(filelist);
