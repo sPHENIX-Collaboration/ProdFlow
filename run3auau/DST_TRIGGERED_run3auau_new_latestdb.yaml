@@ -532,3 +532,239 @@ DST_JETCALO_run3auau:
      #accounting_group      : "group_sphenix.mdc2"
      #accounting_group_user : "sphnxpro"
      priority : '3900'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Postprocessing rule(s)
+
+POST_PROCESSING_TRIGGERED_EVENT_run3cosmics:
+  # Logfile compression & etc...
+  params:
+    name: POST_TRIGGERED_EVENT_$(streamname)_run3cosmics
+    build: new
+    build_name: new
+    dbtag: nocdbtag
+    version: 0
+    logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+    outbase :   $(name)_$(build)_$(tag)_$(version)
+    script  :   run_post_processing.sh  
+    payload :   ./ProdFlow/run3auau/postprocess/
+    rsync :     "./ProdFlow/run3auau/postprocess/*"
+    mnrun: 60000
+    mxrun: 98999
+    neventsper: 0
+
+     # Get the list of runs taken, and for each run, the list of daqhosts for the run...
+  import_tables:
+    - runselection:
+        db: daqdb
+        query: |-
+          select runnumber,runtype from run where runnumber>={mnrun} and runnumber<={mxrun} and runtype in ( 'cosmics', 'physics', 'beam', 'calib', 'dryrun', 'line_laser' )
+          {run_condition}
+
+  input:
+    db: statusw
+    lfn2pfn: lfn2lfn
+    query: |-
+      with jobs as (
+         select 'production' as source,
+         run,
+         0 as segment,
+         (regexp_matches(dsttype,'(seb[0-9]+)'))[1] as streamname,
+         dstfile||'.out' as files,
+         dstfile||':'||status as fileranges
+      from
+         production_status
+      where
+         run>={mnrun} and run<={mxrun} and status>'running' and dstfile like 'DST_TRIGGERED_EVENT_seb%'
+      )
+      select jobs.*,runselection.* from jobs join runselection on run=runnumber
+
+      where true {run_condition}
+
+  job:
+    batch_name            : "$(name)_$(build)_$(tag)_$(version)"
+    arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} $(nendpoint) {histdir} {PWD} {rsync}"
+    output_destination    : '{logdir}'
+    log                   : '{condor}/{logbase}.condor'
+    priority : '3900'
+    request_xferslots: '0'
+      
+  
+      
+    
+
+
+POST_PROCESSING_TRIGGERED_EVENT_run3auau:
+  # Logfile compression & etc...
+  params:
+    name: POST_TRIGGERED_EVENT_$(streamname)_run3auau
+    build: new
+    build_name: new
+    dbtag: nocdbtag
+    version: 0
+    logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+    outbase :   $(name)_$(build)_$(tag)_$(version)
+    script  :   run_post_processing.sh  
+    payload :   ./ProdFlow/run3auau/postprocess/
+    rsync :     "./ProdFlow/run3auau/postprocess/*"
+    mnrun: 60000
+    mxrun: 98999
+    neventsper: 0
+
+     # Get the list of runs taken, and for each run, the list of daqhosts for the run...
+  import_tables:
+    - runselection:
+        db: daqdb
+        query: |-
+          select runnumber,runtype from run where runnumber>={mnrun} and runnumber<={mxrun} and runtype in ( 'cosmics', 'physics', 'beam', 'calib', 'dryrun', 'line_laser' )
+          {run_condition}
+
+  input:
+    db: statusw
+    lfn2pfn: lfn2lfn
+    query: |-
+      with jobs as (
+         select 'production' as source,
+         run,
+         0 as segment,
+         (regexp_matches(dsttype,'(seb[0-9]+)'))[1] as streamname,
+         dstfile||'.out' as files,
+         dstfile||':'||status as fileranges
+      from
+         production_status
+      where
+         run>={mnrun} and run<={mxrun} and status>'running' and dstfile like 'DST_TRIGGERED_EVENT_seb%'
+      )
+      select jobs.*,runselection.* from jobs join runselection on run=runnumber
+
+      where true {run_condition}
+
+  job:
+    batch_name            : "$(name)_$(build)_$(tag)_$(version)"
+    arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} $(nendpoint) {histdir} {PWD} {rsync}"
+    output_destination    : '{logdir}'
+    log                   : '{condor}/{logbase}.condor'
+    priority : '3900'
+    request_xferslots: '0'
+      
+  
+      
+    
+    
+POST_PROCESSING_CALOFITTING_run3cosmics:
+  # Logfile compression & etc...
+  params:
+    name: POST_CALOFITTING_run3cosmics
+    build: new
+    build_name: new
+    dbtag: 2025p001
+    version: 0
+    logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+    outbase :   $(name)_$(build)_$(tag)_$(version)
+    script  :   run_post_processing.sh  
+    payload :   ./ProdFlow/run3auau/postprocess/
+    rsync :     "./ProdFlow/run3auau/postprocess/*"
+    mnrun: 60000
+    mxrun: 98999
+    neventsper: 0
+
+     # Get the list of runs taken, and for each run, the list of daqhosts for the run...
+  import_tables:
+    - runselection:
+        db: daqdb
+        query: |-
+          select runnumber,runtype from run where runnumber>={mnrun} and runnumber<={mxrun} and runtype in ( 'cosmics', 'physics', 'beam', 'calib', 'dryrun', 'line_laser' )
+          {run_condition}
+
+  input:
+    db: statusw
+    lfn2pfn: lfn2lfn
+    query: |-
+      with jobs as (
+         select 'production' as source,
+         run,
+         segment,
+         dstfile||'.out' as files,
+         dstfile||':'||status as fileranges
+      from
+         production_status
+      where
+         run>={mnrun} and run<={mxrun} and status>'running' and dstfile like 'DST_CALOFIT%'
+      )
+      select jobs.*,runselection.* from jobs join runselection on run=runnumber
+
+      where true {run_condition}
+
+  job:
+    batch_name            : "$(name)_$(build)_$(tag)_$(version)"
+    arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} $(nendpoint) {histdir} {PWD} {rsync}"
+    output_destination    : '{logdir}'
+    log                   : '{condor}/{logbase}.condor'
+    priority : '3900'
+    request_xferslots: '0'
+
+
+POST_PROCESSING_CALOFITTING_run3auau:
+  # Logfile compression & etc...
+  params:
+    name: POST_CALOFITTING_run3auau
+    build: new
+    build_name: new
+    dbtag: 2025p001
+    version: 0
+    logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+    outbase :   $(name)_$(build)_$(tag)_$(version)
+    script  :   run_post_processing.sh  
+    payload :   ./ProdFlow/run3auau/postprocess/
+    rsync :     "./ProdFlow/run3auau/postprocess/*"
+    mnrun: 60000
+    mxrun: 98999
+    neventsper: 0
+
+     # Get the list of runs taken, and for each run, the list of daqhosts for the run...
+  import_tables:
+    - runselection:
+        db: daqdb
+        query: |-
+          select runnumber,runtype from run where runnumber>={mnrun} and runnumber<={mxrun} and runtype in ( 'cosmics', 'physics', 'beam', 'calib', 'dryrun', 'line_laser' )
+          {run_condition}
+
+  input:
+    db: statusw
+    lfn2pfn: lfn2lfn
+    query: |-
+      with jobs as (
+         select 'production' as source,
+         run,
+         segment,
+         dstfile||'.out' as files,
+         dstfile||':'||status as fileranges
+      from
+         production_status
+      where
+         run>={mnrun} and run<={mxrun} and status>'running' and dstfile like 'DST_CALOFIT%'
+      )
+      select jobs.*,runselection.* from jobs join runselection on run=runnumber
+
+      where true {run_condition}
+
+  job:
+    batch_name            : "$(name)_$(build)_$(tag)_$(version)"
+    arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} $(nendpoint) {histdir} {PWD} {rsync}"
+    output_destination    : '{logdir}'
+    log                   : '{condor}/{logbase}.condor'
+    priority : '3900'
+    request_xferslots: '0'    
