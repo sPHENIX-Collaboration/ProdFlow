@@ -89,7 +89,7 @@ void Fun4All_LaminationFitting(
 
 
   G4TPC::LaminationOutputName = Form("Laminations_run2pp_%s-%08d.root",dbtag.c_str(),runnumber);
-  G4TPC::LaminationFitName = Form("LaminationFits_run2pp_%s-%08d.pdf",dbtag.c_str(),runnumber);
+  G4TPC::LaminationQAName = Form("LaminationQA_run2pp_%s-%08d.pdf",dbtag.c_str(),runnumber);
   TPC_LaminationFitting();
   
   se->run(nEvents);
