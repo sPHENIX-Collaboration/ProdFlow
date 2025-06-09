@@ -1,5 +1,6 @@
-#ifndef FUN4ALL_JETPRODUCTIONYEAR2_AUAU_C
-#define FUN4ALL_JETPRODUCTIONYEAR2_AUAU_C
+#ifndef FUN4ALL_CALOJETPRODUCTIONYEAR2_AUAU_C
+#define FUN4ALL_CALOJETPRODUCTIONYEAR2_AUAU_C
+
 
 // c++ utilities
 #include <fstream>
@@ -54,30 +55,18 @@ R__LOAD_LIBRARY(libzdcinfo.so)
 
 
 // ============================================================================
-//! Jet production macro for year 2 (AuAu)
+//! Calorimeter jet production macro for year 2 (AuAu)
 // ============================================================================
 /*! Jet production macro for AuAu-running in year 2. Currently used for
  *  producing for QA. Can be adapted for production of JET DSTs in the
  *  future.
  *
- *  Necessary inputs:
- *    - For calo jets:
- *      - DST_CALO
- *    - For track jets:
- *      - DST_CALO (for beam background filter)
- *      - DST_TRKR_TRACKS
- *      - DST_TRKR_CLUSTER (for tracks-in-jets QA)
+ *  Necessary inputs for calo jets:
+ *    - DST_CALO
  */
-void Fun4All_JetProductionYear2_AuAu(
+void Fun4All_CaloJetProductionYear2_AuAu(
   const int nEvents = 0,
-  const bool useTwrs = true,
-  const bool useTrks = false,
-  const bool useFlow = false,
-  const std::vector<std::string>& inlists = {
-    "./input/dsts_calo_run2pp-00053877.goldenTrkCaloRun_allSeg.list",
-    "./input/dsts_clust_run2pp-00053877.goldenTrkCaloRun_allSeg.list",
-    "./input/dsts_track_run2pp-00053877.goldenTrkCaloRun_allSeg.list"
-  },
+  const std::string& inlist =  "./input/dsts_calo_run2pp-00053877.goldenTrkCaloRun_allSeg.list",
   const std::string& outfile = "DST_JET-00053877-0000.root",
   const std::string& outfile_hist = "HIST_JETQA-00053877-0000.year2aa_tracktest.root",
   const std::string& dbtag = "ProdA_2024"
@@ -93,9 +82,9 @@ void Fun4All_JetProductionYear2_AuAu(
 
   // jet reco options
   Enable::HIJETS         = true;
-  Enable::HIJETS_TOWER   = useTwrs;
-  Enable::HIJETS_TRACK   = useTrks;
-  Enable::HIJETS_PFLOW   = useFlow;
+  Enable::HIJETS_TOWER   = true;
+  Enable::HIJETS_TRACK   = false;
+  Enable::HIJETS_PFLOW   = false;
   HIJETS::is_pp          = false;
   HIJETS::do_vertex_type = true;
   HIJETS::vertex_type    = Enable::HIJETS_TRACK ? GlobalVertex::SVTX : GlobalVertex::MBD;
@@ -120,10 +109,10 @@ void Fun4All_JetProductionYear2_AuAu(
 
   // initialize F4A server
   Fun4AllServer* se = Fun4AllServer::instance();
-  se -> Verbosity(0);
+  se -> Verbosity(1);
 
   // grab 1st file from input lists
-  ifstream    files(inlists.front());
+  ifstream    files(inlist);
   std::string first("");
   std::getline(files, first);
 
@@ -145,12 +134,9 @@ void Fun4All_JetProductionYear2_AuAu(
   se -> registerSubsystem(flag);
 
   // read in input
-  for (std::size_t iin = 0; iin < inlists.size(); ++iin)
-  {
-    Fun4AllInputManager* indst = new Fun4AllDstInputManager("indst" + std::to_string(iin));
-    indst -> AddListFile(inlists[iin]);
-    se -> registerInputManager(indst);
-  }
+  Fun4AllInputManager* indst = new Fun4AllDstInputManager("indst");
+  indst -> AddListFile(inlist);
+  se -> registerInputManager(indst);
 
   // set up tracking
   if (JetQA::HasTracks)

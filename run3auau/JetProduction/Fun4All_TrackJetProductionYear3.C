@@ -1,5 +1,5 @@
-#ifndef FUN4ALL_JETPRODUCTIONYEAR2_C
-#define FUN4ALL_JETPRODUCTIONYEAR2_C
+#ifndef FUN4ALL_TRACKJETPRODUCTIONYEAR3_C
+#define FUN4ALL_TRACKJETPRODUCTIONYEAR3_C
 
 
 // c++ utilities
@@ -33,8 +33,7 @@
 #include <G4_Global.C>
 #include <G4_Magnet.C>
 #include <GlobalVariables.C>
-#include <HIJetReco.C>  // n.b. needed for rho calculation
-#include <NoBkgdSubJetReco.C>
+#include <HIJetReco.C>
 #include <Jet_QA.C>
 #include <QA.C>
 #include <Trkr_Reco.C>
@@ -56,32 +55,22 @@ R__LOAD_LIBRARY(libzdcinfo.so)
 
 
 // ============================================================================
-//! Jet production macro for year 2 (pp)
+//! Track jet production macro for year 3 (AuAu)
 // ============================================================================
-/*! Jet production macro for pp-running in year 2. Currently used for
+/*! Jet production macro for AuAu-running in year 3. Currently used for
  *  producing for QA. Can be adapted for production of JET DSTs in the
  *  future.
  *
- *  Necessary inputs:
- *    - For calo jets:
- *      - DST_CALO
- *    - For track jets:
- *      - DST_CALO (for beam background filter)
- *      - DST_TRKR_TRACKS
- *      - DST_TRKR_CLUSTER (for tracks-in-jets QA)
+ *  Necessary input for track jets:
+ *    - DST_CALO (for beam background filter)
+ *    - DST_TRKR_TRACKS
+ *    - DST_TRKR_CLUSTER (for tracks-in-jets QA)
  */
-void Fun4All_JetProductionYear2(
+void Fun4All_TrackJetProductionYear3(
   const int nEvents = 0,
-  const bool useTwrs = true,
-  const bool useTrks = false,
-  const bool useFlow = false,
-  const std::vector<std::string>& inlists = {
-    "./input/dsts_calo_run2pp-00053877.goldenTrkCaloRun_allSeg.list",
-    "./input/dsts_clust_run2pp-00053877.goldenTrkCaloRun_allSeg.list",
-    "./input/dsts_track_run2pp-00053877.goldenTrkCaloRun_allSeg.list"
-  },
+  const std::string& inlist = "./input/dsts_track_run2pp-00053877.goldenTrkCaloRun_allSeg.list",
   const std::string& outfile = "DST_JET-00053877-0000.root",
-  const std::string& outfile_hist = "HIST_JETQA-00053877-0000.year2_trackandcalotest.root",
+  const std::string& outfile_hist = "HIST_JETQA-00053877-0000.year2aa_tracktest.root",
   const std::string& dbtag = "ProdA_2024"
 ) {
 
@@ -90,48 +79,42 @@ void Fun4All_JetProductionYear2(
   // turn on/off DST output and/or QA
   Enable::DSTOUT           = false;
   Enable::QA               = true;
-  Enable::NSJETS_VERBOSITY = 0;
-  Enable::JETQA_VERBOSITY  = std::max(Enable::VERBOSITY, Enable::NSJETS_VERBOSITY);
+  Enable::HIJETS_VERBOSITY = 0;
+  Enable::JETQA_VERBOSITY  = std::max(Enable::VERBOSITY, Enable::HIJETS_VERBOSITY);
 
   // jet reco options
-  Enable::NSJETS         = true;
-  Enable::NSJETS_TOWER   = useTwrs;
-  Enable::NSJETS_TRACK   = useTrks;
-  Enable::NSJETS_PFLOW   = useFlow;
-  NSJETS::is_pp          = true;
-  NSJETS::do_vertex_type = true;
-  NSJETS::vertex_type    = Enable::NSJETS_TRACK ? GlobalVertex::SVTX : GlobalVertex::MBD;
-
-  // make sure HIJetReco inputs are the same
-  // for rho calculation
-  Enable::HIJETS_TOWER = Enable::NSJETS_TOWER;
-  Enable::HIJETS_TRACK = Enable::NSJETS_TRACK;
-  Enable::HIJETS_PFLOW = Enable::NSJETS_PFLOW;
+  Enable::HIJETS         = true;
+  Enable::HIJETS_TOWER   = false;
+  Enable::HIJETS_TRACK   = true;
+  Enable::HIJETS_PFLOW   = false;
+  HIJETS::is_pp          = false;
+  HIJETS::do_vertex_type = true;
+  HIJETS::vertex_type    = Enable::HIJETS_TRACK ? GlobalVertex::SVTX : GlobalVertex::MBD;
 
   // qa options
   JetQA::DoInclusive      = true;
   JetQA::DoTriggered      = true;
-  JetQA::DoPP             = NSJETS::is_pp;
-  JetQA::UseBkgdSub       = false;
+  JetQA::DoPP             = HIJETS::is_pp;
+  JetQA::UseBkgdSub       = true;
   JetQA::RestrictPtToTrig = false;
   JetQA::RestrictEtaByR   = true;
-  JetQA::HasTracks        = Enable::NSJETS_TRACK || Enable::NSJETS_PFLOW;
-  JetQA::HasCalos         = Enable::NSJETS_TOWER || Enable::NSJETS_PFLOW;
+  JetQA::HasTracks        = Enable::HIJETS_TRACK || Enable::HIJETS_PFLOW;
+  JetQA::HasCalos         = Enable::HIJETS_TOWER || Enable::HIJETS_PFLOW;
 
   // tracking options
   G4TPC::ENABLE_MODULE_EDGE_CORRECTIONS = true;
   Enable::MVTX_APPLYMISALIGNMENT        = true;
   ACTSGEOM::mvtx_applymisalignment      = Enable::MVTX_APPLYMISALIGNMENT;
-  TRACKING::pp_mode                     = NSJETS::is_pp;
+  TRACKING::pp_mode                     = HIJETS::is_pp;
 
   // initialize interfaces, register inputs -----------------------------------
 
   // initialize F4A server
   Fun4AllServer* se = Fun4AllServer::instance();
-  se -> Verbosity(0);
+  se -> Verbosity(1);
 
   // grab 1st file from input lists
-  ifstream    files(inlists.front());
+  ifstream    files(inlist);
   std::string first("");
   std::getline(files, first);
 
@@ -153,12 +136,9 @@ void Fun4All_JetProductionYear2(
   se -> registerSubsystem(flag);
 
   // read in input
-  for (std::size_t iin = 0; iin < inlists.size(); ++iin)
-  {
-    Fun4AllInputManager* indst = new Fun4AllDstInputManager("indst" + std::to_string(iin));
-    indst -> AddListFile(inlists[iin]);
-    se -> registerInputManager(indst);
-  }
+  Fun4AllInputManager* indst = new Fun4AllDstInputManager("indst");
+  indst -> AddListFile(inlist);
+  se -> registerInputManager(indst);
 
   // set up tracking
   if (JetQA::HasTracks)
@@ -177,7 +157,7 @@ void Fun4All_JetProductionYear2(
 
   // do vertex & centrality reconstruction
   Global_Reco();
-  if (!NSJETS::is_pp)
+  if (!HIJETS::is_pp)
   {
     Centrality();
   }
@@ -197,7 +177,7 @@ void Fun4All_JetProductionYear2(
   se -> registerSubsystem(filter);
 
   // do jet reconstruction
-  NoBkgdSubJetReco();
+  HIJetReco();  
 
   // register modules necessary for QA
   if (Enable::QA)
