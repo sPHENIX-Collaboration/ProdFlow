@@ -29,7 +29,9 @@ R__LOAD_LIBRARY(libtpccalib.so)
 void Fun4All_LaminationFitting(
     const int nEvents = 2,
     const std::string dbtag = "2024p001",
-    const std::string filelist = "filelist.list")
+    const std::string filelist = "filelist.list",
+    const std::string outfile = "Laminations.root",
+    const std::string QAfile = "Laminations_QA.pdf")
 {
 
   gSystem->Load("libg4dst.so");
@@ -88,8 +90,8 @@ void Fun4All_LaminationFitting(
   TrackingInit();
 
 
-  G4TPC::LaminationOutputName = Form("Laminations_run3auau_%s-%08d.root",dbtag.c_str(),runnumber);
-  G4TPC::LaminationQAName = Form("LaminationQA_run3auau_%s-%08d.pdf",dbtag.c_str(),runnumber);
+  G4TPC::LaminationOutputName = outfile; 
+  G4TPC::LaminationQAName = QAfile;
   TPC_LaminationFitting();
   
   se->run(nEvents);
