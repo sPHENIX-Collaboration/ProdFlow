@@ -14,7 +14,7 @@ inputs=(`echo ${9} | tr "," " "`)  # array of input files
 ranges=(`echo ${10} | tr "," " "`)  # array of input files with ranges appended
 neventsper=${11:-1000}
 logdir=${12:-.}
-comment=${13}
+nendpoint=${13}
 histdir=${14:-.}
 subdir=${15}
 payload=(`echo ${16} | tr ","  " "`) # array of files to be rsynced
@@ -40,14 +40,6 @@ export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
-
-OS=$( hostnamectl | awk '/Operating System/{ print $3" "$4 }' )
-#if [[ $OS =~ "Alma" ]]; then
-#    echo "Can live with stock pyton on alma9"
-#else
-#    echo "Need older python on SL7"
-#   source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/stow/opt_sphenix_scripts/bin/setup_python-3.6.sh
-#fi
 
 echo "Offline main "${OFFLINE_MAIN}
 
@@ -87,25 +79,48 @@ fi
 #______________________________________________________________________________________________
 # Map TPC input files into filelists
 neventsperintt=$(( 10 * neventsper ))
+
+
 inputlist=""
 cat inputfiles.list | while read -r f; do
     b=$( basename $f )
     # TPC files
     if [[ $b =~ "TPC_ebdc" ]]; then
-       l=${b%%_cosmics*}  # handle either cosmic events or calibrations or beam...
-       l=${l%%_calib*}
-       l=${l%%_beam*}
-       l=${l%%_physics*}
+       #l=${b%%_cosmics*}  # handle either cosmic events or calibrations or beam...
+       #l=${l%%_calib*}
+       #l=${l%%_beam*}
+       #l=${l%%_physics*}
+       l=${b%%_0_dryrun*}
+       l=${l%%_1_dryrun*}
+       l=${l%%_0_cosmics*}
+       l=${l%%_1_comsics*}
+       l=${l%%_0_calib*}
+       l=${l%%_1_calib*}       
+       l=${l%%_0_beam*}
+       l=${l%%_1_beam*}
+       l=${l%%_0_physics*}
+       l=${l%%_1_physics*}
+       l=${l%%_0_line_laser*}
+       l=${l%%_1_line_laser*}                     
        echo ${f} >> ${l/TPC_ebdc/tpc}.list
        echo Add ${f} to ${l/TPC_ebdc/tpc}.list
        inputlist="${f} ${inputlist}"
+       valid=1
     fi
+
+    if [[ $b =~ "GL1_gl1daq_line_laser" ]]; then
+       echo ${f} >> gl1.list
+       echo Add ${f} to gl1.list
+       inputlist="${f} ${inputlist}"
+    fi
+    
     # TPOT files
     if [[ $b =~ "TPOT_ebdc" ]]; then
        echo ${f} >> tpot.list 
        echo Add ${f} to tpot.list
        inputlist="${f} ${inputlist}"
     fi
+    
     if [[ $b =~ "GL1_cosmics" ]]; then
        echo ${f} >> gl1.list
        echo Add ${f} to gl1.list
@@ -189,6 +204,27 @@ cat inputfiles.list | while read -r f; do
        echo Add ${f} to ${l}.list
        inputlist="${f} ${inputlist}"
     fi
+
+    if [[ $b =~ "GL1_dryrun" ]]; then
+       echo ${f} >> gl1.list
+       echo Add ${f} to gl1.list
+       inputlist="${f} ${inputlist}"
+    fi
+    if [[ $b =~ "dryrun_intt" ]]; then
+       l=${b#*dryrun_}
+       l=${l%%-*}
+       echo ${f} >> ${l}.list
+       echo Add ${f} to ${l}.list
+       inputlist="${f} ${inputlist}"
+       neventsper=${neventsperintt}
+    fi
+    if [[ $b =~ "dryrun_mvtx" ]]; then
+       l=${b#*dryrun_}
+       l=${l%%-*}
+       echo ${f} >> ${l}.list
+       echo Add ${f} to ${l}.list
+       inputlist="${f} ${inputlist}"
+    fi
     
 done
 
@@ -213,17 +249,26 @@ touch tpot.list
 
 ls -la *.list
 
+echo Dumping intt*.list
 cat intt*.list >> inttinputs.list
-cat tpc*.list >> tpcinputs.list
-cat mvtx*.list >> mvtxinputs.list
-
-cat gl1.list
-cat mvtxinputs.list
 cat inttinputs.list
+echo Dumping tpc*.list
+cat tpc*.list >> tpcinputs.list
 cat tpcinputs.list
+echo Dumping mvtx*.list
+cat mvtx*.list >> mvtxinputs.list
+cat mvtxinputs.list
+echo Dumping tpot*.list
+cat tpot.list
+
+#cat gl1.list
+#cat mvtxinputs.list
+#cat inttinputs.list
+#cat tpcinputs.list
 
 # If no input files are in the file lists exit with code 111 to indicate a failure
-if [ $(cat *.list|wc -l) -eq 0 ]; then
+if [ $(cat mvtxinputs.list inttinputs.list tpcinputs.list tpot.list |wc -l) -eq 0 ]; then
+    echo Job self termination due to missing tpc, intt and/or mvtx files
      ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e 111 --nevents 0 --inc 
      exit 111
 fi
@@ -233,8 +278,8 @@ fi
 
 
 
-echo root.exe -q -b Fun4All_SingleStream_Combiner.C\(${nevents},${runnumber},\"${outdir}\",\"${histdir}\",\"${outbase}\",${neventsper},\"${dbtag}\",\"gl1.list\",\"tpcinputs.list\",\"inttinputs.list\",\"mvtxinputs.list\",\"tpot.list\"\);
-     root.exe -q -b Fun4All_SingleStream_Combiner.C\(${nevents},${runnumber},\"${outdir}\",\"${histdir}\",\"${outbase}\",${neventsper},\"${dbtag}\",\"gl1.list\",\"tpcinputs.list\",\"inttinputs.list\",\"mvtxinputs.list\",\"tpot.list\"\); status_f4a=$?
+echo root.exe -q -b Fun4All_SingleStream_Combiner.C\(${nevents},${runnumber},\"${outdir}\",\"${histdir}\",\"${outbase}\",${neventsper},\"${dbtag}\",${nendpoint},\"gl1.list\",\"tpcinputs.list\",\"inttinputs.list\",\"mvtxinputs.list\",\"tpot.list\"\);
+     root.exe -q -b Fun4All_SingleStream_Combiner.C\(${nevents},${runnumber},\"${outdir}\",\"${histdir}\",\"${outbase}\",${neventsper},\"${dbtag}\",${nendpoint},\"gl1.list\",\"tpcinputs.list\",\"inttinputs.list\",\"mvtxinputs.list\",\"tpot.list\"\); status_f4a=$?
 
 # There should be no output files hanging around  (TODO add number of root files to exit code)
 ls -la 

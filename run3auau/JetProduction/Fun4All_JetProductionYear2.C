@@ -128,7 +128,7 @@ void Fun4All_JetProductionYear2(
 
   // initialize F4A server
   Fun4AllServer* se = Fun4AllServer::instance();
-  se -> Verbosity(1);
+  se -> Verbosity(0);
 
   // grab 1st file from input lists
   ifstream    files(inlists.front());

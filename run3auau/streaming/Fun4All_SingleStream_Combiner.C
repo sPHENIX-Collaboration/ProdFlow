@@ -40,12 +40,14 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 				   const string &type = "beam",
 				   const int neventsper = 100,
 				   const string &dbtag = "ProdA_2024",
+				   const int nTpcPrdfs = 0,
 				   const string &input_gl1file = "gl1daq.list",
 				   const string &input_tpcfile00 = "tpc00.list",
 				   const string &input_inttfile00 = "intt0.list",
 				   const string &input_mvtxfile00 = "mvtx0.list",
 				   const string &input_tpotfile = "tpot.list")
 {
+  int registered_subsystems = 0;
 // GL1 which provides the beam clock reference (if we ran with GL1)
   vector<string> gl1_infile;
   gl1_infile.push_back(input_gl1file);
@@ -67,7 +69,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   tpot_infile.push_back(input_tpotfile);
 
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(1);
+  se->Verbosity(0);
   se->VerbosityDownscale(10000); // only print every 10000th event
   recoConsts *rc = recoConsts::instance();
   CDBInterface::instance()->Verbosity(1);
@@ -123,6 +125,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       intt_sngl->AddListFile(iter);
       in->registerStreamingInput(intt_sngl, InputManagerType::INTT);
       i++;
+      registered_subsystems++;
     }
   }
   i = 0;
@@ -148,6 +151,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       mvtx_sngl->AddListFile(iter);
       in->registerStreamingInput(mvtx_sngl, InputManagerType::MVTX);
       i++;
+      registered_subsystems++;
     }
   }
   i = 0;
@@ -162,7 +166,20 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       while(std::getline(ifs, filepath))
       {
 	auto pos = filepath.find("ebdc");
-	ebdc = filepath.substr(pos+4, 2);
+	if(nTpcPrdfs == 24)
+	  {
+	    ebdc = filepath.substr(pos+4, 2);
+	  }
+	else if (nTpcPrdfs == 48)
+	  {
+	    ebdc = filepath.substr(pos+4, 4);
+	  }
+	else
+	  {
+	    std::cout << "There is no setup for any non 24 or 48 endpoints. Exiting" << std::endl;
+	    
+	    gSystem->Exit(1);
+	  }
 	break;
       }
 
@@ -173,6 +190,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       tpc_sngl->AddListFile(iter);
       in->registerStreamingInput(tpc_sngl, InputManagerType::TPC);
       i++;
+      registered_subsystems++;
     }
   }
   i = 0;
@@ -189,10 +207,16 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       mm_sngl->AddListFile(iter);
       in->registerStreamingInput(mm_sngl, InputManagerType::MICROMEGAS);
       i++;
+      registered_subsystems++;
     }
   }
 
   se->registerInputManager(in);
+  if (registered_subsystems == 0)
+  {
+    std::cout << "No streaming readoung input managers resgistered, quitting" << std::endl;
+    gSystem->Exit(1);
+  }
   // StreamingCheck *scheck = new StreamingCheck();
   // scheck->SetTpcBcoRange(130);
   // se->registerSubsystem(scheck);
@@ -215,6 +239,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("out",outfile);
   out->UseFileRule();
+  out->SplitLevel(0);
   out->SetNEvents(neventsper);                       // number of events per output file
   out->SetClosingScript("stageout.sh");      // script to call on file close (not quite working yet...)
   out->SetClosingScriptArgs(outdir);  // additional beyond the name of the file
