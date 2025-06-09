@@ -4,7 +4,7 @@
 echo Hostname: `hostname`
 echo This script: $0
 #echo Arguments: $@
-echo Working directrory: $_CONDOR_SCRATCH_DIR
+echo Working directory: $_CONDOR_SCRATCH_DIR
 echo
 
 EXPECTED_ARG_COUNT=17

@@ -1,0 +1,79 @@
+#______________________________________________________________________________________________________________________
+DST_TRIGGERED_EVENT_run3physics:
+  params:
+    rulestem:   DST_TRIGGERED_EVENT
+    period:     run3auau
+    outstub:    run3physics # could be run3physics, run3calib, etc.
+    physicsmode: physics
+    build:      new
+    dbtag:      nocdbtag
+    version:    0
+
+  input:
+    db:          rawr
+    table:       datasets
+
+  job:
+    script:                 run_eventcombine.sh
+    arguments:             '{nevents} {outbase} {logbase} {run} {seg} {daqhost} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
+    log:                   '{condor}/{logbase}.condor'
+    neventsper:             10000
+    payload:                [triggered_code/*]
+    mem:                    2000MB
+    batch_name:            'kolja.{rulestem}_{outstub}_{dataset}'
+    priority:              '3500'
+    # comment :              '---'
+
+#______________________________________________________________________________________________________________________
+DST_TRIGGERED_EVENT_run3cosmics:
+  params:
+    rulestem:   DST_TRIGGERED_EVENT
+    period:     run3auau
+    outstub:    run3cosmics # could be run3cosmics, run3calib, etc.
+    physicsmode: cosmics
+    build:      new
+    dbtag:      nocdbtag
+    version:    0
+
+  input:
+    db:          rawr
+    table:       datasets
+
+  job:
+    script:                 run_eventcombine.sh
+    arguments:             '{nevents} {outbase} {logbase} {run} {seg} {daqhost} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
+    log:                   '{condor}/{logbase}.condor'
+    neventsper:             10000
+    payload:                [triggered_code/*]
+    mem:                    2000MB
+    batch_name:            'kolja.{rulestem}_{outstub}_{dataset}'
+    priority:              '3500'
+    # comment :              '---'
+
+#______________________________________________________________________________________________________________________
+DST_TRIGGERED_EVENT_run3beam:
+  params:
+    rulestem:   DST_TRIGGERED_EVENT
+    period:     run3auau
+    outstub:    run3beam # could be run3cosmics, run3calib, etc.
+    physicsmode: beam
+    build:      new
+    dbtag:      nocdbtag
+    version:    0
+
+  input:
+    db:          rawr
+    table:       datasets
+
+  job:
+    script:                 run_eventcombine.sh
+    arguments:             '{nevents} {outbase} {logbase} {run} {seg} {daqhost} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
+    log:                   '{condor}/{logbase}.condor'
+    neventsper:             10000
+    payload:                [triggered_code/*]
+    mem:                    2000MB
+    batch_name:            'kolja.{rulestem}_{outstub}_{dataset}'
+    priority:              '3500'
+    # comment :              '---'
+
+#______________________________________________________________________________________________________________________

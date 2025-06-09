@@ -33,11 +33,16 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
   se->VerbosityDownscale(100000);
   Fun4AllTriggeredInputManager *in = new Fun4AllTriggeredInputManager("Tin");
   SingleTriggeredInput *gl1 = new SingleGl1TriggeredInput("Gl1in");
+  gl1->KeepPackets();
   gl1->AddListFile("gl1daq.list");
   //  gl1->Verbosity(10);
   in->registerGl1TriggeredInput(gl1);
 
   SingleTriggeredInput *input = new SingleTriggeredInput(daqhost);
+  if (daqhost == "seb18") {
+    input->KeepPackets();
+  }
+
   //  input->Verbosity(10);
   //  input->FakeProblemEvent(10);
   TSystemDirectory workdir("workdir",".");
@@ -94,14 +99,14 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
 
-// not functional yet
   ClockDiffCheck *clkchk = new ClockDiffCheck();
 //   clkchk->Verbosity(3);
- clkchk->set_delBadPkts(true);
+  clkchk->set_delBadPkts(true);
   se->registerSubsystem(clkchk);
   // std::string outfile = "DST_TRIGGERED_EVENT_" + daqhost + "_run2pp_new_nocdbtag_v001.root";
   std::string outfile = outbase + ".root";
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("dstout",outfile);
+  out->SplitLevel(0);
   out->UseFileRule();
   out->SetNEvents(100000); 
   // out->SetClosingScript("copyscript.pl");      // script to call on file close (not quite working yet...)
@@ -110,13 +115,12 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
   // out->SetClosingScript("/usr/bin/mv");
   // out->SetClosingScriptArgs(" -v " + outdir);  // additional beyond the name of the file
   out->SetClosingScript("stageout.sh");
-  out->SetClosingScriptArgs(" " + outdir + " " + "0");  // additional beyond the name of the file
+  out->SetClosingScriptArgs(outdir + " " + "0");  // additional beyond the name of the file
   se->registerOutputManager(out);
-  if (nEvents < 0)
+  if (nEvents >= 0)
   {
-    return;
+    se->run(nEvents);
   }
-  se->run(nEvents);
   se->End();
   delete se;
   std::cout << "all done" << std::endl;

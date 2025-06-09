@@ -46,6 +46,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 				   const string &input_mvtxfile00 = "mvtx0.list",
 				   const string &input_tpotfile = "tpot.list")
 {
+  int registered_subsystems = 0;
 // GL1 which provides the beam clock reference (if we ran with GL1)
   vector<string> gl1_infile;
   gl1_infile.push_back(input_gl1file);
@@ -123,6 +124,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       intt_sngl->AddListFile(iter);
       in->registerStreamingInput(intt_sngl, InputManagerType::INTT);
       i++;
+      registered_subsystems++;
     }
   }
   i = 0;
@@ -148,6 +150,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       mvtx_sngl->AddListFile(iter);
       in->registerStreamingInput(mvtx_sngl, InputManagerType::MVTX);
       i++;
+      registered_subsystems++;
     }
   }
   i = 0;
@@ -173,6 +176,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       tpc_sngl->AddListFile(iter);
       in->registerStreamingInput(tpc_sngl, InputManagerType::TPC);
       i++;
+      registered_subsystems++;
     }
   }
   i = 0;
@@ -189,10 +193,16 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       mm_sngl->AddListFile(iter);
       in->registerStreamingInput(mm_sngl, InputManagerType::MICROMEGAS);
       i++;
+      registered_subsystems++;
     }
   }
 
   se->registerInputManager(in);
+  if (registered_subsystems == 0)
+  {
+    std::cout << "No streaming readoung input managers resgistered, quitting" << std::endl;
+    gSystem->Exit(1);
+  }
   // StreamingCheck *scheck = new StreamingCheck();
   // scheck->SetTpcBcoRange(130);
   // se->registerSubsystem(scheck);
@@ -217,11 +227,9 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   out->UseFileRule();
   out->SetNEvents(neventsper);                       // number of events per output file
   out->SetClosingScript("stageout.sh");      // script to call on file close (not quite working yet...)
+  // out->SetClosingScriptArgs(outdir + " " + "0");  // with dbid
   out->SetClosingScriptArgs(outdir);  // additional beyond the name of the file
   se->registerOutputManager(out);
-
-  se->registerOutputManager(out);
-
 
   if (nEvents < 0)
   {
@@ -233,8 +241,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 
   char histoutfile[500];
   sprintf(histoutfile,"./HIST_%s-%08i-%05i.root",type.c_str(),runnumber,0);
-  QAHistManagerDef::saveQARootFile(histoutfile);
-  
+  QAHistManagerDef::saveQARootFile(histoutfile);  
 
   delete se;
   cout << "all done" << endl;
