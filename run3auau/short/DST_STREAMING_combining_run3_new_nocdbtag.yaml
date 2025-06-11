@@ -7,7 +7,7 @@ DST_STREAMING_EVENT_run3physics:
     physicsmode: physics
     build:      new
     dbtag:      nocdbtag
-    version:    9
+    version:    0
 
   input:
     db:          rawr
@@ -32,7 +32,7 @@ DST_STREAMING_EVENT_run3cosmics:
     physicsmode: cosmics
     build:      new
     dbtag:      nocdbtag
-    version:    9
+    version:    0
 
   input:
     db:          rawr
@@ -58,7 +58,7 @@ DST_STREAMING_EVENT_run3beam:
     physicsmode: beam
     build:      new
     dbtag:      nocdbtag
-    version:    9
+    version:    0
 
   input:
     db:          rawr
@@ -84,7 +84,7 @@ DST_STREAMING_EVENT_run3dryrun:
     physicsmode: dryrun
     build:      new
     dbtag:      nocdbtag
-    version:    9
+    version:    0
 
   input:
     db:          rawr

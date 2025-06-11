@@ -72,6 +72,7 @@ DST_TRIGGERED_EVENT_run3beam:
     neventsper:             10000
     payload:                [triggered_code/*]
     mem:                    2000MB
+    # mem:                    2000MB
     batch_name:            'kolja.{rulestem}_{outstub}_{dataset}'
     priority:              '3500'
     # comment :              '---'
