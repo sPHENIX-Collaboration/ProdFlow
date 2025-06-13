@@ -3,7 +3,7 @@ DST_TRIGGERED_EVENT_run3physics:
   params:
     rulestem:   DST_TRIGGERED_EVENT
     period:     run3auau
-    outstub:    run3physics # could be run3physics, run3calib, etc.
+    outstub:    run3auau # could be run3physics, run3calib, etc.
     physicsmode: physics
     build:      new
     dbtag:      nocdbtag
