@@ -7,17 +7,15 @@ echo This script: $0
 echo Working directory: $_CONDOR_SCRATCH_DIR
 echo
 
-EXPECTED_ARG_COUNT=17
-if [ "$#" -ne "$EXPECTED_ARG_COUNT" ]; then
+MIN_ARG_COUNT=17
+MAX_ARG_COUNT=18
+if [ "$#" -lt "$MIN_ARG_COUNT" ] || [ "$#" -gt "$MAX_ARG_COUNT" ] ; then
     echo "Error: Incorrect number of arguments."
-    echo "Expected $EXPECTED_ARG_COUNT, but received $#."
+    echo "Expected $ARG_MIN_COUNT--$ARG_MAX_COUNT, but received $#."
     echo "Arguments received: $@"
     echo "Usage: $0 <nevents> <outbase> <logbase> <run> <seg> <outdir> <finaldir> <buildarg> <tag> <inputs> <ranges_str> <neventsper> <log_dir> <comment_str> <hist_dir> <condor_rsync_val>"
     exit 1
 fi
-
-# TODO: Need cupsid - assigned at job registration in the prod db for efficient updates
-# echo cupsid:     ${cupsid}
 
 # Parse arguments using shift
 nevents="$1"; shift
@@ -36,8 +34,11 @@ nevents_per_job="$1"; shift    # Corresponds to {neventsper}
 log_directory="$1"; shift      # Corresponds to {logdir}
 job_comment="$1"; shift        # Corresponds to {comment}
 histogram_directory="$1"; shift # Corresponds to {histdir}
+
 condor_rsync="$1"; shift       # Corresponds to {rsync}, change from comma separation
-condor_rsync=`echo $condor_rsync|sed 's/,/ /g'`; shift # Change from comma separation
+condor_rsync=`echo $condor_rsync|sed 's/,/ /g'` # Change from comma separation
+
+dbid=${1:--1};shift            # dbid for faster db lookup, -1 means no dbid
 
 # Variables for the script
 echo "Processing job with the following parameters:"
@@ -58,9 +59,11 @@ echo "Log directory (logdir):                $log_directory"
 echo "Job comment (comment):                 $job_comment"
 echo "Histogram directory (histdir):         $histogram_directory"
 echo "Condor Rsync Paths (rsync):            $condor_rsync" 
+echo "Job database id (dbid):                $dbid"
 echo "---------------------------------------------"
 echo "Input file(s) (inputs):                $input_files"
 echo "---------------------------------------------"
+#exit 0
 
 ## Make sure logfiles are kept even when receiving a signal
 sighandler()
@@ -115,9 +118,22 @@ for f in *list; do
 done
 
 echo "--- Executing macro"
-echo running root.exe -q -b Fun4All_Prdf_Combiner.C\(${nevents},\"${daqhost}\",\"${outbase}\",\"${output_directory}\"\)
+echo root.exe -q -b Fun4All_Prdf_Combiner.C\(${nevents},\"${daqhost}\",\"${outbase}\",\"${output_directory}\"\)
 root.exe -q -b Fun4All_Prdf_Combiner.C\(${nevents},\"${daqhost}\",\"${outbase}\",\"${output_directory}\"\)
 ls -ltr
+
+shopt -s nullglob
+for hfile in HIST_*.root; do
+    echo ./stageout ${hfile} to ${histdir}
+    ./stageout.sh ${hfile} ${histdir}
+done
+shopt -u nullglob
+
+# There should be no output files hanging around  (TODO add number of root files to exit code)
+ls -la 
+
+# Signal that the job is done
+touch ${outdir}/${logbase}.dbid:$dbid.finished
 
 echo "script done"
 echo "---------------------------------------------"

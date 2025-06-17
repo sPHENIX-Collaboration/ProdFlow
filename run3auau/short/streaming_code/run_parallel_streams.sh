@@ -7,17 +7,15 @@ echo This script: $0
 echo Working directory: $_CONDOR_SCRATCH_DIR
 echo
 
-EXPECTED_ARG_COUNT=17
-if [ "$#" -ne "$EXPECTED_ARG_COUNT" ]; then
+MIN_ARG_COUNT=17
+MAX_ARG_COUNT=18
+if [ "$#" -lt "$MIN_ARG_COUNT" ] || [ "$#" -gt "$MAX_ARG_COUNT" ] ; then
     echo "Error: Incorrect number of arguments."
     echo "Expected $EXPECTED_ARG_COUNT, but received $#."
     echo "Arguments received: $@"
     echo "Usage: $0 <nevents> <outbase> <logbase> <run> <seg> <daqhost> <outdir> <finaldir> <buildarg> <tag> <inputs> <ranges_str> <neventsper> <log_dir> <comment_str> <hist_dir> <condor_rsync_val>"
     exit 1
 fi
-
-# TODO: Need cupsid - assigned at job registration in the prod db for efficient updates
-# echo cupsid:     ${cupsid}
 
 # Parse arguments using shift
 nevents="$1"; shift
@@ -36,8 +34,11 @@ neventsper="$1"; shift
 logdir="$1"; shift
 comment="$1"; shift
 histdir="$1"; shift # Corresponds to {histdir}
-condor_rsync="$1"; shift       # Corresponds to {rsync}, change from comma separation
-condor_rsync=`echo $condor_rsync|sed 's/,/ /g'`; shift # Change from comma separation
+
+condor_rsync="$1"; shift       # Corresponds to {rsync}
+condor_rsync=`echo $condor_rsync|sed 's/,/ /g'` # Change from comma separation
+
+dbid=${1:--1};shift            # dbid for faster db lookup, -1 means no dbid
 
 # Variables for the script
 echo "Processing job with the following parameters:"
@@ -58,10 +59,10 @@ echo "Log directory (logdir):                $logdir"
 echo "Job comment (comment):                 $comment"
 echo "Histogram directory (histdir):         $histdir"
 echo "Condor Rsync Paths (rsync):            $condor_rsync" 
+echo "Job database id (dbid):                $dbid"
 echo "---------------------------------------------"
 echo "Input file(s) (inputs):                $input_files"
 echo "---------------------------------------------"
-
 
 ## Make sure logfiles are kept even when receiving a signal
 sighandler()
@@ -169,11 +170,9 @@ shopt -u nullglob
 # # Flag job as running in production status
 # ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
 
+echo "--- Executing macro"
 echo root.exe -q -b Fun4All_SingleStream_Combiner.C\(${nevents},${runnumber},\"${outdir}\",\"${histdir}\",\"${outbase}\",${neventsper},\"${dbtag}\",\"${gl1file}\",\"${ebdcfile}\",\"${inttfile}\",\"${mvtxfile}\",\"${tpotfile}\"\);
 root.exe -q -b Fun4All_SingleStream_Combiner.C\(${nevents},${runnumber},\"${outdir}\",\"${histdir}\",\"${outbase}\",${neventsper},\"${dbtag}\",\"${gl1file}\",\"${ebdcfile}\",\"${inttfile}\",\"${mvtxfile}\",\"${tpotfile}\"\);
-
-# There should be no output files hanging around  (TODO add number of root files to exit code)
-ls -la 
 
 shopt -s nullglob
 for hfile in HIST_*.root; do
@@ -182,67 +181,14 @@ for hfile in HIST_*.root; do
 done
 shopt -u nullglob
 
+# There should be no output files hanging around  (TODO add number of root files to exit code)
+ls -la 
+
+
+# Signal that the job is done
+touch ${outdir}/${logbase}.dbid:$dbid.finished
+
+echo "script done"
+echo "---------------------------------------------"
+
 exit 0
-
-# # Flag run as finished.  Increment nevents by zero
-# echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents 0 --inc 
-#      ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents 0 --inc 
-
-# # Close the dataset
-
-# dstname=${logbase%%-*} # dstname is needed for production status, but not related to the dataset we are registering
-# #./cups.py -r ${runnumber} -s ${segment} -d ${dstname} closeout ${dstname}-${runnumber} ${destination} --dsttype ${dsttype} --dataset ${build}_${dbtag}
-
-
-# echo $outbase
-# echo $logbase
-
-# # Any leftover DSTs and histograms are staged out at the end of the job.  We
-# #status_stageout=0
-# #for r in $( ls DST*.root ); do
-# #    echo "${r} was not successfully staged out, trying again."
-# #    stageout.sh ${r} ${outdir}
-# #    if [[ $?>0 ]]; then status_stageout=$? ; fi
-# #done
-# #for r in $( ls HIST*.root ); do
-# #    echo "${r} was not successfully staged out, trying again."
-# #    stageout.sh ${r} ${histdir}
-# #    #if [[ $?>0 ]]; then status_stageout=$? ; fi    
-# #done
-# #
-# ## If any stageout failed, the job will fail and go on hold.
-# #if [[ $status_stageout>0 ]]; then
-# #    status_f4a=${status_stageout}
-# #fi
-
-
-
-# #cp stderr.log ${logbase}.err
-# #cp stdout.log ${logbase}.out
-
-
-# # Cleanup any stray root and/or list files leftover from stageout
-# rm *.root *.list
-
-# ls -la
-
-# logsize=$( du -s ${logdir#file:/}/${logbase}.out | awk '//{ print $1 }' )
-# if [ "$logsize" -gt 10240 ];
-# then
-#    ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} message "Normal termination with large log file" --flag 10 --logsize ${logsize}
-# else
-#    ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} message "Normal termination" --flag 0 --logsize ${logsize}
-# fi
-
-# echo "script done"
-# } >& ${logdir#file:/}/${logbase}.out 
-
-# echo "Job termination with logsize= " ${logsize} "kB"
-
-
-# #mv ${logbase}.out ${logdir#file:/}
-# #mv ${logbase}.err ${logdir#file:/}
-
-# exit $status_f4a
-
-
