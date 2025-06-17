@@ -11,7 +11,7 @@ MIN_ARG_COUNT=17
 MAX_ARG_COUNT=18
 if [ "$#" -lt "$MIN_ARG_COUNT" ] || [ "$#" -gt "$MAX_ARG_COUNT" ] ; then
     echo "Error: Incorrect number of arguments."
-    echo "Expected $ARG_MIN_COUNT--$ARG_MAX_COUNT, but received $#."
+    echo "Expected $MIN_ARG_COUNT--$MAX_ARG_COUNT, but received $#."
     echo "Arguments received: $@"
     echo "Usage: $0 <nevents> <outbase> <logbase> <run> <seg> <outdir> <finaldir> <buildarg> <tag> <inputs> <ranges_str> <neventsper> <log_dir> <comment_str> <hist_dir> <condor_rsync_val>"
     exit 1
@@ -133,7 +133,7 @@ shopt -u nullglob
 ls -la 
 
 # Signal that the job is done
-touch ${outdir}/${logbase}.dbid:$dbid.finished
+#touch ${output_directory}/${logbase}.dbid:$dbid.finished
 
 echo "script done"
 echo "---------------------------------------------"
