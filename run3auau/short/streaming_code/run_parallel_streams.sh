@@ -39,6 +39,7 @@ condor_rsync="$1"; shift       # Corresponds to {rsync}
 condor_rsync=`echo $condor_rsync|sed 's/,/ /g'` # Change from comma separation
 
 dbid=${1:--1};shift            # dbid for faster db lookup, -1 means no dbid
+export PRODDB_DBID=$dbid
 
 # Variables for the script
 echo "Processing job with the following parameters:"
@@ -100,6 +101,9 @@ else
     elif [[ $OS =~ "AlmaLinux" ]]; then
         echo "Setting up Production software for ${OS}"
         source /opt/sphenix/core/bin/sphenix_setup.sh -n $build_argument
+    else
+	echo "Unsupported OS $OS"
+	return 1
     fi
 fi
 printenv
@@ -181,12 +185,19 @@ for hfile in HIST_*.root; do
 done
 shopt -u nullglob
 
+# Signal that the job is done
+destname=${outdir}/${logbase}.finished
+# change the destination filename the same way root files are treated for easy parsing
+destname="${destname}:nevents:0"
+destname="${destname}:first:-1"
+destname="${destname}:last:-1"
+destname="${destname}:md5:none"
+destname="${destname}:dbid:${dbid}"
+echo touch $destname
+touch $destname
+
 # There should be no output files hanging around  (TODO add number of root files to exit code)
 ls -la 
-
-
-# Signal that the job is done
-#touch ${output_directory}/${logbase}.dbid:$dbid.finished
 
 echo "script done"
 echo "---------------------------------------------"
