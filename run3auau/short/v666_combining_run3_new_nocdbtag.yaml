@@ -46,6 +46,6 @@ DST_STREAMING_EVENT_run3physics:
     neventsper:             10000
     payload:                [streaming_code/*]
     mem:                    2024MB
-    batch_name:            'kolja.{rulestem}_{outstub}_{dataset}'
+    batch_name:            'devkolja.{rulestem}_{outstub}_{dataset}'
     priority:              '3500'
 #    comment :              'Throwaway production for testing'
