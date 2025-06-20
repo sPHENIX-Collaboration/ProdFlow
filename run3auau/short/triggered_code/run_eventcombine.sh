@@ -130,7 +130,7 @@ done
 shopt -u nullglob
 
 # Signal that the job is done
-destname=${output_directory}/${logbase}.finished
+destname=${outdir}/${logbase}.finished
 # change the destination filename the same way root files are treated for easy parsing
 destname="${destname}:nevents:0"
 destname="${destname}:first:-1"
