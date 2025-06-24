@@ -108,75 +108,19 @@ else
 fi
 printenv
 
-echo "Offline main "${OFFLINE_MAIN}
-
-if [ -e odbc.ini ]; then
-echo export ODBCINI=./odbc.ini
-     export ODBCINI=./odbc.ini
-else
-     echo No odbc.ini file detected.  Using system odbc.ini
-fi
-
-# echo "CUPS configuration"
-# echo ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
-#      ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} info
-# ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
-
-# echo "INPUTS" 
-# if [[ "${9}" == *"dbinput"* ]]; then
-#    ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs >> inputfiles.list
-# else
-#    for i in ${inputs[@]}; do
-#       echo $i >> inputfiles.list
-#    done
-# fi
-
-
 echo "---------------------------------------------"
-echo "Running streaming eventcombine for run ${run_number} on ${daqhost}"
+echo "Running eventcombine for run ${run_number} on ${daqhost}"
 echo "---------------------------------------------"
 echo "--- Collecting input files"
-./create_filelist.py $runnumber $daqhost
-
-# Should be exactly one gl1 file and one ebdc, mvtx, or intt file
-# trying to be flexible here, but we have to assume daqhost will always be lowercase and in this family
-# Bit of shell magic here, inspired by
-# https://unix.stackexchange.com/questions/472668/how-to-easily-count-the-number-of-matches-of-a-glob-involving-paths-with-spaces
-shopt -s nullglob
-set -- *gl1*.list
-if [[ $# != 1 ]] ; then
-    echo "Multiple or no GL1 files found:" >&2
-    ls -l `echo $@`                        >$2
-    echo Stop.                             >&2
-    # ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e 111 --nevents 0 --inc 
-    exit 111
-fi
-gl1file=$1
-
-inttfile=""
-mvtxfile=""
-ebdcfile=""
-tpotfile=""
-set -- `find . -maxdepth 1 -name \*.list -a -not -name $gl1file`
-if [[ $# != 1 ]] ; then
-    echo "Multiple or not enough .list files found:"     >&2
-    ls -l `echo $@`                        >$2
-    echo Stop.                             >&2
-    # ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e 111 --nevents 0 --inc 
-    exit 111
-fi
-[[ $1 == *intt* ]] && inttfile=$1
-[[ $1 == *mvtx* ]] && mvtxfile=$1
-[[ $1 == *ebdc* ]] && ebdcfile=$1
-[[ $1 == *ebdc39* ]] && ebdcfile="" && tpotfile=$1
-shopt -u nullglob
-
-# # Flag job as running in production status
-# ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
+./create_filelist_run_daqhost.py $runnumber $daqhost
+for f in *list; do
+    ls -l $f
+    cat $f
+done
 
 echo "--- Executing macro"
-echo root.exe -q -b Fun4All_SingleStream_Combiner.C\(${nevents},${runnumber},\"${outdir}\",\"${histdir}\",\"${outbase}\",${neventsper},\"${dbtag}\",\"${gl1file}\",\"${ebdcfile}\",\"${inttfile}\",\"${mvtxfile}\",\"${tpotfile}\"\);
-root.exe -q -b Fun4All_SingleStream_Combiner.C\(${nevents},${runnumber},\"${outdir}\",\"${histdir}\",\"${outbase}\",${neventsper},\"${dbtag}\",\"${gl1file}\",\"${ebdcfile}\",\"${inttfile}\",\"${mvtxfile}\",\"${tpotfile}\"\);
+echo root.exe -q -b Fun4All_Prdf_Combiner.C\(${nevents},\"${daqhost}\",\"${outbase}\",\"${outdir}\"\)
+root.exe -q -b Fun4All_Prdf_Combiner.C\(${nevents},\"${daqhost}\",\"${outbase}\",\"${outdir}\"\)
 
 shopt -s nullglob
 for hfile in HIST_*.root; do

@@ -3,17 +3,16 @@
 ## Logging details
 echo Hostname: `hostname`
 echo This script: $0
-#echo Arguments: $@
 echo Working directory: $_CONDOR_SCRATCH_DIR
 echo
 
-MIN_ARG_COUNT=17
-MAX_ARG_COUNT=18
+MIN_ARG_COUNT=16
+MAX_ARG_COUNT=17
 if [ "$#" -lt "$MIN_ARG_COUNT" ] || [ "$#" -gt "$MAX_ARG_COUNT" ] ; then
     echo "Error: Incorrect number of arguments."
     echo "Expected $MIN_ARG_COUNT--$MAX_ARG_COUNT, but received $#."
     echo "Arguments received: $@"
-    echo "Usage: $0 <nevents> <outbase> <logbase> <run> <seg> <daqhost> <outdir> <finaldir> <buildarg> <tag> <inputs> <ranges_str> <neventsper> <log_dir> <comment_str> <hist_dir> <condor_rsync_val>"
+    echo "Usage: $0 <nevents> <outbase> <logbase> <run> <seg> <outdir> <finaldir> <buildarg> <tag> <inputs> <ranges_str> <neventsper> <log_dir> <comment_str> <hist_dir> <condor_rsync_val>"
     exit 1
 fi
 
@@ -22,18 +21,17 @@ nevents="$1"; shift
 outbase="$1"; shift
 logbase="$1"; shift
 runnumber="$1"; shift
-segment="$1"; shift            # Corresponds to {seg}
-daqhost="$1"; shift            # Corresponds to {daqhost}
+segment="$1"; shift
 outdir="$1"; shift
 finaldir="$1"; shift
-build_argument="$1"; shift     # Corresponds to {buildarg}
+buildarg="$1"; shift
 dbtag="$1"; shift
-input_files="$1"; shift        # Corresponds to {inputs}
-ranges_string="$1"; shift      # Corresponds to $(ranges)
+inputs="$1"; shift
+ranges="$1"; shift
 neventsper="$1"; shift
 logdir="$1"; shift
 comment="$1"; shift
-histdir="$1"; shift # Corresponds to {histdir}
+histdir="$1"; shift
 
 condor_rsync="$1"; shift       # Corresponds to {rsync}
 condor_rsync=`echo $condor_rsync|sed 's/,/ /g'` # Change from comma separation
@@ -48,11 +46,10 @@ echo "Number of events to process (nevents): $nevents"
 echo "Output base name (outbase):            $outbase"
 echo "Log base name (logbase):               $logbase"
 echo "Run number (run):                      $runnumber"
-echo "Segment number (seg):                  $segment           (not used)"
-echo "DAQ host (daqhost):                    $daqhost"
+echo "Segment number (seg):                  $segment"
 echo "Output directory (outdir):             $outdir"
 echo "Final destination (finaldir):          $finaldir   (not used)"
-echo "Build argument (buildarg):             $build_argument"
+echo "Build argument (buildarg):             $buildarg"
 echo "Tag (tag):                             $dbtag"
 echo "Ranges string (ranges):                $ranges_string"
 echo "Events per sub-job (neventsper):       $neventsper"
@@ -61,8 +58,6 @@ echo "Job comment (comment):                 $comment"
 echo "Histogram directory (histdir):         $histdir"
 echo "Condor Rsync Paths (rsync):            $condor_rsync" 
 echo "Job database id (dbid):                $dbid"
-echo "---------------------------------------------"
-echo "Input file(s) (inputs):                $input_files"
 echo "---------------------------------------------"
 
 ## Make sure logfiles are kept even when receiving a signal
@@ -75,8 +70,6 @@ trap sighandler SIGTERM
 trap sighandler SIGSTOP 
 trap sighandler SIGINT 
 # SIGKILL can't be trapped
-# Note: Original jobwrapper.sh has more intricate trapping that
-# catches more signals and updates the prod db.
 
 # stage in the payload files
 cd $_CONDOR_SCRATCH_DIR
@@ -86,6 +79,7 @@ for f in ${condor_rsync}; do
 done
 ls -ltra
 echo "---------------------------------------------"
+
 
 export USER="$(id -u -n)"
 export LOGNAME=${USER}
@@ -106,44 +100,87 @@ else
 	return 1
     fi
 fi
-printenv
+# printenv
+
+echo "Offline main "${OFFLINE_MAIN}
+
+if [ -e odbc.ini ]; then
+echo export ODBCINI=./odbc.ini
+     export ODBCINI=./odbc.ini
+else
+     echo No odbc.ini file detected.  Using system odbc.ini
+fi
 
 echo "---------------------------------------------"
-echo "Running eventcombine for run ${run_number} on ${daqhost}"
+echo "Running clustering (job0) for run ${run_number}, seg {segment}"
 echo "---------------------------------------------"
 echo "--- Collecting input files"
-./create_filelist.py $runnumber $daqhost
-for f in *list; do
-    ls -l $f
-    cat $f
-done
+./create_filelist_run_seg.py $runnumber 
+echo cat inlist.list
+echo bye
+exit 0
 
-echo "--- Executing macro"
-echo root.exe -q -b Fun4All_Prdf_Combiner.C\(${nevents},\"${daqhost}\",\"${outbase}\",\"${outdir}\"\)
-root.exe -q -b Fun4All_Prdf_Combiner.C\(${nevents},\"${daqhost}\",\"${outbase}\",\"${outdir}\"\)
+ls *.json
+if [ -e sPHENIX_newcdb_test.json ]; then
+    echo "... setting user provided conditions database config"
+    export NOPAYLOADCLIENT_CONF=./sPHENIX_newcdb_test.json
+fi
 
-shopt -s nullglob
-for hfile in HIST_*.root; do
-    echo ./stageout ${hfile} to ${histdir}
+echo NOPAYLOADCLIENT_CONF=${NOPAYLOADCLIENT_CONF}
+
+#______________________________________________________________________________________ started __
+#
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
+#_________________________________________________________________________________________________
+
+
+if [[ "${9}" == *"dbinput"* ]]; then
+    echo GRABBING DBINPUT $runnumber $segment $outbase
+    echo ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs
+    ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs
+    
+    for i in $(./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs); do
+       #cp -v ${i} .
+       #echo $( basename $i ) >> inlist
+       echo $i >> inlist          
+    done
+else
+  echo WFT???  We should not be running this way
+  for i in ${inputs[@]}; do
+     echo $i  >> inlist   
+  done
+fi
+
+echo "Here is the input list"
+cat inlist
+
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
+
+dstname=${logbase%%-*}
+echo "in dir"
+pwd
+echo root.exe -q -b Fun4All_SingleJob0.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"inlist\"\)
+     root.exe -q -b Fun4All_SingleJob0.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"inlist\"\);  status_f4a=$?
+
+ls -la
+
+echo ./stageout.sh ${logbase}.root ${outdir}
+     ./stageout.sh ${logbase}.root ${outdir}
+
+for hfile in `ls HIST_*.root`; do
+    echo Stageout ${hfile} to ${histdir}
     ./stageout.sh ${hfile} ${histdir}
 done
-shopt -u nullglob
 
-# Signal that the job is done
-destname=${outdir}/${logbase}.finished
-# change the destination filename the same way root files are treated for easy parsing
-destname="${destname}:nevents:0"
-destname="${destname}:first:-1"
-destname="${destname}:last:-1"
-destname="${destname}:md5:none"
-destname="${destname}:dbid:${dbid}"
-echo touch $destname
-touch $destname
+ls -la
 
-# There should be no output files hanging around  (TODO add number of root files to exit code)
-ls -la 
+# Flag run as finished. 
+echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${nevents}  
+     ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${nevents}
 
-echo "script done"
-echo "---------------------------------------------"
+echo "bdee bdee bdee, That's All Folks!"
 
-exit 0
+} >> ${logdir#file:/}/${logbase}.out  2>${logdir#file:/}/${logbase}.err
+
+
+exit ${status_f4a:-1}
