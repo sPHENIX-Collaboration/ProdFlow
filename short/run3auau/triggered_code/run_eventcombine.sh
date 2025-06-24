@@ -13,7 +13,7 @@ if [ "$#" -lt "$MIN_ARG_COUNT" ] || [ "$#" -gt "$MAX_ARG_COUNT" ] ; then
     echo "Error: Incorrect number of arguments."
     echo "Expected $MIN_ARG_COUNT--$MAX_ARG_COUNT, but received $#."
     echo "Arguments received: $@"
-    echo "Usage: $0 <nevents> <outbase> <logbase> <run> <seg> <outdir> <finaldir> <buildarg> <tag> <inputs> <ranges_str> <neventsper> <log_dir> <comment_str> <hist_dir> <condor_rsync_val>"
+    echo "Usage: $0 <nevents> <outbase> <logbase> <run> <seg> <daqhost> <outdir> <finaldir> <buildarg> <tag> <inputs> <ranges_str> <neventsper> <log_dir> <comment_str> <hist_dir> <condor_rsync_val>"
     exit 1
 fi
 
@@ -21,24 +21,25 @@ fi
 nevents="$1"; shift
 outbase="$1"; shift
 logbase="$1"; shift
-run_number="$1"; shift         # Corresponds to {run}
+runnumber="$1"; shift
 segment="$1"; shift            # Corresponds to {seg}
 daqhost="$1"; shift            # Corresponds to {daqhost}
-output_directory="$1"; shift   # Corresponds to {outdir}
-final_directory="$1"; shift    # Corresponds to {finaldir}
+outdir="$1"; shift
+finaldir="$1"; shift
 build_argument="$1"; shift     # Corresponds to {buildarg}
-tag_value="$1"; shift          # Corresponds to {tag}
+dbtag="$1"; shift
 input_files="$1"; shift        # Corresponds to {inputs}
 ranges_string="$1"; shift      # Corresponds to $(ranges)
-nevents_per_job="$1"; shift    # Corresponds to {neventsper}
-log_directory="$1"; shift      # Corresponds to {logdir}
-job_comment="$1"; shift        # Corresponds to {comment}
-histogram_directory="$1"; shift # Corresponds to {histdir}
+neventsper="$1"; shift
+logdir="$1"; shift
+comment="$1"; shift
+histdir="$1"; shift # Corresponds to {histdir}
 
-condor_rsync="$1"; shift       # Corresponds to {rsync}, change from comma separation
+condor_rsync="$1"; shift       # Corresponds to {rsync}
 condor_rsync=`echo $condor_rsync|sed 's/,/ /g'` # Change from comma separation
 
 dbid=${1:--1};shift            # dbid for faster db lookup, -1 means no dbid
+export PRODDB_DBID=$dbid
 
 # Variables for the script
 echo "Processing job with the following parameters:"
@@ -46,24 +47,23 @@ echo "---------------------------------------------"
 echo "Number of events to process (nevents): $nevents"
 echo "Output base name (outbase):            $outbase"
 echo "Log base name (logbase):               $logbase"
-echo "Run number (run):                      $run_number"
+echo "Run number (run):                      $runnumber"
 echo "Segment number (seg):                  $segment           (not used)"
 echo "DAQ host (daqhost):                    $daqhost"
-echo "Output directory (outdir):             $output_directory"
-echo "Final destination (finaldir):          $final_directory   (not used)"
+echo "Output directory (outdir):             $outdir"
+echo "Final destination (finaldir):          $finaldir   (not used)"
 echo "Build argument (buildarg):             $build_argument"
-echo "Tag (tag):                             $tag_value"
+echo "Tag (tag):                             $dbtag"
 echo "Ranges string (ranges):                $ranges_string"
-echo "Events per sub-job (neventsper):       $nevents_per_job"
-echo "Log directory (logdir):                $log_directory"
-echo "Job comment (comment):                 $job_comment"
-echo "Histogram directory (histdir):         $histogram_directory"
+echo "Events per sub-job (neventsper):       $neventsper"
+echo "Log directory (logdir):                $logdir"
+echo "Job comment (comment):                 $comment"
+echo "Histogram directory (histdir):         $histdir"
 echo "Condor Rsync Paths (rsync):            $condor_rsync" 
 echo "Job database id (dbid):                $dbid"
 echo "---------------------------------------------"
 echo "Input file(s) (inputs):                $input_files"
 echo "---------------------------------------------"
-#exit 0
 
 ## Make sure logfiles are kept even when receiving a signal
 sighandler()
@@ -87,6 +87,10 @@ done
 ls -ltra
 echo "---------------------------------------------"
 
+export USER="$(id -u -n)"
+export LOGNAME=${USER}
+export HOME=/sphenix/u/${USER}
+
 OS=$( grep ^PRETTY_NAME /etc/os-release | sed 's/"//g'| cut -f2- -d'=' ) # Works better, though still mostly for RHEL
 if [[ $OS == "" ]]; then
     echo "Unable to determine OS version."
@@ -95,10 +99,7 @@ else
     if [[ "$_CONDOR_JOB_IWD" =~ "/Users/eickolja" ]]; then
         source /Users/eickolja/sphenix/sphenixprod/mac_this_sphenixprod.sh
     elif [[ $OS =~ "AlmaLinux" ]]; then
-	echo "Setting up Production software for ${OS}"
-	export USER="$(id -u -n)"
-	export LOGNAME=${USER}
-	export HOME=/sphenix/u/${LOGNAME}
+        echo "Setting up Production software for ${OS}"
         source /opt/sphenix/core/bin/sphenix_setup.sh -n $build_argument
     else
 	echo "Unsupported OS $OS"
@@ -111,16 +112,15 @@ echo "---------------------------------------------"
 echo "Running eventcombine for run ${run_number} on ${daqhost}"
 echo "---------------------------------------------"
 echo "--- Collecting input files"
-./create_filelist.py $run_number $daqhost
+./create_filelist_run_daqhost.py $runnumber $daqhost
 for f in *list; do
     ls -l $f
     cat $f
 done
 
 echo "--- Executing macro"
-echo root.exe -q -b Fun4All_Prdf_Combiner.C\(${nevents},\"${daqhost}\",\"${outbase}\",\"${output_directory}\"\)
-root.exe -q -b Fun4All_Prdf_Combiner.C\(${nevents},\"${daqhost}\",\"${outbase}\",\"${output_directory}\"\)
-ls -ltr
+echo root.exe -q -b Fun4All_Prdf_Combiner.C\(${nevents},\"${daqhost}\",\"${outbase}\",\"${outdir}\"\)
+root.exe -q -b Fun4All_Prdf_Combiner.C\(${nevents},\"${daqhost}\",\"${outbase}\",\"${outdir}\"\)
 
 shopt -s nullglob
 for hfile in HIST_*.root; do
@@ -129,11 +129,19 @@ for hfile in HIST_*.root; do
 done
 shopt -u nullglob
 
+# Signal that the job is done
+destname=${outdir}/${logbase}.finished
+# change the destination filename the same way root files are treated for easy parsing
+destname="${destname}:nevents:0"
+destname="${destname}:first:-1"
+destname="${destname}:last:-1"
+destname="${destname}:md5:none"
+destname="${destname}:dbid:${dbid}"
+echo touch $destname
+touch $destname
+
 # There should be no output files hanging around  (TODO add number of root files to exit code)
 ls -la 
-
-# Signal that the job is done
-#touch ${output_directory}/${logbase}.dbid:$dbid.finished
 
 echo "script done"
 echo "---------------------------------------------"

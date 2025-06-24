@@ -59,7 +59,7 @@ void Fun4All_Year2_Calib(int nEvents=100,
   CaloTowerDefs::BuilderType buildertype = CaloTowerDefs::kPRDFTowerv4;
 
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(1);
+  se->Verbosity(0);
 
   recoConsts *rc = recoConsts::instance();
 

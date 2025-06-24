@@ -1,6 +1,5 @@
 #!/usr/bin/bash
 
-#     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
 nevents=${1}
 outbase=${2}
 logbase=${3}
@@ -11,15 +10,12 @@ build=${7/./}
 dbtag=${8}
 inputs=(`echo ${9} | tr "," " "`)  # array of input files 
 ranges=(`echo ${10} | tr "," " "`)  # array of input files with ranges appended
-neventsper=${11}
-logdir=${12:-.}
-comment=${13}
-histdir=${14:-.}
-subdir=${15}
-payload=(`echo ${16} | tr ","  " "`) # array of files to be rsynced
-
+logdir=${11:-.}
+histdir=${12:-.}
+subdir=${13}
+payload=(`echo ${14} | tr ","  " "`) # array of files to be rsynced
+#-----
 export cupsid=${@: -1}
-echo CUPSID=${cupsid}
 
 sighandler()
 {
@@ -41,7 +37,6 @@ hostname
 source /opt/sphenix/core/bin/sphenix_setup.sh -n ${7}
 
 echo OFFLINE_MAIN: $OFFLINE_MAIN
-
 
 echo ..............................................................................................
 echo $@
@@ -76,42 +71,34 @@ fi
 #_________________________________________________________________________________________________
 
 if [[ "${9}" == *"dbinput"* ]]; then
-  for i in $( ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs ); do
-     #cp -v ${i} .
-      #echo $( basename $i ) >> inlist
-      echo $i >> inlist
+  for i in $(./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs); do
+     cp -v ${i} .
+     echo $( basename $i ) >> inlist   
   done
 else
   for i in ${inputs[@]}; do
-     #cp -v ${i} .
-      #echo $( basename $i ) >> inlist
-      echo $i >> inlist
+     cp -v ${i} .
+     echo $( basename $i ) >> inlist   
   done
 fi
-
 
 #$$$./cups.py -r ${runnumber} -s ${segment} -d ${outbase} inputs --files "$( cat inlist )"
 ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
 
 dstname=${logbase%%-*}
+echo root.exe -q -b Fun4All_Job0.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"inlist\"\)
+     root.exe -q -b Fun4All_Job0.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"inlist\"\);  status_f4a=$?
 
-echo root.exe -q -b Fun4All_JobC.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"inlist\"\)
-     root.exe -q -b Fun4All_JobC.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"inlist\"\);  status_f4a=$?
-     echo "Fun4All exit code: ${status_f4a}"
+ls -la
 
+./stageout.sh ${logbase}.root ${outdir}
 
-if [[ $status_f4a -ne 0 ]]; then
-    echo "macro failed, no stageout"
-    ls -l    
-else
-    echo "macro succeeded staging output"
-    ./stageout.sh ${logbase}.root ${outdir}
+for hfile in `ls HIST_*.root`; do
+    echo Stageout ${hfile} to ${histdir}
+    ./stageout.sh ${hfile} ${histdir}
+done
 
-    for hfile in `ls HIST_*.root`; do
-	./stageout.sh ${hfile} ${histdir}
-    done
-fi
-
+ls -la
 
 # Flag run as finished. 
 echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${nevents}  
@@ -119,11 +106,11 @@ echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${stat
 
 echo "bdee bdee bdee, That's All Folks!"
 
-
-} >${logdir#file:/}/${logbase}.out  2>${logdir#file:/}/${logbase}.err
+} >${logdir#file:/}/${logbase}.out  2>${logdir#file:/}/${logbase}.err 
 
 if [ -e cups.stat ]; then
     cp cups.stat ${logdir#file:/}/${logbase}.dbstat
 fi
 
-exit ${status_f4a:-1}
+exit $status_f4a
+

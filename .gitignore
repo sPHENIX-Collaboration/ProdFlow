@@ -8,3 +8,5 @@ run3auau/CaloProduction/.run.sh.swp
 run3auau/CaloProduction/.runhcalcosmics.sh.swp
 test.cmd
 run3auau/#DST_STREAMING_run3auau_new_latestdb.yaml#
+run3auau/streaming/stageout_new.sh
+run3auau/postprocess/inputfiles.list

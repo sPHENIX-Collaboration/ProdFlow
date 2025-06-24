@@ -35,7 +35,7 @@ void Fun4All_Year2_Fitting(int nEvents = 100,
                    const std::string &dbtag = "ProdA_2024")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(1);
+  se->Verbosity(0);
 
   recoConsts *rc = recoConsts::instance();
 
