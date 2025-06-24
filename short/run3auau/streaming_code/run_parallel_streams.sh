@@ -168,6 +168,11 @@ for hfile in HIST_*.root; do
     echo ./stageout ${hfile} to ${histdir}
     ./stageout.sh ${hfile} ${histdir}
 done
+for cfile in CALIB_*.root; do
+    echo ./stageout ${cfile} to ${histdir}
+    ./stageout.sh ${cfile} ${histdir}
+done
+
 shopt -u nullglob
 
 # Signal that the job is done

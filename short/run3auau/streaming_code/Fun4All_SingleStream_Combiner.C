@@ -14,6 +14,7 @@
 #include <fun4allraw/SingleTpcTimeFrameInput.h>
 
 #include <intt/InttOdbcQuery.h>
+#include <inttcalib/InttCalib.h>
 
 #include <phool/recoConsts.h>
 
@@ -94,7 +95,8 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   }
   i = 0;
 
-
+  
+  bool isInttStreaming = true;
   for (auto iter : intt_infile)
   {
     if (isGood(iter))
@@ -103,13 +105,12 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       //intt_sngl->Verbosity(3);
    
       InttOdbcQuery query;
-      bool isStreaming = true;
       if(runnumber != 0)
 	{
 	  query.Query(runnumber);
-	  isStreaming = query.IsStreaming();
+	  isInttStreaming = query.IsStreaming();
 	}
-      intt_sngl->streamingMode(isStreaming);
+      intt_sngl->streamingMode(isInttStreaming);
       
     /// find the ebdc number from the filename
       std::string filepath, felix;
@@ -210,6 +211,41 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   // tpccheck->Verbosity(3);
   // tpccheck->SetBcoRange(130);
   // se->registerSubsystem(tpccheck);
+
+  for (auto iter : intt_infile)
+  {
+    if (isGood(iter))
+    {
+      std::string filepath, felix;
+      std::ifstream ifs(iter);
+      while(std::getline(ifs, filepath))
+      {
+	auto pos = filepath.find("intt");
+	felix = filepath.substr(pos+4, 1);
+	break;
+      }
+      auto inttcalib = new InttCalib("INTTCalib_" + felix);
+      char hotmapfilename[500];
+      sprintf(hotmapfilename,"./CALIB_HOTMAP_%s.root",type.c_str());
+      
+      char bcomapfilename[500];
+      sprintf(bcomapfilename,"./CALIB_BCOMAP_%s.root", type.c_str());
+
+      char pngfilename[500];
+      sprintf(pngfilename, "./CALIB_PNG_%s.root", type.c_str());
+      
+      inttcalib->SetRawHitContainerName("INTTRAWHIT_" + felix);
+      inttcalib->SetHotMapCdbFile(hotmapfilename);
+      inttcalib->SetHotMapPngFile(pngfilename);
+      inttcalib->SetBcoMapCdbFile(bcomapfilename);
+      inttcalib->SetBcoMapPngFile(pngfilename);
+      inttcalib->SetOneFelixServer(std::stoi(felix));
+      inttcalib->SetDoFeebyFee(false);
+      inttcalib->SetStreamingMode(isInttStreaming);
+      se->registerSubsystem(inttcalib);
+    }
+  }
+  
   SyncReco *sync = new SyncReco();
   se->registerSubsystem(sync);
 
