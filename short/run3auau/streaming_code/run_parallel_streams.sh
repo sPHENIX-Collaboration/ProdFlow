@@ -122,6 +122,12 @@ echo "Running streaming eventcombine for run ${run_number} on ${daqhost}"
 echo "---------------------------------------------"
 echo "--- Collecting input files"
 ./create_filelist_run_daqhost.py $runnumber $daqhost
+ls -la *.list
+echo end of ls -la '*.list'
+for l in *list; do
+    echo cat $l
+    cat $l
+done
 
 # Should be exactly one gl1 file and one ebdc, mvtx, or intt file
 # trying to be flexible here, but we have to assume daqhost will always be lowercase and in this family

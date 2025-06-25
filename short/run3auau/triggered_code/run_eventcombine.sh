@@ -113,9 +113,11 @@ echo "Running eventcombine for run ${run_number} on ${daqhost}"
 echo "---------------------------------------------"
 echo "--- Collecting input files"
 ./create_filelist_run_daqhost.py $runnumber $daqhost
-for f in *list; do
-    ls -l $f
-    cat $f
+ls -la *.list
+echo end of ls -la '*.list'
+for l in *list; do
+    echo cat $l
+    cat $l
 done
 
 echo "--- Executing macro"
