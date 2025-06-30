@@ -27,6 +27,8 @@
 #include <trackingqa/SiliconSeedsQA.h>
 #include <trackingqa/TpcSeedsQA.h>
 
+#include <trackreco/DSTClusterPruning.h>
+
 #include <stdio.h>
 
 R__LOAD_LIBRARY(libfun4all.so)
@@ -195,6 +197,11 @@ void Fun4All_JobA(
   out->AddNode("GL1RAWHIT");
   out->AddNode("SiliconTrackSeedContainer");
   out->AddNode("TpcTrackSeedContainer");
+  out->AddNode("LASER_CLUSTER");
+  out->AddNode("LaserEventInfo");
+  //out->AddNode("TRKR_CLUSTER");
+  out->AddNode("TRKR_CLUSTER_SEED");
+  out->AddNode("TRKR_CLUSTERCROSSINGASSOC");
 
   se->registerOutputManager(out);
 
@@ -252,6 +259,8 @@ void Fun4All_JobA(
   tpcqa->setSegment(rc->get_IntFlag("RUNSEGMENT"));
   se->registerSubsystem(tpcqa);
 
+  auto clusterPruner = new DSTClusterPruning("DSTClusterPruning");
+  se->registerSubsystem(clusterPruner);
 
   se->run(nEvents);
   se->End();
