@@ -6,13 +6,13 @@ echo This script: $0
 echo Working directory: $_CONDOR_SCRATCH_DIR
 echo
 
-MIN_ARG_COUNT=16
-MAX_ARG_COUNT=17
+MIN_ARG_COUNT=17
+MAX_ARG_COUNT=18
 if [ "$#" -lt "$MIN_ARG_COUNT" ] || [ "$#" -gt "$MAX_ARG_COUNT" ] ; then
     echo "Error: Incorrect number of arguments."
     echo "Expected $MIN_ARG_COUNT--$MAX_ARG_COUNT, but received $#."
     echo "Arguments received: $@"
-    echo "Usage: $0 <nevents> <outbase> <logbase> <run> <seg> <outdir> <finaldir> <buildarg> <tag> <inputs> <ranges_str> <neventsper> <log_dir> <comment_str> <hist_dir> <condor_rsync_val>"
+    echo "Usage: $0 <nevents> <outbase> <logbase> <inbase> <run> <seg> <outdir> <finaldir> <buildarg> <tag> <inputs> <ranges_str> <neventsper> <log_dir> <comment_str> <hist_dir> <condor_rsync_val>"
     exit 1
 fi
 
@@ -20,6 +20,7 @@ fi
 nevents="$1"; shift
 outbase="$1"; shift
 logbase="$1"; shift
+inbase="$1"; shift
 runnumber="$1"; shift
 segment="$1"; shift
 outdir="$1"; shift
@@ -45,6 +46,7 @@ echo "---------------------------------------------"
 echo "Number of events to process (nevents): $nevents"
 echo "Output base name (outbase):            $outbase"
 echo "Log base name (logbase):               $logbase"
+echo "Input name maske (inbase):             $inbase"
 echo "Run number (run):                      $runnumber"
 echo "Segment number (seg):                  $segment"
 echo "Output directory (outdir):             $outdir"
@@ -94,7 +96,7 @@ else
         source /Users/eickolja/sphenix/sphenixprod/mac_this_sphenixprod.sh
     elif [[ $OS =~ "AlmaLinux" ]]; then
         echo "Setting up Production software for ${OS}"
-        source /opt/sphenix/core/bin/sphenix_setup.sh -n $build_argument
+        source /opt/sphenix/core/bin/sphenix_setup.sh -n $buildarg
     else
 	echo "Unsupported OS $OS"
 	return 1
@@ -115,12 +117,20 @@ echo "---------------------------------------------"
 echo "Running clustering (job0) for run ${run_number}, seg {segment}"
 echo "---------------------------------------------"
 echo "--- Collecting input files"
-./create_filelist_run_seg.py $runnumber 
-echo cat inlist.list
-echo bye
-exit 0
+echo inbase=$inbase
+echo runnumber=$runnumber
+echo segment=$segment
 
-ls *.json
+echo 'create_filelist_run_seg.py $inbase $runnumber $segment'
+./create_filelist_run_seg.py $inbase $runnumber $segment
+ls -la *.list
+echo end of ls -la '*.list'
+for l in *list; do
+    echo cat $l
+    cat $l
+done
+
+ls *.json 2>&1
 if [ -e sPHENIX_newcdb_test.json ]; then
     echo "... setting user provided conditions database config"
     export NOPAYLOADCLIENT_CONF=./sPHENIX_newcdb_test.json
@@ -128,51 +138,49 @@ fi
 
 echo NOPAYLOADCLIENT_CONF=${NOPAYLOADCLIENT_CONF}
 
-#______________________________________________________________________________________ started __
-#
-./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
-#_________________________________________________________________________________________________
+# #______________________________________________________________________________________ started __
+# #
+# ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} started
+# #_________________________________________________________________________________________________
 
 
-if [[ "${9}" == *"dbinput"* ]]; then
-    echo GRABBING DBINPUT $runnumber $segment $outbase
-    echo ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs
-    ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs
+# if [[ "${9}" == *"dbinput"* ]]; then
+#     echo GRABBING DBINPUT $runnumber $segment $outbase
+#     echo ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs
+#     ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs
     
-    for i in $(./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs); do
-       #cp -v ${i} .
-       #echo $( basename $i ) >> inlist
-       echo $i >> inlist          
-    done
-else
-  echo WFT???  We should not be running this way
-  for i in ${inputs[@]}; do
-     echo $i  >> inlist   
-  done
-fi
+#     for i in $(./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs); do
+#        #cp -v ${i} .
+#        #echo $( basename $i ) >> inlist
+#        echo $i >> inlist          
+#     done
+# else
+#   echo WFT???  We should not be running this way
+#   for i in ${inputs[@]}; do
+#      echo $i  >> inlist   
+#   done
+# fi
 
-echo "Here is the input list"
-cat inlist
+# ./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
 
-./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
-
-dstname=${logbase%%-*}
-echo "in dir"
-pwd
-echo root.exe -q -b Fun4All_SingleJob0.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"inlist\"\)
-     root.exe -q -b Fun4All_SingleJob0.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"inlist\"\);  status_f4a=$?
+echo root.exe -q -b Fun4All_SingleJob0.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"infile.list\"\)
+root.exe -q -b Fun4All_SingleJob0.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"infile.list\"\);  status_f4a=$?
 
 ls -la
 
 echo ./stageout.sh ${logbase}.root ${outdir}
-     ./stageout.sh ${logbase}.root ${outdir}
+./stageout.sh ${logbase}.root ${outdir}
 
-for hfile in `ls HIST_*.root`; do
-    echo Stageout ${hfile} to ${histdir}
+for hfile in HIST_*.root; do
+    echo stageout.sh ${hfile} to ${histdir}
     ./stageout.sh ${hfile} ${histdir}
 done
 
 ls -la
+
+echo done
+exit ${status_f4a:-1}
+
 
 # Flag run as finished. 
 echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${nevents}  
