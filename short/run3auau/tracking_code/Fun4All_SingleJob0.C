@@ -70,7 +70,7 @@ void Fun4All_SingleJob0(
   std::string filepath; 
   
   int i = 0;
-  int nTpcFiles = 0;
+  bool process_endpoints = false;
   while(std::getline(ifs,filepath))
     {
       std::cout << "Adding DST with filepath: " << filepath << std::endl; 
@@ -85,9 +85,10 @@ void Fun4All_SingleJob0(
 	}
        if(filepath.find("ebdc") != std::string::npos)
 	{
-	  if(filepath.find("ebdc39") == std::string::npos)
+	  if(filepath.find("_0_") != std::string::npos or
+	     filepath.find("_1_") != std::string::npos)
 	    {
-	      nTpcFiles++;
+	      process_endpoints = true;
 	    }
 	}
       std::string inputname = "InputManager" + std::to_string(i);
@@ -120,10 +121,12 @@ void Fun4All_SingleJob0(
     {
       Intt_HitUnpacking(std::to_string(server));
     }
+
+  std::cout << "Process endpoints is " << process_endpoints << std::endl;
   ostringstream ebdcname;
   for(int ebdc = 0; ebdc < 24; ebdc++)
     {
-      if(nTpcFiles ==24)
+      if(!process_endpoints)
 	{
 	  ebdcname.str("");
 	  if(ebdc < 10)
@@ -134,7 +137,7 @@ void Fun4All_SingleJob0(
 	  Tpc_HitUnpacking(ebdcname.str());
 	}
       
-      else if(nTpcFiles == 48)
+      else if(process_endpoints)
 	{
 	  for(int endpoint = 0; endpoint <2; endpoint++)
 	    {
@@ -146,11 +149,6 @@ void Fun4All_SingleJob0(
 	      ebdcname<<ebdc <<"_"<<endpoint;
 	      Tpc_HitUnpacking(ebdcname.str());
 	    }
-	}
-      else
-	{
-	  std::cout << "Wrong number of tpc files input! Exiting now." << std::endl;
-	  gSystem->Exit(1);
 	}
     }
 
