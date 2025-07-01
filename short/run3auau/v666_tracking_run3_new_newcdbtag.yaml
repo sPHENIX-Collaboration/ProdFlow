@@ -1,0 +1,114 @@
+#______________________________________________________________________________________________________________________
+DST_TRKR_CLUSTER_run3physics:
+
+  params:
+    rulestem:   DST_TRKR_CLUSTER
+    period:     run3auau
+    outstub:    run3auau # could be run3cosmics, run3calib, etc.
+    physicsmode: physics
+    build:      new
+    dbtag:      newcdbtag
+    version:    666
+
+  input:
+    db:          fcr
+    table:       datasets
+    indataset:   new_nocdbtag_v001
+
+  job:
+    script:                 run_singlejob0.sh
+    arguments:             '{nevents} {outbase} {logbase} {inbase} {run} {seg} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
+    log:                   '{condor}/{logbase}.condor'
+    neventsper:             10000
+    payload:                [tracking_code/*]
+    mem:                    16384MB
+    batch_name:            'devkolja.{rulestem}_{outstub}_{dataset}'
+    priority:              '3500'
+#    comment :              'Throwaway production for testing'
+
+
+###############################################################################################
+###############################################################################################
+###############################################################################################
+###############################################################################################
+###############################################################################################
+###############################################################################################
+
+
+DST_TRKR_CLUSTER_run3auau_streams:
+
+   params:
+     name:       DST_TRKR_CLUSTER_run3auau
+     build:      new
+     build_name: new
+     dbtag:      2025p001
+     version:    0
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
+     script  :   run_singlejob0.sh
+     payload :   ./ProdFlow/run3auau/TrackingProduction/
+     neventsper:      10000
+     comment :    "---"
+     rsync   : "./ProdFlow/run3auau/TrackingProduction/*"
+     mem     :   8192MB
+     mnrun   : 56900
+     mxrun   : 99999
+     dstin   : 'DST_STREAMING_EVENT_%_run3auau'
+     dataset : 'new_nocdbtag_v000'
+     mninputs: 24
+     required: >
+       TPC00 TPC01 TPC02 TPC03 TPC04 TPC05
+       TPC06 TPC07 TPC08 TPC09 TPC10 TPC11
+       TPC12 TPC13 TPC14 TPC15 TPC16 TPC17
+       TPC18 TPC19 TPC20 TPC21 TPC22 TPC23
+       #INTT0 INTT1 INTT2 INTT3 INTT4 INTT5 INTT6 INTT7
+       #MVTX0 MVTX1 MVTX2 MVTX3 MVTX4 MVTX5
+       #TPOT
+
+
+   input:
+      db: fc
+      query: |-
+         with allruns as (
+         select
+                'filecatalog/datasets'         as source        ,
+                runnumber                                       ,
+                segment                                         ,
+                string_agg( distinct filename, ' ' ) as files   ,
+                'NA'  as fileranges                             ,
+                count(distinct filename) as ninputs             ,
+                array_agg( split_part(filename,'_',4)		   ) as subsystems                
+         from
+                datasets
+         where
+                dsttype like '{dstin}' and dataset='{dataset}'
+                {run_condition}
+                and runnumber>={mnrun}
+                and runnumber<={mxrun}
+
+         group by runnumber, segment
+
+         order by runnumber {limit_condition}
+         )
+
+         --         select * from allruns where allruns.ninputs>={mninputs} order by runnumber, segment
+
+         select source, runnumber, segment, files, fileranges from allruns;
+
+
+   #
+   # Again I note the need to ensure that the arguments are properly specified given the
+   # definition of the payload script.
+   #
+   job:
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {comment} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     #accounting_group      : "group_sphenix.mdc2"
+     #accounting_group_user : "sphnxpro"
+     priority : '3900'
+     request_xferslots: '0'
+
+     
+
+#___________________________________________________________________________________________________________________________
