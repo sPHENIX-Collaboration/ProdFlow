@@ -225,14 +225,14 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 	break;
       }
       auto inttcalib = new InttCalib("INTTCalib_" + felix);
-      char hotmapfilename[500];
-      sprintf(hotmapfilename,"./CALIB_HOTMAP_%s.root",type.c_str());
+      char hotmapfilename[500]; 
+      sprintf(hotmapfilename,"./CALIB_HOTMAP_%s-%08i-%05i.root",type.c_str(), runnumber, 0);
       
       char bcomapfilename[500];
-      sprintf(bcomapfilename,"./CALIB_BCOMAP_%s.root", type.c_str());
+      sprintf(bcomapfilename,"./CALIB_BCOMAP_%s-%08i-%05i.root", type.c_str(), runnumber, 0);
 
       char pngfilename[500];
-      sprintf(pngfilename, "./CALIB_PNG_%s.root", type.c_str());
+      sprintf(pngfilename, "./CALIB_PNG_%s-%08i-%05i.root", type.c_str(), runnumber, 0);
       
       inttcalib->SetRawHitContainerName("INTTRAWHIT_" + felix);
       inttcalib->SetHotMapCdbFile(hotmapfilename);
