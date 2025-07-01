@@ -199,8 +199,8 @@ void Fun4All_JobA(
   out->AddNode("TpcTrackSeedContainer");
   out->AddNode("LASER_CLUSTER");
   out->AddNode("LaserEventInfo");
-  out->AddNode("TRKR_CLUSTER");
-  //out->AddNode("TRKR_CLUSTER_SEED");
+  //out->AddNode("TRKR_CLUSTER");
+  out->AddNode("TRKR_CLUSTER_SEED");
   out->AddNode("TRKR_CLUSTERCROSSINGASSOC");
 
   se->registerOutputManager(out);
