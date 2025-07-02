@@ -8,6 +8,7 @@
 #include <Trkr_RecoInit.C>
 #include <Trkr_Reco.C>
 #include <Trkr_TpcReadoutInit.C>
+#include <QA.C>
 
 #include <fun4all/Fun4AllUtils.h>
 #include <fun4all/Fun4AllDstInputManager.h>
@@ -20,7 +21,10 @@
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
 
+#include <trackingqa/TrackFittingQA.h>
 #include <trackingqa/TpcSiliconQA.h>
+#include <trackingqa/VertexQA.h>
+
 #include <phool/recoConsts.h>
 
 #include <stdio.h>
@@ -206,6 +210,9 @@ void Fun4All_JobC(
   
   auto tpcsiliconqa = new TpcSiliconQA;
   se->registerSubsystem(tpcsiliconqa);
+
+  se->registerSubsystem(new TrackFittingQA);
+  se->registerSubsystem(new VertexQA);
   
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfilename);
   out->AddNode("Sync");
@@ -218,6 +225,12 @@ void Fun4All_JobC(
 
   se->run(nEvents);
   se->End();
+
+  TString qaname = "HIST_" + outfilename;
+  std::string qaOutputFileName(qaname.Data());
+  QAHistManagerDef::saveQARootFile(qaOutputFileName);
+
+
   CDBInterface::instance()->Print();
   se->PrintTimer();
 
