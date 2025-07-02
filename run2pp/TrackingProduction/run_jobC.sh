@@ -11,6 +11,7 @@ dbtag=${8}
 inputs=(`echo ${9} | tr "," " "`)  # array of input files 
 ranges=(`echo ${10} | tr "," " "`)  # array of input files with ranges appended
 logdir=${11:-.}
+histdir=${12:-.}
 subdir=${13}
 payload=(`echo ${14} | tr ","  " "`) # array of files to be rsynced
 #-----
@@ -95,6 +96,11 @@ echo root.exe -q -b Fun4All_JobC.C\(${nevents},${runnumber},\"${logbase}.root\",
 ls -la
 
 ./stageout.sh ${logbase}.root ${outdir}
+
+for hfile in `ls HIST_*.root`; do
+    echo Stageout ${hfile} to ${histdir}
+    ./stageout.sh ${hfile} ${histdir}
+done
 
 
 ls -la
