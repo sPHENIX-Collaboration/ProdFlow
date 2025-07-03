@@ -1,10 +1,10 @@
 #______________________________________________________________________________________________________________________
 DST_TRIGGERED_EVENT_run3physics:
   params:
-    rulestem:   DST_TRIGGERED_EVENT
+    dsttype:    DST_TRIGGERED_EVENT
     period:     run3auau
-    outstub:    run3auau # could be run3physics, run3calib, etc.
     physicsmode: physics
+    dataset:    run3auau # could be run3physics, run3calib, etc.
     build:      new
     dbtag:      nocdbtag
     version:    666
@@ -20,17 +20,16 @@ DST_TRIGGERED_EVENT_run3physics:
     neventsper:             10000
     payload:                [triggered_code/*]
     mem:                    2000MB
-    batch_name:            'devkolja.{rulestem}_{outstub}_{dataset}'
+    batch_name:            '{dsttype}_{dataset}_{outtriplet}'
     priority:              '3500'
-#    comment :              'Throwaway production for testing'
 
 #______________________________________________________________________________________________________________________
 DST_STREAMING_EVENT_run3physics:
   params:
-    rulestem:   DST_STREAMING_EVENT
-    period:     run3auau
-    outstub:    run3auau # could be run3cosmics, run3calib, etc.
+    dsttype:    DST_STREAMING_EVENT
     physicsmode: physics
+    period:     run3auau
+    dataset:    run3auau # could be run3cosmics, run3calib, etc.
     build:      new
     dbtag:      nocdbtag
     version:    666
@@ -46,6 +45,5 @@ DST_STREAMING_EVENT_run3physics:
     neventsper:             10000
     payload:                [streaming_code/*]
     mem:                    2024MB
-    batch_name:            'devkolja.{rulestem}_{outstub}_{dataset}'
+    batch_name:            '{dsttype}_{dataset}_{outtriplet}'
     priority:              '3500'
-#    comment :              'Throwaway production for testing'
