@@ -1,11 +1,10 @@
-
 #______________________________________________________________________________________________________________________
 DST_STREAMING_EVENT_run3line_laser:
   params:
-    rulestem:   DST_STREAMING_EVENT
+    dsttype:   DST_STREAMING_EVENT
     period:     run3auau
-    outstub:    run3line_laser # could be run3cosmics, run3calib, etc.
     physicsmode: line_laser
+    dataset:    run3line_laser # could be run3cosmics, run3calib, etc.
     build:      new
     dbtag:      nocdbtag
     version:    1
@@ -24,6 +23,5 @@ DST_STREAMING_EVENT_run3line_laser:
     neventsper:             10000
     payload:                [streaming_code/*]
     mem:                    2024MB
-    batch_name:            'mainkolja.{rulestem}_{outstub}_{dataset}'
+    batch_name:            '{dsttype}_{dataset}_{outtriplet}'
     priority:              '3500'
-#    comment :              'Throwaway production for testing'
