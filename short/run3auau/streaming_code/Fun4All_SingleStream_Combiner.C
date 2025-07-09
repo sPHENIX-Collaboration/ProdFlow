@@ -236,9 +236,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       
       inttcalib->SetRawHitContainerName("INTTRAWHIT_" + felix);
       inttcalib->SetHotMapCdbFile(hotmapfilename);
-      inttcalib->SetHotMapPngFile(pngfilename);
       inttcalib->SetBcoMapCdbFile(bcomapfilename);
-      inttcalib->SetBcoMapPngFile(pngfilename);
       inttcalib->SetOneFelixServer(std::stoi(felix));
       inttcalib->SetDoFeebyFee(false);
       inttcalib->SetStreamingMode(isInttStreaming);
