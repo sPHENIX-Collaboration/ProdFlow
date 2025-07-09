@@ -182,13 +182,13 @@ echo done
 exit ${status_f4a:-1}
 
 
-# Flag run as finished. 
-echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${nevents}  
-     ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${nevents}
+# # Flag run as finished. 
+# echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${nevents}  
+#      ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${nevents}
 
-echo "bdee bdee bdee, That's All Folks!"
+# echo "bdee bdee bdee, That's All Folks!"
 
-} >> ${logdir#file:/}/${logbase}.out  2>${logdir#file:/}/${logbase}.err
+# } >> ${logdir#file:/}/${logbase}.out  2>${logdir#file:/}/${logbase}.err
 
 
-exit ${status_f4a:-1}
+# exit ${status_f4a:-1}
