@@ -27,8 +27,8 @@ DST_TRIGGERED_EVENT_run3physics:
 DST_STREAMING_EVENT_run3physics:
   params:
     dsttype:    DST_STREAMING_EVENT
-    physicsmode: physics
     period:     run3auau
+    physicsmode: physics
     dataset:    run3auau # could be run3cosmics, run3calib, etc.
     build:      new
     dbtag:      nocdbtag

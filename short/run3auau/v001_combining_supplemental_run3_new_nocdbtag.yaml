@@ -1,0 +1,82 @@
+################################################################################
+################################# Cosmics ######################################
+################################################################################
+#______________________________________________________________________________________________________________________
+DST_TRIGGERED_EVENT_run3cosmics:
+  params:
+    dsttype:    DST_TRIGGERED_EVENT
+    period:     run3auau
+    physicsmode: cosmics
+    dataset:    run3cosmics # could be run3physics, run3calib, etc.
+    build:      new
+    dbtag:      nocdbtag
+    version:    1
+
+  input:
+    db:          rawr
+    table:       datasets
+
+  job:
+    script:                 run_eventcombine.sh
+    arguments:             '{nevents} {outbase} {logbase} {run} {seg} {daqhost} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
+    log:                   '{condor}/{logbase}.condor'
+    neventsper:             10000
+    payload:                [triggered_code/*]
+    mem:                    2000MB
+    batch_name:            '{dsttype}_{dataset}_{outtriplet}'
+    priority:              '3500'
+
+#______________________________________________________________________________________________________________________
+DST_STREAMING_EVENT_run3cosmics:
+  params:
+    dsttype:    DST_STREAMING_EVENT
+    period:     run3auau
+    physicsmode: cosmics
+    dataset:    run3cosmics # could be run3cosmics, run3calib, etc.
+    build:      new
+    dbtag:      nocdbtag
+    version:    1
+
+  input:
+    db:          rawr
+    table:       datasets
+
+  job:
+    script:                 run_parallel_streams.sh
+    arguments:             '{nevents} {outbase} {logbase} {run} {seg} {daqhost} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
+    log:                   '{condor}/{logbase}.condor'
+    neventsper:             10000
+    payload:                [streaming_code/*]
+    mem:                    2024MB
+    batch_name:            '{dsttype}_{dataset}_{outtriplet}'
+    priority:              '3500'
+
+################################################################################
+################################# Line_Laser ###################################
+################################################################################
+#______________________________________________________________________________________________________________________
+DST_STREAMING_EVENT_run3line_laser:
+  params:
+    dsttype:    DST_STREAMING_EVENT
+    period:     run3auau
+    physicsmode: line_laser
+    dataset:    run3line_laser # could be run3cosmics, run3calib, etc.
+    build:      new
+    dbtag:      nocdbtag
+    version:    1
+
+  input:
+    db:          rawr
+    table:       datasets
+
+  job:
+    script:                 run_parallel_streams.sh
+    arguments:             '{nevents} {outbase} {logbase} {run} {seg} {daqhost} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
+    log:                   '{condor}/{logbase}.condor'
+    neventsper:             10000
+    payload:                [streaming_code/*]
+    mem:                    2024MB
+    batch_name:            '{dsttype}_{dataset}_{outtriplet}'
+    priority:              '3500'
+
+
