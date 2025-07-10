@@ -13,8 +13,10 @@ DST_TRIGGERED_EVENT_run3cosmics:
     version:    1
 
   input:
-    db:          rawr
-    table:       datasets
+    db:             rawr
+    table:          datasets
+    min_run_time:   300
+    min_run_events: 1000
 
   job:
     script:                 run_eventcombine.sh
@@ -38,9 +40,11 @@ DST_STREAMING_EVENT_run3cosmics:
     version:    1
 
   input:
-    db:          rawr
-    table:       datasets
-
+    db:             rawr
+    table:          datasets
+    min_run_time:   300
+    min_run_events: 1000
+    
   job:
     script:                 run_parallel_streams.sh
     arguments:             '{nevents} {outbase} {logbase} {run} {seg} {daqhost} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
@@ -66,8 +70,10 @@ DST_STREAMING_EVENT_run3line_laser:
     version:    1
 
   input:
-    db:          rawr
-    table:       datasets
+    db:             rawr
+    table:          datasets
+    min_run_time:   1
+    min_run_events: 1
 
   job:
     script:                 run_parallel_streams.sh
