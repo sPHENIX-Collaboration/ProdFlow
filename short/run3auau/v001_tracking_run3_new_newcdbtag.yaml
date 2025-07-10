@@ -20,7 +20,7 @@ DST_TRKR_CLUSTER_run3physics:
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
     payload:                [tracking_code/*]
-    mem:                    16384MB
+    mem:                    12228MB
     request_cpus:          '4'
     batch_name:            '{dsttype}_{dataset}_{outtriplet}'
     priority:              '3500'
