@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/bash
 
 ## Logging details
 echo Hostname: `hostname`
@@ -6,15 +6,16 @@ echo This script: $0
 echo Working directory: $_CONDOR_SCRATCH_DIR
 echo
 
-MIN_ARG_COUNT=17
-MAX_ARG_COUNT=18
+MIN_ARG_COUNT=15
+MAX_ARG_COUNT=16
 if [ "$#" -lt "$MIN_ARG_COUNT" ] || [ "$#" -gt "$MAX_ARG_COUNT" ] ; then
     echo "Error: Incorrect number of arguments."
     echo "Expected $MIN_ARG_COUNT--$MAX_ARG_COUNT, but received $#."
     echo "Arguments received: $@"
-    echo "Usage: $0 <nevents> <outbase> <logbase> <inbase> <run> <seg> <outdir> <finaldir> <buildarg> <tag> <inputs> <ranges_str> <neventsper> <log_dir> <comment_str> <hist_dir> <condor_rsync_val>"
+    echo "Usage: $0 <nevents> <outbase> <logbase> <inbase> <runnumber> <segment> <outdir> <finaldir> <buildarg> <dbtag> <inputs> <neventsper> <log_dir> <hist_dir> <condor_rsync_val>"
     exit 1
 fi
+
 
 # Parse arguments using shift
 nevents="$1"; shift
@@ -28,10 +29,8 @@ finaldir="$1"; shift
 buildarg="$1"; shift
 dbtag="$1"; shift
 inputs="$1"; shift
-ranges="$1"; shift
 neventsper="$1"; shift
 logdir="$1"; shift
-comment="$1"; shift
 histdir="$1"; shift
 
 condor_rsync="$1"; shift       # Corresponds to {rsync}
@@ -48,19 +47,18 @@ echo "Output base name (outbase):            $outbase"
 echo "Log base name (logbase):               $logbase"
 echo "Input name maske (inbase):             $inbase"
 echo "Run number (run):                      $runnumber"
-echo "Segment number (seg):                  $segment"
+echo "Segment number (seg):                  $segment    (not used)"
 echo "Output directory (outdir):             $outdir"
 echo "Final destination (finaldir):          $finaldir   (not used)"
 echo "Build argument (buildarg):             $buildarg"
 echo "Tag (tag):                             $dbtag"
-echo "Ranges string (ranges):                $ranges_string"
 echo "Events per sub-job (neventsper):       $neventsper"
 echo "Log directory (logdir):                $logdir"
-echo "Job comment (comment):                 $comment"
 echo "Histogram directory (histdir):         $histdir"
 echo "Condor Rsync Paths (rsync):            $condor_rsync" 
 echo "Job database id (dbid):                $dbid"
 echo "---------------------------------------------"
+
 
 ## Make sure logfiles are kept even when receiving a signal
 sighandler()
@@ -114,13 +112,11 @@ else
 fi
 
 echo "---------------------------------------------"
-echo "Running clustering (job0) for run ${run_number}, seg {segment}"
+echo "Running seeding (jobA) for run ${run_number}, seg {segment}"
 echo "---------------------------------------------"
 echo "--- Collecting input files"
-echo inbase=$inbase
 echo runnumber=$runnumber
-echo segment=$segment
-
+ 
 echo 'create_filelist_run_seg.py $inbase $runnumber $segment'
 ./create_filelist_run_seg.py $inbase $runnumber $segment
 ls -la *.list
@@ -138,8 +134,8 @@ fi
 
 echo NOPAYLOADCLIENT_CONF=${NOPAYLOADCLIENT_CONF}
 
-echo root.exe -q -b Fun4All_SingleJob0.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"infile.list\"\)
-root.exe -q -b Fun4All_SingleJob0.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"infile.list\"\);  status_f4a=$?
+echo root.exe -q -b Fun4All_JobA.C\(${nevents},${runnumber},\"${outbase}.root\",\"${dbtag}\",\"infile.list\"\)
+     root.exe -q -b Fun4All_JobA.C\(${nevents},${runnumber},\"${outbase}.root\",\"${dbtag}\",\"infile.list\"\);  status_f4a=$?
 
 ls -la
 
@@ -155,15 +151,3 @@ ls -la
 
 echo done
 exit ${status_f4a:-1}
-
-
-# # Flag run as finished. 
-# echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${nevents}  
-#      ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${nevents}
-
-# echo "bdee bdee bdee, That's All Folks!"
-
-# } >> ${logdir#file:/}/${logbase}.out  2>${logdir#file:/}/${logbase}.err
-
-
-# exit ${status_f4a:-1}
