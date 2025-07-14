@@ -43,8 +43,8 @@ export PRODDB_DBID=$dbid
 echo "Processing job with the following parameters:"
 echo "---------------------------------------------"
 echo "Number of events to process (nevents): $nevents"
-echo "Output base name (outbase):            $outbase"
-echo "Log base name (logbase):               $logbase"
+echo "Output base name (outbase):            $outbase  (NOT USED!!)"
+echo "Log base name (logbase):               $logbase  (Used for output as well!)"
 echo "Input name maske (inbase):             $inbase"
 echo "Run number (run):                      $runnumber"
 echo "Segment number (seg):                  $segment    (not used)"
@@ -126,6 +126,17 @@ for l in *list; do
     cat $l
 done
 
+ 
+echo 'create_full_filelist_run_seg.py $inbase $runnumber $segment'
+./create_full_filelist_run_seg.py $inbase $runnumber $segment
+ls -la *.list
+echo end of ls -la '*.list'
+for infile in `cat infile_paths.list`; do
+    cp -v $infile .
+done
+echo ls -ltr \*root
+ls -ltr *root
+
 ls *.json 2>&1
 if [ -e sPHENIX_newcdb_test.json ]; then
     echo "... setting user provided conditions database config"
@@ -134,13 +145,13 @@ fi
 
 echo NOPAYLOADCLIENT_CONF=${NOPAYLOADCLIENT_CONF}
 
-echo root.exe -q -b Fun4All_JobA.C\(${nevents},${runnumber},\"${outbase}.root\",\"${dbtag}\",\"infile.list\"\)
-     root.exe -q -b Fun4All_JobA.C\(${nevents},${runnumber},\"${outbase}.root\",\"${dbtag}\",\"infile.list\"\);  status_f4a=$?
+echo root.exe -q -b Fun4All_JobA.C\(${nevents},\"${logbase}.root\",\"${dbtag}\",\"infile.list\"\)
+     root.exe -q -b Fun4All_JobA.C\(${nevents},\"${logbase}.root\",\"${dbtag}\",\"infile.list\"\);  status_f4a=$?
 
 ls -la
 
-echo ./stageout.sh ${logbase}.root ${outdir}
-./stageout.sh ${logbase}.root ${outdir}
+echo ./stageout.sh ${logbase}.root ${outdir} ${dbid}
+./stageout.sh ${logbase}.root ${outdir} ${dbid}
 
 for hfile in HIST_*.root; do
     echo stageout.sh ${hfile} to ${histdir}
