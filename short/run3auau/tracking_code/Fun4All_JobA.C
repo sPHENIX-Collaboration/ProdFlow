@@ -49,8 +49,8 @@ void Fun4All_JobA(
   gSystem->Load("libg4dst.so");
 
   auto se = Fun4AllServer::instance();
-  se->Verbosity(0);
-  se->VerbosityDownscale(100); // only print every 1000th event
+  se->Verbosity(1);
+  se->VerbosityDownscale(10); // only print every 1000th event
   auto rc = recoConsts::instance();
   CDBInterface::instance()->Verbosity(1);
 
