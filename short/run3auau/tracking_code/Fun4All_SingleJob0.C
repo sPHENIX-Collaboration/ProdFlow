@@ -203,7 +203,7 @@ void Fun4All_SingleJob0(
     out->AddNode("LASER_CLUSTER");
     out->AddNode("LAMINATION_CLUSTER");
   }
-  se->registerOutputManager(out);
+  //se->registerOutputManager(out);
 
   se->run(nEvents);
   se->End();
