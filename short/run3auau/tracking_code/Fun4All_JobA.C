@@ -254,7 +254,7 @@ void Fun4All_JobA(
   out->AddNode("SvtxTrackSeedContainer");
   out->AddNode("GL1RAWHIT");
 
-  //se->registerOutputManager(out);
+  se->registerOutputManager(out);
 
   auto converter = new TrackSeedTrackMapConverter("SiliconSeedConverter");
   // Default set to full SvtxTrackSeeds. Can be set to
