@@ -14,7 +14,7 @@
 sphnxprod02:
   ### Standard combining - use main
   defaultlocations:
-    submissiondir: /sphenix/data/data02/sphnxpro/production/run3auau/
+    submitdir: /sphenix/data/data02/sphnxpro/production/run3auau/{rule}
     prodbase:      /sphenix/u/sphnxpro/mainkolja/sphenixprod
     configbase:    /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
     
@@ -29,7 +29,7 @@ sphnxprod02:
 sphnxprod01:
   ### Special combining - use main
   defaultlocations:
-    submissiondir: /sphenix/data/data02/sphnxpro/production/run3auau/
+    submitdir: /sphenix/data/data02/sphnxpro/production/run3auau/
     prodbase:      /sphenix/u/sphnxpro/mainkolja/sphenixprod
     configbase:    /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
 
@@ -61,7 +61,7 @@ sphnxprod01:
 sphnxprod04:
   ## Downstream Tracking - use main for CLUSTER
   defaultlocations:
-    submissiondir: /sphenix/data/data02/sphnxpro/production/run3auau/
+    submitdir: /sphenix/data/data02/sphnxpro/production/run3auau/
     prodbase:      /sphenix/u/sphnxpro/mainkolja/sphenixprod
     configbase:    /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
 
