@@ -14,9 +14,9 @@
 sphnxprod02:
   ### Standard combining - use main
   defaultlocations:
-    submitdir: /sphenix/data/data02/sphnxpro/production/run3auau/{rule}
-    prodbase:      /sphenix/u/sphnxpro/mainkolja/sphenixprod
-    configbase:    /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
+    submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/{rule}
+    prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
+    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
     
   DST_TRIGGERED_EVENT_run3physics:    
     config: v001_combining_run3_new_nocdbtag.yaml
@@ -29,9 +29,9 @@ sphnxprod02:
 sphnxprod01:
   ### Special combining - use main
   defaultlocations:
-    submitdir: /sphenix/data/data02/sphnxpro/production/run3auau/{rule}
-    prodbase:      /sphenix/u/sphnxpro/mainkolja/sphenixprod
-    configbase:    /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
+    submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/{rule}
+    prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
+    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
 
   # Laser
   DST_STREAMING_EVENT_run3line_laser:
@@ -61,9 +61,9 @@ sphnxprod01:
 sphnxprod04:
   ## Downstream Tracking - use main for CLUSTER
   defaultlocations:
-    submitdir: /sphenix/data/data02/sphnxpro/production/run3auau/{rule}
-    prodbase:      /sphenix/u/sphnxpro/mainkolja/sphenixprod
-    configbase:    /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
+    submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/{rule}
+    prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
+    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
 
   DST_TRKR_CLUSTER_run3physics:
     config: v001_tracking_run3_new_newcdbtag.yaml
@@ -71,7 +71,7 @@ sphnxprod04:
 
   # SEED is under construction; override locations to dev
   DST_TRKR_SEED_run3physics:    
-    prodbase:      /sphenix/u/sphnxpro/devkolja/sphenixprod
-    configbase:    /sphenix/u/sphnxpro/devkolja/ProdFlow/short/run3auau
+    prodbase:   /sphenix/u/sphnxpro/devkolja/sphenixprod
+    configbase: /sphenix/u/sphnxpro/devkolja/ProdFlow/short/run3auau
     config: v001_tracking_run3_new_newcdbtag.yaml
     runs: [68900 69500]
