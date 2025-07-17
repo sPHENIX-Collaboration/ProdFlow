@@ -86,3 +86,35 @@ DST_STREAMING_EVENT_run3line_laser:
     priority:              '3500'
 
 
+
+################################################################################
+################################### Calib ######################################
+################################################################################
+#______________________________________________________________________________________________________________________
+DST_STREAMING_EVENT_run3calib:
+  params:
+    dsttype:    DST_STREAMING_EVENT
+    period:     run3auau
+    physicsmode: calib
+    dataset:    run3calib # could be run3cosmics, run3calib, etc.
+    build:      new
+    dbtag:      nocdbtag
+    version:    1
+
+  input:
+    db:             rawr
+    table:          datasets
+    min_run_time:   1
+    min_run_events: 1
+
+  job:
+    script:                 run_parallel_streams.sh
+    arguments:             '{nevents} {outbase} {logbase} {run} {seg} {daqhost} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
+    log:                   '{condor}/{logbase}.condor'
+    neventsper:             10000
+    payload:                [streaming_code/*]
+    mem:                    2024MB
+    batch_name:            '{dsttype}_{dataset}_{outtriplet}'
+    priority:              '3500'
+
+
