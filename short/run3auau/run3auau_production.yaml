@@ -14,8 +14,9 @@
 sphnxprod02:
   ### Standard combining - use main
   defaultlocations:
-    prodbase: /sphenix/u/sphnxpro/mainkolja/sphenixprod
-    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
+    submissiondir: /sphenix/data/data02/sphnxpro/production/run3auau/
+    prodbase:      /sphenix/u/sphnxpro/mainkolja/sphenixprod
+    configbase:    /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
     
   DST_TRIGGERED_EVENT_run3physics:    
     config: v001_combining_run3_new_nocdbtag.yaml
@@ -28,47 +29,49 @@ sphnxprod02:
 sphnxprod01:
   ### Special combining - use main
   defaultlocations:
-    prodbase: /sphenix/u/sphnxpro/mainkolja/sphenixprod
-    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
+    submissiondir: /sphenix/data/data02/sphnxpro/production/run3auau/
+    prodbase:      /sphenix/u/sphnxpro/mainkolja/sphenixprod
+    configbase:    /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
 
   # Laser
   DST_STREAMING_EVENT_run3line_laser:
-    config: v001_combining_run3_new_nocdbtag.yaml
+    config: v001_combining_supplemental_run3_new_nocdbtag.yaml
     runs: [66456 70000]
     
   # Cosmics
   DST_TRIGGERED_EVENT_run3cosmics:
-    config: v001_combining_run3_new_nocdbtag.yaml
+    config: v001_combining_supplemental_run3_new_nocdbtag.yaml
     runs: [69100 70000] 
     # runlist:  /sphenix/u/sphnxpro/mainkolja/runstoproduce_june.txt ## mutually exclusive with runs
 
   DST_STREAMING_EVENT_run3cosmics:
-    config: v001_combining_run3_new_nocdbtag.yaml
+    config: v001_combining_supplemental_run3_new_nocdbtag.yaml
     runs: [69100 70000]
     # runlist:  /sphenix/u/sphnxpro/mainkolja/runstoproduce_june.txt ## mutually exclusive with runs
 
   # Calib
   DST_TRIGGERED_EVENT_run3calib:
-    config: v001_combining_run3_new_nocdbtag.yaml
+    config: v001_combining_supplemental_run3_new_nocdbtag.yaml
     runs: [66456 70000]
 
   DST_STREAMING_EVENT_run3calib:
-    config: v001_combining_run3_new_nocdbtag.yaml
+    config: v001_combining_supplemental_run3_new_nocdbtag.yaml
     runs: [66456 70000]
     
 sphnxprod04:
   ## Downstream Tracking - use main for CLUSTER
   defaultlocations:
-    prodbase: /sphenix/u/sphnxpro/mainkolja/sphenixprod
-    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
+    submissiondir: /sphenix/data/data02/sphnxpro/production/run3auau/
+    prodbase:      /sphenix/u/sphnxpro/mainkolja/sphenixprod
+    configbase:    /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
 
   DST_TRKR_CLUSTER_run3physics:
     config: v001_tracking_run3_new_newcdbtag.yaml
     runs: [68900 69500]
 
   # SEED is under construction; override locations to dev
-  DST_TRKR_SEED_run3physics:
-    prodbase: /sphenix/u/sphnxpro/devkolja/sphenixprod
-    configbase: /sphenix/u/sphnxpro/devkolja/ProdFlow/short/run3auau
+  DST_TRKR_SEED_run3physics:    
+    prodbase:      /sphenix/u/sphnxpro/devkolja/sphenixprod
+    configbase:    /sphenix/u/sphnxpro/devkolja/ProdFlow/short/run3auau
     config: v001_tracking_run3_new_newcdbtag.yaml
     runs: [68900 69500]
