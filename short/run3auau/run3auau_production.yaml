@@ -15,7 +15,7 @@
 sphnxprod02:
   ### Standard combining - use main
   defaultlocations:
-    submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/{rule}
+    submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/submission/{rule}
     prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
     configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
     
@@ -33,7 +33,7 @@ sphnxprod02:
 sphnxprod03:
   ### Special combining - use main
   defaultlocations:
-    submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/{rule}
+    submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/submission/{rule}
     prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
     configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
     
@@ -81,7 +81,7 @@ sphnxprod03:
 sphnxprod01:
   ## Overflow - use for additional things like extra spiders
   defaultlocations:
-    submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/{rule}
+    submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/submission/{rule}
     prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
     configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
 
@@ -97,13 +97,13 @@ sphnxprod01:
 sphnxprod04:
   ## Downstream Tracking - use main for CLUSTER
   defaultlocations:
-    submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/{rule}
+    submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/submission/{rule}
     prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
     configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
 
   DST_TRKR_CLUSTER_run3physics:
     config: v001_tracking_run3_new_newcdbtag.yaml
-    runs: [68900 69500]
+    runs: [69600 69700]
     submit: off
 
   # SEED is under construction; override locations to dev
