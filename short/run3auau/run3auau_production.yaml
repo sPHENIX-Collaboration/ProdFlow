@@ -70,7 +70,7 @@ sphnxprod03:
     histspider: on
 
   ## Also run physics streaming dst spider
-  DST_TRIGGERED_EVENT_run3physics:    
+  DST_STREAMING_EVENT_run3physics:    
     config: v001_combining_run3_new_nocdbtag.yaml
     runs: [69000 72000]
     submit: off
@@ -86,7 +86,7 @@ sphnxprod01:
     configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
 
   # Also run physics streaming dst spider
-  DST_TRIGGERED_EVENT_run3physics:    
+  DST_STREAMING_EVENT_run3physics:    
     config: v001_combining_run3_new_nocdbtag.yaml
     runs: [69000 72000]
     submit: off
@@ -115,7 +115,7 @@ sphnxprod04:
     submit: off
 
   # Also run physics streaming dst spider
-  DST_TRIGGERED_EVENT_run3physics:    
+  DST_STREAMING_EVENT_run3physics:    
     config: v001_combining_run3_new_nocdbtag.yaml
     runs: [69000 72000]
     submit: off
