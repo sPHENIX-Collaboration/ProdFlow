@@ -28,7 +28,7 @@ outdir="$1"; shift
 finaldir="$1"; shift
 build_argument="$1"; shift     # Corresponds to {buildarg}
 dbtag="$1"; shift
-input_files="$1"; shift        # Corresponds to {inputs}
+inputs="$1"; shift
 ranges_string="$1"; shift      # Corresponds to $(ranges)
 neventsper="$1"; shift
 logdir="$1"; shift
@@ -62,7 +62,7 @@ echo "Histogram directory (histdir):         $histdir"
 echo "Condor Rsync Paths (rsync):            $condor_rsync" 
 echo "Job database id (dbid):                $dbid"
 echo "---------------------------------------------"
-echo "Input file(s) (inputs):                $input_files"
+echo "Input mode (inputs):                   $inputs (all segments or seg 0 only)"
 echo "---------------------------------------------"
 
 ## Make sure logfiles are kept even when receiving a signal
@@ -121,7 +121,7 @@ echo "---------------------------------------------"
 echo "Running streaming eventcombine for run ${run_number} on ${daqhost}"
 echo "---------------------------------------------"
 echo "--- Collecting input files"
-./create_filelist_run_daqhost.py $runnumber $daqhost
+./create_filelist_run_daqhost.py $runnumber $daqhost $inputs
 ls -la *.list
 echo end of ls -la '*.list'
 for l in *list; do
