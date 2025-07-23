@@ -11,114 +11,132 @@
 # jobmem: 4096MB # default: none
 # jobprio: 10000 # default: none
 
-################################# Prod02 #######################################
-sphnxprod02:
-  ### Standard combining - use main
-  defaultlocations:
-    submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/submission/{rule}
-    prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
-    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
-    
-  DST_TRIGGERED_EVENT_run3physics:    
-    config: v001_combining_run3_new_nocdbtag.yaml
-    runs: [69000 72000]
-    submit: on
-    
-  DST_STREAMING_EVENT_run3physics:
-    config: v001_combining_run3_new_nocdbtag.yaml
-    runs: [69400 72000]
-    submit: on
-
-################################# Prod03 #######################################
-sphnxprod03:
-  ### Special combining - use main
-  defaultlocations:
-    submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/submission/{rule}
-    prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
-    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
-    
-  # Laser
-  DST_STREAMING_EVENT_run3line_laser:
-    config: v001_combining_supplemental_run3_new_nocdbtag.yaml
-    runs: [66456 70000]
-    submit: on
-    
-  # Cosmics
-  DST_TRIGGERED_EVENT_run3cosmics:
-    config: v001_combining_supplemental_run3_new_nocdbtag.yaml
-    runs: [69100 70000] 
-    # runlist:  /sphenix/u/sphnxpro/mainkolja/runstoproduce_june.txt ## mutually exclusive with runs
-    submit: off
-    dstspider: off
-    histspider: off
-
-  DST_STREAMING_EVENT_run3cosmics:
-    config: v001_combining_supplemental_run3_new_nocdbtag.yaml
-    runs: [69100 70000]
-    # runlist:  /sphenix/u/sphnxpro/mainkolja/runstoproduce_june.txt ## mutually exclusive with runs
-    submit: off
-    dstspider: off
-    histspider: off
-
-  # Calib
-  DST_STREAMING_EVENT_run3calib:
-    config: v001_combining_supplemental_run3_new_nocdbtag.yaml
-    # runs: [66456 70000]
-    runs: [69441 69444 69447 69448 69449 69451 69452 69453]
-    submit: on
-    dstspider: on
-    histspider: on
-
-  ## Also run physics streaming dst spider
-  DST_STREAMING_EVENT_run3physics:    
-    config: v001_combining_run3_new_nocdbtag.yaml
-    runs: [69000 72000]
-    submit: off
-    dstspider: on
-    histspider: off
 
 ################################# Prod01 #######################################
 sphnxprod01:
-  ## Overflow - use for additional things like extra spiders
+  #### Standard combination production
   defaultlocations:
     submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/submission/{rule}
     prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
     configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
 
-  # Also run physics streaming dst spider
-  DST_STREAMING_EVENT_run3physics:    
+  # Catchup TRIGGERED production. Redoing some runs before Vernier scan 69561
+  DST_TRIGGERED_EVENT_run3physics:    
     config: v001_combining_run3_new_nocdbtag.yaml
-    runs: [69000 72000]
+    runs: [66456 69650]
     submit: off
-    dstspider: on
-    histspider: off
 
-################################# Prod04 #######################################
-sphnxprod04:
-  ## Downstream Tracking - use main for CLUSTER
+  # Rolling TRIGGERED production on dev
+  DST_TRIGGERED_EVENT_run3physics:    
+    config: v001_combining_run3_new_nocdbtag.yaml
+    runs: [69562 72000]
+    submit: on
+
+  # Catchup STREAMING production
+  DST_TRIGGERED_EVENT_run3physics:    
+    config: v001_combining_run3_new_nocdbtag.yaml
+    # runs: [66456 69500]
+    runs: [66456 67000]
+    # runs: [67000 69000]
+    # runs: [69000 69500]
+    submit: on
+
+  # Rolling STREAMING production
+  DST_STREAMING_EVENT_run3physics:
+    config: v001_combining_run3_new_nocdbtag.yaml
+    runs: [69500 72000]
+    submit: on
+
+  # Vernier. Can't be used for submission. 
+  # Either needs "combine_seg0_only: false" in a special yaml,
+  # or better just submit this run with '--no-onlyseg0'
+  # DST_TRIGGERED_EVENT_run3physics:    
+  #   config: v001_combining_run3_new_nocdbtag.yaml
+  #   runs: [69561]
+  #   submit: off
+
+
+################################# Prod02 #######################################
+sphnxprod02:
+  #### TRKR and SEED
   defaultlocations:
     submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/submission/{rule}
     prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
     configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
 
+  # Rolling TRKR
   DST_TRKR_CLUSTER_run3physics:
     config: v001_tracking_run3_new_newcdbtag.yaml
-    runs: [69600 69700]
-    submit: off
+    runs: [69500 72000]
+    submit: on
 
-  # SEED is under construction; override locations to dev
+  # Rolling SEED
   DST_TRKR_SEED_run3physics:    
     prodbase:   /sphenix/u/sphnxpro/devkolja/sphenixprod
     configbase: /sphenix/u/sphnxpro/devkolja/ProdFlow/short/run3auau
     config: v001_tracking_run3_new_newcdbtag.yaml
-    runs: [68900 69500]
-    submit: off
+    runs: [69500 72000]
+    submit: on
 
-  # Also run physics streaming dst spider
-  DST_STREAMING_EVENT_run3physics:    
-    config: v001_combining_run3_new_nocdbtag.yaml
-    runs: [69000 72000]
-    submit: off
-    dstspider: on
-    histspider: off
+################################# Prod03 #######################################
+sphnxprod03:
+  # #### Special stuff, cosmics, laser, what have you
+  defaultlocations:
+    submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/submission/{rule}
+    prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
+    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
+    
+  # # Laser
+  # DST_STREAMING_EVENT_run3line_laser:
+  #   config: v001_combining_supplemental_run3_new_nocdbtag.yaml
+  #   runs: [69100 72000]
+  #   submit: off    
+
+  # # Calib
+  # DST_STREAMING_EVENT_run3calib:
+  #   config: v001_combining_supplemental_run3_new_nocdbtag.yaml
+  #   # runs: [69441 69444 69447 69448 69449 69451 69452 69453]
+  #   runs: [69500 72000]
+  #   submit: off
+  #   dstspider: on
+  #   histspider: on
+
+  # # Cosmics
+  # DST_TRIGGERED_EVENT_run3cosmics:
+  #   config: v001_combining_supplemental_run3_new_nocdbtag.yaml
+  #   runs: [69100 72000] 
+  #   # runlist:  /sphenix/u/sphnxpro/mainkolja/runstoproduce_june.txt ## mutually exclusive with runs
+  #   submit: off
+  #   dstspider: off
+  #   histspider: off
+
+  # DST_STREAMING_EVENT_run3cosmics:
+  #   config: v001_combining_supplemental_run3_new_nocdbtag.yaml
+  #   runs: [69100 72000]
+  #   # runlist:  /sphenix/u/sphnxpro/mainkolja/runstoproduce_june.txt ## mutually exclusive with runs
+  #   submit: off
+  #   dstspider: off
+  #   histspider: off
+
+################################# Prod04 #######################################
+sphnxprod04:
+
+  # #### Use for the one remaining MAIN process - the mop-up STREAMING spider
+  # # Currently MAIN  
+  defaultlocations:
+    submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/submission/{rule}
+    prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
+    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
+    
+  # DST_STREAMING_EVENT_run3physics:
+  #   config: v001_combining_run3_new_nocdbtag.yaml
+  #   runs: [69400 72000]
+  #   submit: off
+  #   dstspider: on
+  #   histspider: on
+    
+    
+
+
+
     
