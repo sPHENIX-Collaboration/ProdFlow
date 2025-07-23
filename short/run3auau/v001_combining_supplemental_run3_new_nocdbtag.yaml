@@ -7,7 +7,7 @@ DST_TRIGGERED_EVENT_run3cosmics:
     dsttype:    DST_TRIGGERED_EVENT
     period:     run3auau
     physicsmode: cosmics
-    dataset:    run3cosmics # could be run3physics, run3calib, etc.
+    dataset:    run3cosmics
     build:      new
     dbtag:      nocdbtag
     version:    1
@@ -17,7 +17,8 @@ DST_TRIGGERED_EVENT_run3cosmics:
     table:          datasets
     min_run_time:   300
     min_run_events: 1000
-
+    combine_seg0_only: false
+    
   job:
     script:                 run_eventcombine.sh
     arguments:             '{nevents} {outbase} {logbase} {run} {seg} {daqhost} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
@@ -34,7 +35,7 @@ DST_STREAMING_EVENT_run3cosmics:
     dsttype:    DST_STREAMING_EVENT
     period:     run3auau
     physicsmode: cosmics
-    dataset:    run3cosmics # could be run3cosmics, run3calib, etc.
+    dataset:    run3cosmics
     build:      new
     dbtag:      nocdbtag
     version:    1
@@ -44,6 +45,7 @@ DST_STREAMING_EVENT_run3cosmics:
     table:          datasets
     min_run_time:   300
     min_run_events: 1000
+    combine_seg0_only: false
     
   job:
     script:                 run_parallel_streams.sh
@@ -86,7 +88,6 @@ DST_STREAMING_EVENT_run3line_laser:
     priority:              '3500'
 
 
-
 ################################################################################
 ################################### Calib ######################################
 ################################################################################
@@ -106,6 +107,7 @@ DST_STREAMING_EVENT_run3calib:
     table:          datasets
     min_run_time:   1
     min_run_events: 1
+    combine_seg0_only: false
 
   job:
     script:                 run_parallel_streams.sh
