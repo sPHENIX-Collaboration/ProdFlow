@@ -48,7 +48,7 @@ DST_TRKR_SEED_run3physics:
     neventsper:             10000
     payload:                [tracking_code/*]
     mem:                    4096MB
-    request_cpus:          '1'
+    request_cpus:          '2'
     batch_name:            '{dsttype}_{dataset}_{outtriplet}'
     priority:              '3500'
 
