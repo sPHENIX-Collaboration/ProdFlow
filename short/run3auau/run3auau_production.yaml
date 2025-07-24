@@ -59,7 +59,7 @@ sphnxprod02:
   # Rolling TRKR
   DST_TRKR_CLUSTER_run3physics:
     config: v001_tracking_run3_new_newcdbtag.yaml
-    runs: [69500 80000]
+    runs: [68500 72000]
     submit: on
     
   # Rolling SEED
@@ -67,7 +67,7 @@ sphnxprod02:
     prodbase:   /sphenix/u/sphnxpro/devkolja/sphenixprod
     configbase: /sphenix/u/sphnxpro/devkolja/ProdFlow/short/run3auau
     config: v001_tracking_run3_new_newcdbtag.yaml
-    runs: [69500 80000]
+    runs: [68500 72000]
     submit: on
 
 ################################# Prod03 #######################################
@@ -98,28 +98,21 @@ sphnxprod03:
   # runlist:  /sphenix/u/sphnxpro/mainkolja/runstoproduce_june.txt ## mutually exclusive with runs
   DST_TRIGGERED_EVENT_run3cosmics:
     config: v001_combining_supplemental_run3_new_nocdbtag.yaml
-    runs: [69500 80000] 
+    runs: [69000 80000] 
     submit: on
 
   DST_STREAMING_EVENT_run3cosmics:
     config: v001_combining_supplemental_run3_new_nocdbtag.yaml
-    runs: [69500 80000]
+    runs: [69000 80000]
     submit: on
 
 ################################# Prod04 #######################################
 sphnxprod04:
 
-  # #### Use for the one remaining MAIN process - the mop-up STREAMING spider
+  # #### Use for Experimentation or mopup duty.
   # # Currently MAIN  
   defaultlocations:
     submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/submission/{rule}
     prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
     configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
     
-  # DST_STREAMING_EVENT_run3physics:
-  #   config: v001_combining_run3_new_nocdbtag.yaml
-  #   runs: [69400 72000]
-  #   submit: off
-  #   dstspider: on
-  #   histspider: on
-
