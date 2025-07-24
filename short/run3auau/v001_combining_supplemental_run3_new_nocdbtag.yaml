@@ -16,7 +16,7 @@ DST_TRIGGERED_EVENT_run3cosmics:
     db:             rawr
     table:          datasets
     min_run_time:   300
-    min_run_events: 1000
+    min_run_events: 100000
     combine_seg0_only: false
     
   job:
@@ -25,7 +25,7 @@ DST_TRIGGERED_EVENT_run3cosmics:
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
     payload:                [triggered_code/*]
-    mem:                    2000MB
+    mem:                    3000MB
     batch_name:            '{dsttype}_{dataset}_{outtriplet}'
     priority:              '3500'
 
@@ -44,7 +44,7 @@ DST_STREAMING_EVENT_run3cosmics:
     db:             rawr
     table:          datasets
     min_run_time:   300
-    min_run_events: 1000
+    min_run_events: 100000
     combine_seg0_only: false
     
   job:
