@@ -7,10 +7,15 @@
 # dstspider: true  # move dsts from the lake and register them; default: true
 # histspider: true # register additional .root files on gpfs; default: true
 # Note: off, on, yes, no, are also valid
+
 ## Allow overriding some parameters - only relevant for condor, i.e. submission
 # jobmem: 4096MB # default: none
 # jobprio: 10000 # default: none
 
+#### IMPORTANT: You CANNOT repeat the same rule inside the same host tag.
+####            The yaml reader picks up the first instance and silently ignores the rest.
+####            Running the same rule across multiple hosts is okay, but stick to spiders
+####            or exclusive run lists. Submission does not have a locking mechanism (yet)
 
 ################################# Prod01 #######################################
 sphnxprod01:
@@ -20,31 +25,18 @@ sphnxprod01:
     prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
     configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
 
-  # Catchup TRIGGERED production. Redoing some runs before Vernier scan 69561
-  DST_TRIGGERED_EVENT_run3physics:    
-    config: v001_combining_run3_new_nocdbtag.yaml
-    runs: [66456 69650]
-    submit: off
-
   # Rolling TRIGGERED production on dev
   DST_TRIGGERED_EVENT_run3physics:    
     config: v001_combining_run3_new_nocdbtag.yaml
-    runs: [69562 72000]
-    submit: on
-
-  # Catchup STREAMING production
-  DST_TRIGGERED_EVENT_run3physics:    
-    config: v001_combining_run3_new_nocdbtag.yaml
-    # runs: [66456 69500]
-    runs: [66456 67000]
-    # runs: [67000 69000]
-    # runs: [69000 69500]
+    runs: [66456 80000]
+    jobprio: 5000
     submit: on
 
   # Rolling STREAMING production
   DST_STREAMING_EVENT_run3physics:
     config: v001_combining_run3_new_nocdbtag.yaml
-    runs: [69500 72000]
+    runs: [67500 80000]
+    jobprio: 5000
     submit: on
 
   # Vernier. Can't be used for submission. 
@@ -67,15 +59,15 @@ sphnxprod02:
   # Rolling TRKR
   DST_TRKR_CLUSTER_run3physics:
     config: v001_tracking_run3_new_newcdbtag.yaml
-    runs: [69500 72000]
+    runs: [69500 80000]
     submit: on
-
+    
   # Rolling SEED
   DST_TRKR_SEED_run3physics:    
     prodbase:   /sphenix/u/sphnxpro/devkolja/sphenixprod
     configbase: /sphenix/u/sphnxpro/devkolja/ProdFlow/short/run3auau
     config: v001_tracking_run3_new_newcdbtag.yaml
-    runs: [69500 72000]
+    runs: [69500 80000]
     submit: on
 
 ################################# Prod03 #######################################
@@ -89,34 +81,30 @@ sphnxprod03:
   # # Laser
   # DST_STREAMING_EVENT_run3line_laser:
   #   config: v001_combining_supplemental_run3_new_nocdbtag.yaml
-  #   runs: [69100 72000]
+  #   runs: [69100 80000]
   #   submit: off    
 
   # # Calib
   # DST_STREAMING_EVENT_run3calib:
   #   config: v001_combining_supplemental_run3_new_nocdbtag.yaml
   #   # runs: [69441 69444 69447 69448 69449 69451 69452 69453]
-  #   runs: [69500 72000]
+  #   runs: [69500 80000]
   #   submit: off
   #   dstspider: on
   #   histspider: on
 
-  # # Cosmics
-  # DST_TRIGGERED_EVENT_run3cosmics:
-  #   config: v001_combining_supplemental_run3_new_nocdbtag.yaml
-  #   runs: [69100 72000] 
-  #   # runlist:  /sphenix/u/sphnxpro/mainkolja/runstoproduce_june.txt ## mutually exclusive with runs
-  #   submit: off
-  #   dstspider: off
-  #   histspider: off
+  # Cosmics
+  # It's possible to use:
+  # runlist:  /sphenix/u/sphnxpro/mainkolja/runstoproduce_june.txt ## mutually exclusive with runs
+  DST_TRIGGERED_EVENT_run3cosmics:
+    config: v001_combining_supplemental_run3_new_nocdbtag.yaml
+    runs: [69500 80000] 
+    submit: on
 
-  # DST_STREAMING_EVENT_run3cosmics:
-  #   config: v001_combining_supplemental_run3_new_nocdbtag.yaml
-  #   runs: [69100 72000]
-  #   # runlist:  /sphenix/u/sphnxpro/mainkolja/runstoproduce_june.txt ## mutually exclusive with runs
-  #   submit: off
-  #   dstspider: off
-  #   histspider: off
+  DST_STREAMING_EVENT_run3cosmics:
+    config: v001_combining_supplemental_run3_new_nocdbtag.yaml
+    runs: [69500 80000]
+    submit: on
 
 ################################# Prod04 #######################################
 sphnxprod04:
@@ -134,9 +122,4 @@ sphnxprod04:
   #   submit: off
   #   dstspider: on
   #   histspider: on
-    
-    
 
-
-
-    
