@@ -1,10 +1,10 @@
 #______________________________________________________________________________________________________________________
-DST_TRKR_CLUSTER_run3physics:
+DST_CALOFITTING_run3physics:
   params:
-    dsttype:     DST_TRKR_CLUSTER
+    dsttype:     DST_CALOFITTING
     period:      run3auau
     physicsmode: physics
-    dataset:     run3auau # could be run3cosmics, run3calib, etc.
+    dataset:     run3auau
     build:       new
     dbtag:       newcdbtag
     version:     666
@@ -18,18 +18,13 @@ DST_TRKR_CLUSTER_run3physics:
     script:                 run_singlejob0.sh
     arguments:             '{nevents} {outbase} {logbase} {inbase} {run} {seg} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
     log:                   '{condor}/{logbase}.condor'
-    neventsper:             10000
-    payload:                [tracking_code/*]
-    mem:                    16384MB
+    neventsper:             100000
+    payload:                [calo_code/*]
+    mem:                    2500MB
+    request_cpus:          '1'
     batch_name:            '{dsttype}_{dataset}_{outtriplet}'
     priority:              '3500'
-#    comment :              'Throwaway production for testing'
 
-
-###############################################################################################
-###############################################################################################
-###############################################################################################
-###############################################################################################
 ###############################################################################################
 ###############################################################################################
 

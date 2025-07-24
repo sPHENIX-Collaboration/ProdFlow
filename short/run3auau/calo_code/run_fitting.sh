@@ -12,26 +12,23 @@ if [ "$#" -lt "$MIN_ARG_COUNT" ] || [ "$#" -gt "$MAX_ARG_COUNT" ] ; then
     echo "Error: Incorrect number of arguments."
     echo "Expected $MIN_ARG_COUNT--$MAX_ARG_COUNT, but received $#."
     echo "Arguments received: $@"
-    # argv=("$@")
-    # for i in `seq 1 16` ; do 
-    # 	echo $i ${argv[i]}
-    # done	
-    echo "Usage: $0 <nevents> <outbase> <logbase> <dsttype> <run> <seg> <outdir> <finaldir> <buildarg> <dbtag> <inputs> <dataset> <neventsper> <log_dir> <comment_str> <hist_dir> <condor_rsync_val> [dbid]"
+    echo "Usage: $0 <nevents> <outbase> <logbase> <inbase> <run> <seg> <outdir> <finaldir> <buildarg> <tag> <inputs> <ranges_str> <neventsper> <log_dir> <comment_str> <hist_dir> <condor_rsync_val>"
     exit 1
 fi
+
 
 # Parse arguments using shift
 nevents="$1"; shift
 outbase="$1"; shift
 logbase="$1"; shift
-dsttype="$1"; shift
+inbase="$1"; shift
 runnumber="$1"; shift
 segment="$1"; shift
 outdir="$1"; shift
 finaldir="$1"; shift
 buildarg="$1"; shift
 dbtag="$1"; shift
-dataset="$1"; shift
+inputs="$1"; shift
 ranges="$1"; shift
 neventsper="$1"; shift
 logdir="$1"; shift
@@ -44,19 +41,20 @@ condor_rsync=`echo $condor_rsync|sed 's/,/ /g'` # Change from comma separation
 dbid=${1:--1};shift            # dbid for faster db lookup, -1 means no dbid
 export PRODDB_DBID=$dbid
 
+
 # Variables for the script
 echo "Processing job with the following parameters:"
 echo "---------------------------------------------"
 echo "Number of events to process (nevents): $nevents"
 echo "Output base name (outbase):            $outbase"
 echo "Log base name (logbase):               $logbase"
-echo "Input name maske (dsttype):            $dsttype"
+echo "Input name maske (inbase):             $inbase"
 echo "Run number (run):                      $runnumber"
 echo "Segment number (seg):                  $segment"
 echo "Output directory (outdir):             $outdir"
 echo "Final destination (finaldir):          $finaldir   (not used)"
 echo "Build argument (buildarg):             $buildarg"
-echo "Tag (dbtag):                           $dbtag"
+echo "Tag (tag):                             $dbtag"
 echo "Ranges string (ranges):                $ranges_string"
 echo "Events per sub-job (neventsper):       $neventsper"
 echo "Log directory (logdir):                $logdir"
@@ -78,12 +76,15 @@ trap sighandler SIGINT
 # SIGKILL can't be trapped
 
 # stage in the payload files
-#cd $_CONDOR_SCRATCH_DIR
+cd $_CONDOR_SCRATCH_DIR
 echo Copying payload data to `pwd`
 for f in ${condor_rsync}; do
-    cp --verbose -r  $f . 
+    cp --verbose -r $f . 
 done
+ls -ltra
 echo "---------------------------------------------"
+
+
 
 export USER="$(id -u -n)"
 export LOGNAME=${USER}
@@ -115,24 +116,17 @@ else
      echo No odbc.ini file detected.  Using system odbc.ini
 fi
 
+
 echo "---------------------------------------------"
-echo "Running clustering (job0) for run ${run_number}, seg {segment}"
+echo "Running CALOFITTING for run ${run_number}, seg {segment}"
 echo "---------------------------------------------"
 echo "--- Collecting input files"
-dataset=run3auau
-echo dataset=$dataset
-echo dsttype=$dsttype
-echo dbtag=$dbtag
-
+echo inbase=$inbase
 echo runnumber=$runnumber
 echo segment=$segment
 
-make_filelists="./create_full_filelist_run_seg.py $dataset $dbtag $dsttype $runnumber $segment"
-echo "$make_filelists"
-eval "$make_filelists"
-
-exit 0
-
+echo 'create_filelist_run_seg.py $inbase $runnumber $segment'
+./create_filelist_run_seg.py $inbase $runnumber $segment
 ls -la *.list
 echo end of ls -la '*.list'
 for l in *list; do
@@ -140,40 +134,91 @@ for l in *list; do
     cat $l
 done
 
-ls *.json 2>&1
-if [ -e sPHENIX_newcdb_test.json ]; then
-    echo "... setting user provided conditions database config"
-    export NOPAYLOADCLIENT_CONF=./sPHENIX_newcdb_test.json
-fi
+exit
 
-echo NOPAYLOADCLIENT_CONF=${NOPAYLOADCLIENT_CONF}
 
-echo root.exe -q -b Fun4All_SingleJob0.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"infile.list\"\)
-root.exe -q -b Fun4All_SingleJob0.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"infile.list\"\);  status_f4a=$?
 
-ls -la
+nevents=-1
+status_f4a=0
 
-echo ./stageout.sh ${logbase}.root ${outdir}
-./stageout.sh ${logbase}.root ${outdir}
+for infile_ in ${inputs[@]}; do
+    outfile=${logbase}.root
+    outhist=${outfile/DST_CALOFITTING/HIST_CALOFITTINGQA}
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
+    
+    root.exe -q -b Fun4All_Year2_Fitting.C\(${nevents},\"${infile}\",\"${outfile}\",\"${outhist}\",\"${dbtag}\"\);  status_f4a=$?
 
-for hfile in HIST_*.root; do
-    echo stageout.sh ${hfile} to ${histdir}
-    ./stageout.sh ${hfile} ${histdir}
+    nevents=${nevents_:--1}
+    echo Stageout ${outfile} to ${outdir}
+        ./stageout.sh ${outfile} ${outdir}
+ 
+    for hfile in `ls HIST_*.root`; do
+	echo Stageout ${hfile} to ${histdir}
+        ./stageout.sh ${hfile} ${histdir}
+    done
+
+done
+    
+
+exit ${status_f4a}
+
+
+
+
+
+
+
+
+
+
+
+dstname=${logbase%%-*}
+
+out0=${logbase}.root
+out1=HIST_${logbase#DST_}.root
+
+nevents=-1
+status_f4a=0
+
+for infile_ in ${inputs[@]}; do
+
+#   infile=$( basename ${infile_} )
+#   cp -v ${infile_} .
+    infile=$infile_
+    
+    outfile=${logbase}.root
+    outhist=${outfile/DST_CALOFITTING/HIST_CALOFITTINGQA}
+./cups.py -r ${runnumber} -s ${segment} -d ${outbase} running
+    
+    root.exe -q -b Fun4All_Year2_Fitting.C\(${nevents},\"${infile}\",\"${outfile}\",\"${outhist}\",\"${dbtag}\"\);  status_f4a=$?
+
+    nevents=${nevents_:--1}
+    echo Stageout ${outfile} to ${outdir}
+        ./stageout.sh ${outfile} ${outdir}
+ 
+    for hfile in `ls HIST_*.root`; do
+	echo Stageout ${hfile} to ${histdir}
+        ./stageout.sh ${hfile} ${histdir}
+    done
+
 done
 
-ls -la
+ls -lah
 
-echo done
-exit ${status_f4a:-1}
-
-
-# # Flag run as finished. 
-# echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${nevents}  
-#      ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${nevents}
-
-# echo "bdee bdee bdee, That's All Folks!"
-
-# } >> ${logdir#file:/}/${logbase}.out  2>${logdir#file:/}/${logbase}.err
+#______________________________________________________________________________________ finished __
+echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${nevents} --inc 
+     ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${nevents} --inc 
+#_________________________________________________________________________________________________
 
 
-# exit ${status_f4a:-1}
+
+echo "bdee bdee bdee, That's All Folks!"
+
+} > ${logdir#file:/}/${logbase}.out 2> ${logdir#file:/}/${logbase}.err
+
+if [ -e cups.stat ]; then
+    cp cups.stat ${logdir#file:/}/${logbase}.dbstat
+fi
+
+
+exit ${status_f4a}
