@@ -64,8 +64,8 @@ sphnxprod02:
     
   # Rolling SEED
   DST_TRKR_SEED_run3physics:    
-    prodbase:   /sphenix/u/sphnxpro/devkolja/sphenixprod
-    configbase: /sphenix/u/sphnxpro/devkolja/ProdFlow/short/run3auau
+    prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
+    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
     config: v001_tracking_run3_new_newcdbtag.yaml
     runs: [68500 72000]
     submit: on
