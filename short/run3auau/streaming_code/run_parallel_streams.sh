@@ -137,7 +137,7 @@ shopt -s nullglob
 set -- *gl1*.list
 if [[ $# != 1 ]] ; then
     echo "Multiple or no GL1 files found:" >&2
-    ls -l `echo $@`                        >$2
+    ls -l `echo $@`                        >&2
     echo Stop.                             >&2
     # ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e 111 --nevents 0 --inc 
     exit 111
@@ -148,10 +148,11 @@ inttfile=""
 mvtxfile=""
 ebdcfile=""
 tpotfile=""
+ls -l | grep list
 set -- `find . -maxdepth 1 -name \*.list -a -not -name $gl1file`
 if [[ $# != 1 ]] ; then
     echo "Multiple or not enough .list files found:"     >&2
-    ls -l `echo $@`                        >$2
+    ls -l `echo $@`                        >&2
     echo Stop.                             >&2
     # ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e 111 --nevents 0 --inc 
     exit 111
