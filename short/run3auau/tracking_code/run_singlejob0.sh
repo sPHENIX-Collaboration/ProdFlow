@@ -1,20 +1,22 @@
 #!/usr/bin/env bash
 
 ## Tedium common to all run scripts. Important, source, not execute!
-echo hello
-. ./common_runscript_prep.sh
+echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_prep.sh
+. ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_prep.sh
 echo "Initialization done; back in $0"
-echo "Running clustering (job0) for run ${run_number}, seg {segment}"
+##
+
+echo "Running clustering (job0) for run ${run}, seg ${seg}"
 echo "---------------------------------------------"
 echo "--- Collecting input files"
 echo dataset=$dataset
 echo dsttype=$dsttype
-echo dbtag=$dbtag
+echo intriplet=$intriplet
 echo run=$run
-echo seg=$se
+echo seg=$seg
 echo "---------------------------------------------"
 
-make_filelists="./create_full_filelist_run_seg.py $dataset $dbtag $dsttype $run $seg"
+make_filelists="./create_full_filelist_run_seg.py $dataset $intriplet $dsttype $run $seg"
 echo "$make_filelists"
 eval "$make_filelists"
 
@@ -22,7 +24,7 @@ shopt -s nullglob
 listsfound="$(echo *.list)"
 shopt -u nullglob
 if [[ -n $listsfound ]]; then
-    echo "Found json file(s):" 
+    echo "Found list file(s):" 
     ls -la *.list
     for l in *list; do
 	echo ---
@@ -32,12 +34,12 @@ if [[ -n $listsfound ]]; then
     echo ---
 fi
 
-run_macro='root.exe -q -b Fun4All_SingleJob0.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"infile.list\"\);'
-echo $run_macro
-eval $run_macro
-exit
-# echo root.exe -q -b Fun4All_SingleJob0.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"infile.list\"\)
-# root.exe -q -b Fun4All_SingleJob0.C\(${nevents},${runnumber},\"${logbase}.root\",\"${dbtag}\",\"infile.list\"\);  status_f4a=$?
+root_line="Fun4All_SingleJob0.C(${nevents},${run},\"${logbase}.root\",\"${dbtag}\",\"infile.list\")"
+full_command="root.exe -q -b '${root_line}'"
+
+echo "--- Executing macro"
+echo "${full_command}"
+eval "${full_command}" ;  status_f4a=$?
 
 ls -la
 
@@ -51,17 +53,6 @@ done
 
 ls -la
 
-echo done
+echo All done
 exit ${status_f4a:-1}
 
-
-# # Flag run as finished. 
-# echo ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${nevents}  
-#      ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e ${status_f4a} --nevents ${nevents}
-
-# echo "bdee bdee bdee, That's All Folks!"
-
-# } >> ${logdir#file:/}/${logbase}.out  2>${logdir#file:/}/${logbase}.err
-
-
-# exit ${status_f4a:-1}

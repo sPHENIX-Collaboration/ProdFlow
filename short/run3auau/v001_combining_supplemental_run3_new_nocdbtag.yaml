@@ -21,11 +21,12 @@ DST_TRIGGERED_EVENT_run3cosmics:
     
   job:
     script:                 run_eventcombine.sh
-    arguments:             '{nevents} {outbase} {logbase} {run} {seg} {daqhost} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
+    # arguments:             '{nevents} {outbase} {logbase} {run} {seg} {daqhost} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
     payload:                [triggered_code/*]
-    mem:                    3000MB
+    request_memory:         2024MB
+    request_xferslots:     '1'
     batch_name:            '{dsttype}_{dataset}_{outtriplet}'
     priority:              '3500'
 
@@ -49,11 +50,12 @@ DST_STREAMING_EVENT_run3cosmics:
     
   job:
     script:                 run_parallel_streams.sh
-    arguments:             '{nevents} {outbase} {logbase} {run} {seg} {daqhost} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
+    # arguments:             '{nevents} {outbase} {logbase} {run} {seg} {daqhost} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
     payload:                [streaming_code/*]
-    mem:                    2024MB
+    request_memory:         2024MB
+    request_xferslots:     '1'
     batch_name:            '{dsttype}_{dataset}_{outtriplet}'
     priority:              '3500'
 
@@ -79,11 +81,12 @@ DST_STREAMING_EVENT_run3line_laser:
 
   job:
     script:                 run_parallel_streams.sh
-    arguments:             '{nevents} {outbase} {logbase} {run} {seg} {daqhost} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
+    # arguments:             '{nevents} {outbase} {logbase} {run} {seg} {daqhost} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
     payload:                [streaming_code/*]
-    mem:                    2024MB
+    request_memory:         2024MB
+    request_xferslots:     '1'
     batch_name:            '{dsttype}_{dataset}_{outtriplet}'
     priority:              '3500'
 
@@ -111,11 +114,12 @@ DST_STREAMING_EVENT_run3calib:
 
   job:
     script:                 run_parallel_streams.sh
-    arguments:             '{nevents} {outbase} {logbase} {run} {seg} {daqhost} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
+    # arguments:             '{nevents} {outbase} {logbase} {run} {seg} {daqhost} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
     payload:                [streaming_code/*]
-    mem:                    2024MB
+    request_memory:         2024MB
+    request_xferslots:     '1'    
     batch_name:            '{dsttype}_{dataset}_{outtriplet}'
     priority:              '4000'
 
