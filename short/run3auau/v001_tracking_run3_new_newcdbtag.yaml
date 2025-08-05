@@ -16,14 +16,14 @@ DST_TRKR_CLUSTER_run3physics:
 
   job:
     script:                 run_singlejob0.sh
-    arguments:             '{nevents} {outbase} {logbase} {inbase} {run} {seg} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
+    # arguments:             '{nevents} {outbase} {logbase} {inbase} {run} {seg} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
     payload:                [tracking_code/*]
-    mem:                    12228MB
+    request_memory:         12228MB
     request_cpus:          '4'
     batch_name:            '{dsttype}_{dataset}_{outtriplet}'
-    priority:              '3500'
+    priority:              '5000'
 
 #______________________________________________________________________________________________________________________
 DST_TRKR_SEED_run3physics:
@@ -43,11 +43,11 @@ DST_TRKR_SEED_run3physics:
 
   job:
     script:                 run_jobA.sh
-    arguments:             '{nevents} {outbase} {logbase} {inbase} {run} {seg} {outdir} {finaldir} {buildarg} {tag} {inputs} {neventsper} {logdir} {histdir} {payload}'
+    # arguments:             '{nevents} {outbase} {logbase} {inbase} {run} {seg} {outdir} {finaldir} {buildarg} {tag} {inputs} {neventsper} {logdir} {histdir} {payload}'
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
     payload:                [tracking_code/*]
-    mem:                    4096MB
+    request_memory:         4096MB
     request_cpus:          '2'
     batch_name:            '{dsttype}_{dataset}_{outtriplet}'
     priority:              '3500'

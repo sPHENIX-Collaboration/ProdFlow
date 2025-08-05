@@ -20,15 +20,10 @@
 ################################# Prod01 #######################################
 sphnxprod01:
   #### Standard combination production
-  #turn on dev for a minute
   defaultlocations:
     submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/submission/{rule}
     prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
     configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
-  # defaultlocations:
-  #   submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/submission/{rule}
-  #   prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
-  #   configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
 
   # Rolling TRIGGERED production
   DST_TRIGGERED_EVENT_run3physics:    
@@ -57,35 +52,26 @@ sphnxprod01:
 ################################# Prod02 #######################################
 sphnxprod02:
   #### TRKR and SEED
-  # defaultlocations:
-  #   submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/submission/{rule}
-  #   prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
-  #   configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
-  #turn on dev for a minute
   defaultlocations:
     submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/submission/{rule}
-    prodbase:   /sphenix/u/sphnxpro/devkolja/sphenixprod
-    configbase: /sphenix/u/sphnxpro/devkolja/ProdFlow/short/run3auau
+    prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
+    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
     
   # Rolling TRKR
   DST_TRKR_CLUSTER_run3physics:
     config: v001_tracking_run3_new_newcdbtag.yaml
-    # runs: [68500 99000]
-    runs: [71200 72000]
+    runs: [68500 99000]
     submit: off
-
+    
   # Rolling SEED
   DST_TRKR_SEED_run3physics:    
-    prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
-    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
     config: v001_tracking_run3_new_newcdbtag.yaml
-    # runs: [68500 99000]
-    runs: [71200 72000]
+    runs: [68500 99000]
     submit: off
 
 ################################# Prod03 #######################################
 sphnxprod03:
-  # #### Special stuff, cosmics, laser, what have you
+  # #### Special stuff, laser, etc.
   defaultlocations:
     submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/submission/{rule}
     prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
@@ -105,6 +91,13 @@ sphnxprod03:
     dstspider: on
     histspider: on
 
+################################# Prod04 #######################################
+sphnxprod04:
+  defaultlocations:
+    submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/submission/{rule}
+    prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
+    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
+  
   # Cosmics
   # It's possible to use:
   # runlist:  /sphenix/u/sphnxpro/mainkolja/runstoproduce_june.txt ## mutually exclusive with runs
@@ -116,28 +109,6 @@ sphnxprod03:
   DST_STREAMING_EVENT_run3cosmics:
     config: v001_combining_supplemental_run3_new_nocdbtag.yaml
     runs: [66456 99000]
-    submit: off
-
-################################# Prod04 #######################################
-sphnxprod04:
-
-  # #### Use for Experimentation or mopup duty.
-  # # Currently MAIN  
-  defaultlocations:
-    submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/submission/{rule}
-    prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
-    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
-
-  # Reference cosmics
-  DST_TRIGGERED_EVENT_run3cosmics:
-    config: v001_combining_supplemental_run3_new_nocdbtag.yaml
-    # runlist:  /sphenix/u/sphnxpro/mainkolja/runstoproduce_june.txt ## mutually exclusive with runs
-    runs: [65000 66455]
-    submit: off
-
-  DST_STREAMING_EVENT_run3cosmics:
-    config: v001_combining_supplemental_run3_new_nocdbtag.yaml
-    runs: [65000 66455]
     submit: off
 
   

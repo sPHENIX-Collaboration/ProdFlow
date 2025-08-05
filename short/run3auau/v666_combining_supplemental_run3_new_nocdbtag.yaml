@@ -10,7 +10,7 @@ DST_TRIGGERED_EVENT_run3cosmics:
     dataset:    run3cosmics
     build:      new
     dbtag:      nocdbtag
-    version:    1
+    version:    666
 
   input:
     db:             rawr
@@ -25,7 +25,7 @@ DST_TRIGGERED_EVENT_run3cosmics:
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
     payload:                [triggered_code/*]
-    request_memory:         2024MB
+    request_memory:         3000MB
     request_xferslots:     '1'
     batch_name:            '{dsttype}_{dataset}_{outtriplet}'
     priority:              '3500'
@@ -39,7 +39,7 @@ DST_STREAMING_EVENT_run3cosmics:
     dataset:    run3cosmics
     build:      new
     dbtag:      nocdbtag
-    version:    1
+    version:    666
 
   input:
     db:             rawr
@@ -71,7 +71,7 @@ DST_STREAMING_EVENT_run3line_laser:
     dataset:    run3line_laser # could be run3cosmics, run3calib, etc.
     build:      new
     dbtag:      nocdbtag
-    version:    1
+    version:    666
 
   input:
     db:             rawr
@@ -103,7 +103,7 @@ DST_STREAMING_EVENT_run3calib:
     dataset:    run3calib
     build:      new
     dbtag:      nocdbtag
-    version:    1
+    version:    666
 
   input:
     db:             rawr
@@ -118,7 +118,7 @@ DST_STREAMING_EVENT_run3calib:
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
     payload:                [streaming_code/*]
-    request_memory:         2024MB
+    request_memory:         8096MB
     request_xferslots:     '1'    
     batch_name:            '{dsttype}_{dataset}_{outtriplet}'
     priority:              '4000'
