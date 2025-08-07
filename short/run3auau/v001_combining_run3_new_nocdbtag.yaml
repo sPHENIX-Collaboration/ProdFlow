@@ -12,6 +12,10 @@ DST_TRIGGERED_EVENT_run3physics:
   input:
     db:          rawr
     table:       datasets
+    min_run_time:   300
+    min_run_events: 100000
+    combine_seg0_only: true
+    choose20:       true
 
   job:
     script:                 run_eventcombine.sh
@@ -20,7 +24,7 @@ DST_TRIGGERED_EVENT_run3physics:
     neventsper:             10000
     payload:                [triggered_code/*]
     request_memory:         2024MB
-    request_xferslots:     '1'    
+    request_xferslots:     '3'    
     batch_name:            '{dsttype}_{dataset}_{outtriplet}'
     priority:              '3500'
 
@@ -38,6 +42,10 @@ DST_STREAMING_EVENT_run3physics:
   input:
     db:          rawr
     table:       datasets
+    min_run_time:   300
+    min_run_events: 100000
+    combine_seg0_only: true
+    choose20:       true
 
   job:
     script:                 run_parallel_streams.sh
@@ -46,6 +54,6 @@ DST_STREAMING_EVENT_run3physics:
     neventsper:             10000
     payload:                [streaming_code/*]
     request_memory:         2024MB
-    request_xferslots:     '1'    
+    request_xferslots:     '3'    
     batch_name:            '{dsttype}_{dataset}_{outtriplet}'
     priority:              '3500'
