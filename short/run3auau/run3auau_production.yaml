@@ -35,7 +35,7 @@ sphnxprod01:
   DST_STREAMING_EVENT_run3cosmics:
     config: v001_combining_supplemental_run3_new_nocdbtag.yaml
     runs: [70000 99000]
-    submit: on
+    submit: off
 
 ################################# Prod02 #######################################
 sphnxprod02:
@@ -49,13 +49,13 @@ sphnxprod02:
   DST_STREAMING_EVENT_run3line_laser:
     config: v001_combining_supplemental_run3_new_nocdbtag.yaml
     runs: [69100 99000]
-    submit: on
+    submit: off
 
   # Calib
   DST_STREAMING_EVENT_run3calib:
     config: v001_combining_supplemental_run3_new_nocdbtag.yaml
     runs: [69500 88000]
-    submit: on
+    submit: off
 
 ################################# Prod03 #######################################    
 sphnxprod03:
@@ -69,13 +69,13 @@ sphnxprod03:
   DST_TRKR_CLUSTER_run3physics:
     config: v001_tracking_run3_new_newcdbtag.yaml
     runs: [70000 99000]
-    submit: on
+    submit: off
 
   # Rolling SEED
   DST_TRKR_SEED_run3physics:    
     config: v001_tracking_run3_new_newcdbtag.yaml
     runs: [70000 99000]
-    submit: on
+    submit: off
     
 ################################# Prod04 #######################################
 sphnxprod04:
@@ -98,7 +98,7 @@ sphnxprod04:
     runs: [67500 99000]
     jobprio: 5000
     # jobmem: 4000MB
-    submit: on
+    submit: off
 
   # Vernier. Can't be used for submission. 
   # Either needs "combine_seg0_only: false" in a special yaml,
