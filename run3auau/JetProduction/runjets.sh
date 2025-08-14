@@ -106,8 +106,8 @@ for infile_ in ${inputs[@]}; do
     outhist=${out0/DST/HIST}
 
     echo ${infile} > input.list
-    echo root.exe -q -b Fun4All_JetProductionYear2.C\(${nevents},\"input.list\",\"${outfile}\",\"${outhist}\",\"${dbtag}\"\)
-         root.exe -q -b Fun4All_JetProductionYear2.C\(${nevents},\"input.list\",\"${outfile}\",\"${outhist}\",\"${dbtag}\"\);  status_f4a=$?
+    echo root.exe -q -b Fun4All_CaloJetProductionYear3.C\(${nevents},\"input.list\",\"${outfile}\",\"${outhist}\",\"${dbtag}\"\)
+         root.exe -q -b Fun4All_CaloJetProductionYear3.C\(${nevents},\"input.list\",\"${outfile}\",\"${outhist}\",\"${dbtag}\"\);  status_f4a=$?
 
     ls -l
 
