@@ -152,10 +152,10 @@ void reconstruct_ppi_mass()
 {
   Fun4AllServer *se = Fun4AllServer::instance();
 
+  std::string ppi_reconstruction_name = "ppi_reco";
   KFParticle_sPHENIX *kfparticle = new KFParticle_sPHENIX(ppi_reconstruction_name);
-  kfparticle->Verbosity(VERBOSITY_HF);
 
-  kfparticle->setDecayDescriptor(ppi_decay_descriptor);
+  kfparticle->setDecayDescriptor("[Lambda0 -> proton^+ pi^-]cc");
   kfparticle->saveOutput(false);
 
   kfparticle->usePID();
