@@ -118,77 +118,8 @@ void Fun4All_JobA(
   // reject laser events if G4TPC::REJECT_LASER_EVENTS is true
   Reject_Laser_Events();
 
-/*
-   * Silicon Seeding
-   */
-  auto silicon_Seeding = new PHActsSiliconSeeding;
-  silicon_Seeding->Verbosity(0);
-  silicon_Seeding->setStrobeRange(-5,5);
-  silicon_Seeding->seedAnalysis(false);
-  silicon_Seeding->setinttRPhiSearchWindow(0.2);
-  silicon_Seeding->setinttZSearchWindow(1.0);
-  se->registerSubsystem(silicon_Seeding);
+  Tracking_Reco_TrackSeed_run2pp();
 
-  auto merger = new PHSiliconSeedMerger;
-  merger->Verbosity(0);
-  se->registerSubsystem(merger);
-
-  /*
-   * Tpc Seeding
-   */
-  auto seeder = new PHCASeeding("PHCASeeding");
-  double fieldstrength = std::numeric_limits<double>::quiet_NaN();  // set by isConstantField if constant
-  bool ConstField = isConstantField(G4MAGNET::magfield_tracking, fieldstrength);
-  if (ConstField)
-  {
-    seeder->useConstBField(true);
-    seeder->constBField(fieldstrength);
-  }
-  else
-  {
-    seeder->set_field_dir(-1 * G4MAGNET::magfield_rescale);
-    seeder->useConstBField(false);
-    seeder->magFieldFile(G4MAGNET::magfield_tracking);  // to get charge sign right
-  }
-  seeder->Verbosity(0);
-  seeder->reject_zsize1_clusters(true);
-  seeder->SetLayerRange(7, 55);
-  seeder->SetSearchWindow(2.0, 0.05);  // (z width, phi width)
-  seeder->SetMinHitsPerCluster(0);
-  seeder->SetClusAdd_delta_window(3.0,0.06);
-  seeder->SetMinClustersPerTrack(3);
-  seeder->useFixedClusterError(true);
-  seeder->set_pp_mode(true);
-  se->registerSubsystem(seeder);
-
-  // expand stubs in the TPC using simple kalman filter
-  auto cprop = new PHSimpleKFProp("PHSimpleKFProp");
-  cprop->set_field_dir(G4MAGNET::magfield_rescale);
-  if (ConstField)
-  {
-    cprop->useConstBField(true);
-    cprop->setConstBField(fieldstrength);
-  }
-  else
-  {
-    cprop->magFieldFile(G4MAGNET::magfield_tracking);
-    cprop->set_field_dir(-1 * G4MAGNET::magfield_rescale);
-  }
-  cprop->useFixedClusterError(true);
-  cprop->set_max_window(5.);
-  cprop->set_max_seeds(5000);
-  cprop->Verbosity(0);
-  cprop->set_pp_mode(true);
-  se->registerSubsystem(cprop);
-
-
-  // apply preliminary distortion corrections to TPC clusters before crossing is known
-  // and refit the trackseeds. Replace KFProp fits with the new fit parameters in the TPC seeds.
-  auto prelim_distcorr = new PrelimDistortionCorrection;
-  prelim_distcorr->set_pp_mode(true);
-  prelim_distcorr->Verbosity(0);
-  se->registerSubsystem(prelim_distcorr);
-  
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfilename);
   out->AddNode("Sync");
   out->AddNode("EventHeader");
