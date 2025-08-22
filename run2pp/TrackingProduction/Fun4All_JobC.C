@@ -222,10 +222,10 @@ void reconstruct_Kpi_mass()
   //PV to SV cuts
   kfparticle->constrainToPrimaryVertex(true);
   kfparticle->setMotherIPchi2(100);
-  kfparticle->setMotherIP(100);
-  kfparticle->setMotherIP_XY(0.005);
+  kfparticle->setMotherIP(0.01);
+  kfparticle->setMotherIP_XY(100);
   kfparticle->setFlightDistancechi2(5);
-  kfparticle->setMinDIRA(0.9);
+  kfparticle->setMinDIRA(0.8);
   kfparticle->setMinDIRA_XY(-1.1);
   kfparticle->setDecayLengthRange_XY(0.005, FLT_MAX);
 
