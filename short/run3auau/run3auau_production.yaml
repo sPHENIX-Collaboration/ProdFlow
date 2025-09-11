@@ -30,13 +30,20 @@ sphnxprod01:
   DST_TRIGGERED_EVENT_run3cosmics:
     config: v001_combining_supplemental_run3_new_nocdbtag.yaml
     runs: [70000 99000] 
-    submit: off
+    submit: on
 
   DST_STREAMING_EVENT_run3cosmics:
     config: v001_combining_supplemental_run3_new_nocdbtag.yaml
     runs: [70000 99000]
-    submit: off
+    submit: on
 
+  # Rolling TRKR
+  DST_TRKR_CLUSTER_run3physics:
+    config: v001_tracking_run3_new_newcdbtag.yaml
+    runs: [70000 99000]
+    submit: on
+
+    
 ################################# Prod02 #######################################
 sphnxprod02:
   defaultlocations:
@@ -48,14 +55,14 @@ sphnxprod02:
   # Laser
   DST_STREAMING_EVENT_run3line_laser:
     config: v001_combining_supplemental_run3_new_nocdbtag.yaml
-    runs: [69100 99000]
-    submit: off
+    runs: [73000 99000]
+    submit: on
 
   # Calib
   DST_STREAMING_EVENT_run3calib:
     config: v001_combining_supplemental_run3_new_nocdbtag.yaml
-    runs: [69500 88000]
-    submit: off
+    runs: [73000 99000]
+    submit: on
 
 ################################# Prod03 #######################################    
 sphnxprod03:
@@ -65,17 +72,11 @@ sphnxprod03:
     prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
     configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
     
-  # Rolling TRKR
-  DST_TRKR_CLUSTER_run3physics:
-    config: v001_tracking_run3_new_newcdbtag.yaml
-    runs: [70000 99000]
-    submit: off
-
   # Rolling SEED
   DST_TRKR_SEED_run3physics:    
     config: v001_tracking_run3_new_newcdbtag.yaml
     runs: [70000 99000]
-    submit: off
+    submit: on
     
 ################################# Prod04 #######################################
 sphnxprod04:
@@ -88,22 +89,14 @@ sphnxprod04:
   # Rolling TRIGGERED production
   DST_TRIGGERED_EVENT_run3physics:    
     config: v001_combining_run3_new_nocdbtag.yaml
-    runs: [66456 99000]
+    runs: [73000 99000]
     jobprio: 5000
-    submit: off
+    submit: on
 
   # Rolling STREAMING production
   DST_STREAMING_EVENT_run3physics:
     config: v001_combining_run3_new_nocdbtag.yaml
-    runs: [67500 99000]
+    runs: [72000 99000]
     jobprio: 5000
     # jobmem: 4000MB
-    submit: off
-
-  # Vernier. Can't be used for submission. 
-  # Either needs "combine_seg0_only: false" in a special yaml,
-  # or better just submit this run with '--no-onlyseg0'
-  # DST_TRIGGERED_EVENT_run3physics:    
-  #   config: v001_combining_run3_new_nocdbtag.yaml
-  #   runs: [69561]
-  #   submit: off
+    submit: on

@@ -15,7 +15,6 @@ DST_TRIGGERED_EVENT_run3physics:
     min_run_time:   300
     min_run_events: 100000
     combine_seg0_only: true
-    choose20:       true
 
   job:
     script:                 run_eventcombine.sh
@@ -45,7 +44,6 @@ DST_STREAMING_EVENT_run3physics:
     min_run_time:   300
     min_run_events: 100000
     combine_seg0_only: true
-    choose20:       true
 
   job:
     script:                 run_parallel_streams.sh
