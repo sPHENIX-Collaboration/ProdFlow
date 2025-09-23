@@ -25,24 +25,33 @@ sphnxprod01:
     configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau    
 
   # Cosmics
-  # It's possible to use:
-  # runlist:  /sphenix/u/sphnxpro/mainkolja/runstoproduce_june.txt ## mutually exclusive with runs
   DST_TRIGGERED_EVENT_run3cosmics:
     config: v001_combining_supplemental_run3_new_nocdbtag.yaml
     runs: [70000 99000] 
     submit: on
+    dstspider: off
+
 
   DST_STREAMING_EVENT_run3cosmics:
     config: v001_combining_supplemental_run3_new_nocdbtag.yaml
     runs: [70000 99000]
     submit: on
+    dstspider: off
 
-  # Rolling TRKR
-  DST_TRKR_CLUSTER_run3physics:
-    config: v001_tracking_run3_new_newcdbtag.yaml
-    runs: [70000 99000]
-    submit: on
+  # # Rolling TRKR
+  # DST_TRKR_CLUSTER_run3physics:
+  #   config: v001_tracking_run3_new_newcdbtag.yaml
+  #   runs: [70000 99000]
+  #   submit: off
 
+  # Repro CLUSTER
+  Repro_TRKR_CLUSTER_run3physics:    
+    config: v001_repro_tracking_physics_new_nocdbtag.yaml
+    runs: [68001 69000]
+    jobprio: 5
+    submit: off
+    dstspider: off
+    
     
 ################################# Prod02 #######################################
 sphnxprod02:
@@ -64,19 +73,26 @@ sphnxprod02:
     runs: [73000 99000]
     submit: on
 
+  # Repro SEED
+  Repro_TRKR_SEED_run3physics:    
+    config: v001_repro_tracking_physics_new_nocdbtag.yaml
+    runs: [68001 69000]
+    jobprio: 5
+    submit: on
+    dstspider: off
+
 ################################# Prod03 #######################################    
 sphnxprod03:
-  #### TRKR and SEED
   defaultlocations:
     submitdir:  /sphenix/data/data02/sphnxpro/production/run3auau/submission/{rule}
     prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
     configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
     
-  # Rolling SEED
-  DST_TRKR_SEED_run3physics:    
-    config: v001_tracking_run3_new_newcdbtag.yaml
-    runs: [70000 99000]
-    submit: on
+  # # Rolling SEED
+  # DST_TRKR_SEED_run3physics:    
+  #   config: v001_tracking_run3_new_newcdbtag.yaml
+  #   runs: [70000 99000]
+  #   submit: off
     
 ################################# Prod04 #######################################
 sphnxprod04:
@@ -91,12 +107,31 @@ sphnxprod04:
     config: v001_combining_run3_new_nocdbtag.yaml
     runs: [73000 99000]
     jobprio: 5000
-    submit: on
-
-  # Rolling STREAMING production
-  DST_STREAMING_EVENT_run3physics:
-    config: v001_combining_run3_new_nocdbtag.yaml
-    runs: [72000 99000]
+    submit: off
+    dstspider: off
+    
+  # Rolling CALOFITTING PRODUCTION
+  DST_CALOFITTING_run3physics:
+    config: v001_calo_run3_new_newcdbtag.yaml
+    runs: [73000 99000]
     jobprio: 5000
-    # jobmem: 4000MB
-    submit: on
+    submit: off
+    dstspider: off
+    
+
+  # # Rolling STREAMING production
+  # DST_STREAMING_EVENT_run3physics:
+  #   config: v001_combining_run3_new_nocdbtag.yaml
+  #   runs: [72000 99000]
+  #   jobprio: 5000
+  #   # jobmem: 4000MB
+  #   submit: off
+
+  # Repro STREAMING
+  Repro_STREAMING_EVENT_run3physics:
+    config: v001_repro_tracking_physics_new_nocdbtag.yaml
+    runs: [68001 69000]
+    jobprio: 5
+    submit: off
+    dstspider: off
+
