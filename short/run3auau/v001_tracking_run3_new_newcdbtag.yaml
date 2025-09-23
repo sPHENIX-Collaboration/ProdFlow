@@ -16,7 +16,6 @@ DST_TRKR_CLUSTER_run3physics:
 
   job:
     script:                 run_singlejob0.sh
-    # arguments:             '{nevents} {outbase} {logbase} {inbase} {run} {seg} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
     payload:                [tracking_code/*]
