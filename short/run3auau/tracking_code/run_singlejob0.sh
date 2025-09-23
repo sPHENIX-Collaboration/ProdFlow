@@ -34,6 +34,14 @@ if [[ -n $listsfound ]]; then
     echo ---
 fi
 
+# ls -la *.list
+# echo end of ls -la '*.list'
+
+# ### Stage input to local
+# for infile in `cat infile_paths.list`; do
+#     cp -v $infile .
+# done
+
 root_line="Fun4All_SingleJob0.C(${nevents},${run},\"${logbase}.root\",\"${dbtag}\",\"infile.list\")"
 full_command="root.exe -q -b '${root_line}'"
 
