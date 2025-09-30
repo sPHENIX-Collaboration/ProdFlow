@@ -24,9 +24,9 @@ ls -la *.list
 echo end of ls -la '*.list'
 
 ### Stage input to local
-for fullinfile in `cat infile_paths.list`; do
-    cp -v $fullinfile .
-done
+# for fullinfile in `cat infile_paths.list`; do
+#     cp -v $fullinfile .
+# done
 
 outfile=${logbase}.root
 outhist=${outfile/DST_CALOFITTING/HIST_CALOFITTINGQA}

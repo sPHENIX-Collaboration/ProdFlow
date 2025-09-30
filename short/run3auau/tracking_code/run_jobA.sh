@@ -25,9 +25,9 @@ eval "$make_filelists"
 ls -la *.list
 echo end of ls -la '*.list'
 ### Stage input to local
-for infile in `cat infile_paths.list`; do
-    cp -v $infile .
-done
+# for infile in `cat infile_paths.list`; do
+#     cp -v $infile .
+# done
 
 root_line="Fun4All_JobA.C(${nevents},\"${logbase}.root\",\"${dbtag}\",\"infile.list\")"
 full_command="root.exe -q -b '${root_line}'"
