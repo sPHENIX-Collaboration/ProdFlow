@@ -353,6 +353,11 @@ void Fun4All_JobC(
   out->AddNode("SvtxTrackSeedContainer");
   out->AddNode("SvtxTrackMap");
   out->AddNode("SvtxVertexMap");
+  out->StripRunNode("CYLINDERGEOM_MVTX");
+  out->StripRunNode("CYLINDERGEOM_INTT");
+  out->StripRunNode("CYLINDERCELLGEOM_SVTX");
+  out->StripRunNode("CYLINDERGEOM_MICROMEGAS_FULL");
+  out->StripRunNode("GEOMETRY_IO");
   se->registerOutputManager(out);
 
   se->run(nEvents);
