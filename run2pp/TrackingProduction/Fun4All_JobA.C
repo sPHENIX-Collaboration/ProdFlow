@@ -126,7 +126,11 @@ void Fun4All_JobA(
   out->AddNode("GL1RAWHIT");
   out->AddNode("SiliconTrackSeedContainer");
   out->AddNode("TpcTrackSeedContainer");
-
+  out->StripRunNode("CYLINDERGEOM_MVTX");
+  out->StripRunNode("CYLINDERGEOM_INTT");
+  out->StripRunNode("CYLINDERCELLGEOM_SVTX");
+  out->StripRunNode("CYLINDERGEOM_MICROMEGAS_FULL");
+  out->StripRunNode("GEOMETRY_IO");
   se->registerOutputManager(out);
 
   auto converter = new TrackSeedTrackMapConverter("SiliconSeedConverter");

@@ -136,7 +136,7 @@ void Fun4All_SingleJob0(
 
   TPC_LaserClustering();
 
-  Tpc_Clustering_run2pp();
+  TPC_Clustering_run2pp();
 
   Micromegas_Clustering();
 
@@ -167,6 +167,11 @@ void Fun4All_SingleJob0(
     out->AddNode("LASER_CLUSTER");
     out->AddNode("LAMINATION_CLUSTER");
   }
+  out->StripRunNode("CYLINDERGEOM_MVTX");
+  out->StripRunNode("CYLINDERGEOM_INTT");
+  out->StripRunNode("CYLINDERCELLGEOM_SVTX");
+  out->StripRunNode("CYLINDERGEOM_MICROMEGAS_FULL");
+  out->StripRunNode("GEOMETRY_IO");
   se->registerOutputManager(out);
 
   se->run(nEvents);
