@@ -1,0 +1,52 @@
+#______________________________________________________________________________________________________________________
+DST_TRKR_CLUSTER_run3physics:
+  params:
+    dsttype:     DST_TRKR_CLUSTER
+    period:      run3auau
+    physicsmode: physics
+    dataset:     run3auau # could be run3cosmics, run3calib, etc.
+    build:       new
+    dbtag:       newcdbtag
+    version:     1
+
+  input:
+    db:          fcr
+    table:       datasets
+    intriplet:   new_nocdbtag_v001
+
+  job:
+    script:                 run_singlejob0.sh
+    log:                   '{condor}/{logbase}.condor'
+    neventsper:             10000
+    payload:                [tracking_code/*]
+    request_memory:         12228MB
+    request_cpus:          '4'
+    batch_name:            '{rule_name}'
+    priority:              '3500'
+
+#______________________________________________________________________________________________________________________
+DST_TRKR_SEED_run3physics:
+  params:
+    dsttype:     DST_TRKR_SEED
+    period:      run3auau
+    physicsmode: physics
+    dataset:     run3auau # could be run3cosmics, run3calib, etc.
+    build:       new
+    dbtag:       newcdbtag
+    version:     1
+
+  input:
+    db:          fcr
+    table:       datasets
+    intriplet:   new_newcdbtag_v001
+
+  job:
+    script:                 run_jobA.sh
+    # arguments:             '{nevents} {outbase} {logbase} {inbase} {run} {seg} {outdir} {finaldir} {buildarg} {tag} {inputs} {neventsper} {logdir} {histdir} {payload}'
+    log:                   '{condor}/{logbase}.condor'
+    neventsper:             10000
+    payload:                [tracking_code/*]
+    request_memory:         4096MB
+    request_cpus:          '2'
+    batch_name:            '{rule_name}'
+    priority:              '3500'
