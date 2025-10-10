@@ -1,4 +1,30 @@
 #______________________________________________________________________________________________________________________
+DST_TRKR_CLUSTER_run3calib:
+  params:
+    dsttype:     DST_TRKR_CLUSTER
+    period:      run3auau
+    physicsmode: calib
+    dataset:     run3calib # could be run3cosmics, run3calib, etc.
+    build:       new
+    dbtag:       newcdbtag
+    version:     1
+
+  input:
+    db:          fcr
+    table:       datasets
+    intriplet:   new_nocdbtag_v001
+
+  job:
+    script:                 run_singlejob0.sh
+    # arguments:             '{nevents} {outbase} {logbase} {inbase} {run} {seg} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
+    log:                   '{condor}/{logbase}.condor'
+    neventsper:             10000
+    payload:                [tracking_code/*]
+    request_memory:         8069MB
+    request_cpus:          '2'
+    batch_name:            '{dsttype}_{dataset}_{outtriplet}'
+    priority:              '3500'
+#______________________________________________________________________________________________________________________
 DST_TRKR_CLUSTER_run3cosmics:
   params:
     dsttype:     DST_TRKR_CLUSTER

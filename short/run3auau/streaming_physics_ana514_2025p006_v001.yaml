@@ -4,8 +4,8 @@ Full_STREAMING_EVENT_run3physics:
     dsttype:    DST_STREAMING_EVENT
     period:     run3auau
     physicsmode: physics
-    dataset:    run3auau # could be run3cosmics, run3calib, etc.
-    build:      new
+    dataset:    run3auau # could be run3physics, run3calib, etc.
+    build:      ana.514
     dbtag:      nocdbtag
     version:    1
 
@@ -32,15 +32,15 @@ Full_TRKR_CLUSTER_run3physics:
     dsttype:     DST_TRKR_CLUSTER
     period:      run3auau
     physicsmode: physics
-    dataset:     run3auau # could be run3cosmics, run3calib, etc.
-    build:       new
-    dbtag:       newcdbtag
+    dataset:     run3auau # could be run3physics, run3calib, etc.
+    build:       ana.514
+    dbtag:       2025p006
     version:     1
 
   input:
     db:          fcr
     table:       datasets
-    intriplet:   new_nocdbtag_v001
+    intriplet:   ana514_nocdbtag_v001
 
   job:
     script:                 run_singlejob0.sh
@@ -58,15 +58,15 @@ Full_TRKR_SEED_run3physics:
     dsttype:     DST_TRKR_SEED
     period:      run3auau
     physicsmode: physics
-    dataset:     run3auau # could be run3cosmics, run3calib, etc.
-    build:       new
-    dbtag:       newcdbtag
+    dataset:     run3auau # could be run3physics, run3calib, etc.
+    build:       ana.514
+    dbtag:       2025p006
     version:     1
 
   input:
     db:          fcr
     table:       datasets
-    intriplet:   new_newcdbtag_v001
+    intriplet:   ana514_2025p006_v001
 
   job:
     script:                 run_jobA.sh
