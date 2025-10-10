@@ -259,7 +259,8 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("out",outfile);
   out->UseFileRule();
-  out->SetNEvents(neventsper);                       // number of events per output file
+  out->SetEventNumberRollover(neventsper); // event number for rollover
+  // out->SetNEvents(neventsper);                       // number of events per output file
   out->SetClosingScript("stageout.sh");      // script to call on file close (not quite working yet...)
   // out->SetClosingScriptArgs(outdir + " " + "0");  // with dbid
   out->SetClosingScriptArgs(outdir);  // additional beyond the name of the file
