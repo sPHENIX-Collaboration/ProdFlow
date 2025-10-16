@@ -138,16 +138,16 @@ sphnxprod04:
     configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau
 
   # Rolling TRIGGERED production
-  DST_TRIGGERED_EVENT_run3physics:    
-    config: v001_combining_run3_new_nocdbtag.yaml
+  Full_TRIGGERED_EVENT_run3physics:
+    config: calo_physics_new_nocdbtag_v001.yaml
     runs: [73000 99000]
     jobprio: 4500
     submit: off
     dstspider: on
     
   # Rolling CALOFITTING PRODUCTION
-  DST_CALOFITTING_run3physics:
-    config: v001_calo_run3_new_newcdbtag.yaml
+  Full_CALOFITTING_run3physics:
+    config: calo_physics_new_nocdbtag_v001.yaml
     runs: [73000 99000]
     jobprio: 4500
     submit: off
