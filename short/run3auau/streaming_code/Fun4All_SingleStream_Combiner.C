@@ -1,9 +1,24 @@
 #include <QA.C>
 
+#include <intt/InttOdbcQuery.h>
+
+#include <inttcalib/InttCalib.h>
+
+#include <ffamodules/HeadReco.h>
+#include <ffamodules/FlagHandler.h>
+#include <ffamodules/SyncReco.h>
+#include <ffamodules/CDBInterface.h>
+
+#include <ffarawmodules/InttCheck.h>
+#include <ffarawmodules/StreamingCheck.h>
+#include <ffarawmodules/TpcCheck.h>
+
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllInputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
+#include <fun4all/Fun4AllUtils.h>
+
 #include <fun4allraw/Fun4AllStreamingInputManager.h>
 #include <fun4allraw/InputManagerType.h>
 #include <fun4allraw/SingleGl1PoolInput.h>
@@ -13,29 +28,19 @@
 #include <fun4allraw/SingleTpcPoolInput.h>
 #include <fun4allraw/SingleTpcTimeFrameInput.h>
 
-#include <intt/InttOdbcQuery.h>
-#include <inttcalib/InttCalib.h>
-
 #include <phool/recoConsts.h>
-
-#include <ffarawmodules/InttCheck.h>
-#include <ffarawmodules/StreamingCheck.h>
-#include <ffarawmodules/TpcCheck.h>
-
-#include <ffamodules/HeadReco.h>
-#include <ffamodules/FlagHandler.h>
-#include <ffamodules/SyncReco.h>
-#include <ffamodules/CDBInterface.h>
 
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4allraw.so)
 R__LOAD_LIBRARY(libffarawmodules.so)
 R__LOAD_LIBRARY(libintt.so)
+
 bool isGood(const string &infile);
+int getrunnumber(const string &listfile);
 
 void Fun4All_SingleStream_Combiner(int nEvents = 0,
-				   const int runnumber = 30117,
+				   const int runnumber1 = 30117,
 				   const string &outdir = "/sphenix/lustre01/sphnxpro/commissioning/slurp/tpccosmics/",
 				   const string& histdir = "/sphenix/data/data02/sphnxpro/single_streamhist/",
 				   const string &type = "beam",
@@ -71,6 +76,30 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
   se->VerbosityDownscale(10000); // only print every 10000th event
+
+// Get the runnumber from the filename
+    int runnumber = -99999;
+  if (!gl1_infile.empty())
+  {
+    runnumber = getrunnumber(gl1_infile[0]);
+  }
+  else if (!mvtx_infile.empty())
+  {
+    runnumber = getrunnumber(mvtx_infile[0]);
+  }
+  else if (!intt_infile.empty())
+  {
+    runnumber = getrunnumber(intt_infile[0]);
+  }
+  else if (!tpc_infile.empty())
+  {
+    runnumber = getrunnumber(tpc_infile[0]);
+  }
+  else if (!tpot_infile.empty())
+  {
+    runnumber = getrunnumber(tpot_infile[0]);
+  }
+
   recoConsts *rc = recoConsts::instance();
   CDBInterface::instance()->Verbosity(1);
   rc->set_StringFlag("CDB_GLOBALTAG", dbtag );
@@ -297,4 +326,21 @@ bool isGood(const string &infile)
     intest.close();
   }
   return goodfile;
+}
+
+int getrunnumber(const std::string &listfile)
+{
+  if (! isGood(listfile))
+  {
+    std::cout << "listfile " << listfile << " is bad" << std::endl;
+    gSystem->Exit(1);
+  }
+  std::ifstream ifs(listfile);
+  std::string filepath;
+  std::getline(ifs, filepath);
+
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(filepath);
+  int runnumber = runseg.first;
+//  int segment = abs(runseg.second);
+  return runnumber;
 }
