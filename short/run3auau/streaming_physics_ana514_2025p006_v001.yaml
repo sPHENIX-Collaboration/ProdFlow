@@ -17,7 +17,7 @@ Full_STREAMING_EVENT_run3physics:
     combine_seg0_only: false
     
   job:
-    script:                 run_parallel_streams.sh
+    script:                 run_ana514_parallel_streams.sh
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
     payload:                [streaming_code/*]
@@ -46,7 +46,7 @@ Full_STREAMING_EVENT_run3calib:
     combine_seg0_only: false
     
   job:
-    script:                 run_parallel_streams.sh
+    script:                 run_ana514_parallel_streams.sh
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
     payload:                [streaming_code/*]
