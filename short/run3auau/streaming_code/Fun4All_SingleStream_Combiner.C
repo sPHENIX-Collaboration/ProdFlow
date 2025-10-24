@@ -1,7 +1,5 @@
 #include <QA.C>
 
-#include <intt/InttOdbcQuery.h>
-
 #include <inttcalib/InttCalib.h>
 
 #include <ffamodules/HeadReco.h>
@@ -133,15 +131,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       SingleInttPoolInput *intt_sngl = new SingleInttPoolInput("INTT_" + to_string(i));
       //intt_sngl->Verbosity(3);
    
-      InttOdbcQuery query;
-      if(runnumber != 0)
-	{
-	  query.Query(runnumber);
-	  isInttStreaming = query.IsStreaming();
-	}
-      intt_sngl->streamingMode(isInttStreaming);
-      
-    /// find the ebdc number from the filename
+      /// find the ebdc number from the filename
       std::string filepath, felix;
       std::ifstream ifs(iter);
       while(std::getline(ifs, filepath))
