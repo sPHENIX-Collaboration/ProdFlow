@@ -21,7 +21,7 @@ Seg0_STREAMING_EVENT_run3physics:
     log:                   '{condor}/{logbase}.condor'
     neventsper:             2000
     payload:                [streaming_code/*]
-    request_memory:         2048MB
+    request_memory:         3072MB
     request_xferslots:     '3'    
     batch_name:            '{rule_name}_{dataset}_{outtriplet}'
     priority:              '3500'

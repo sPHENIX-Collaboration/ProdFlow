@@ -39,7 +39,7 @@ R__LOAD_LIBRARY(libintt.so)
 bool isGood(const string &infile);
 int getrunnumber(const string &listfile);
 
-void Fun4All_SingleStream_Combiner(int nEvents = 0,
+void Fun4All_ana514_SingleStream_Combiner(int nEvents = 0,
 				   const int runnumber1 = 30117,
 				   const string &outdir = "/sphenix/lustre01/sphnxpro/commissioning/slurp/tpccosmics/",
 				   const string& histdir = "/sphenix/data/data02/sphnxpro/single_streamhist/",

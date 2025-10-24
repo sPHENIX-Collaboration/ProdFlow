@@ -114,7 +114,7 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
   // out->SetClosingScript("/bin/echo");      // script to call on file close (not quite working yet...)
   // out->SetClosingScript("/usr/bin/mv");
   // out->SetClosingScriptArgs(" -v " + outdir);  // additional beyond the name of the file
-  out->SetClosingScript("stageout.sh");
+  out->SetClosingScript("./stageout.sh");
   out->SetClosingScriptArgs(outdir + " " + "0");  // additional beyond the name of the file
   se->registerOutputManager(out);
   if (nEvents >= 0)

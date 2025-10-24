@@ -20,8 +20,8 @@ DST_TRKR_CLUSTER_run3calib:
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
     payload:                [tracking_code/*]
-    request_memory:         8069MB
-    request_cpus:          '2'
+    request_memory:         12288MB
+    request_cpus:          '3'
     batch_name:            '{dsttype}_{dataset}_{outtriplet}'
     priority:              '3500'
     

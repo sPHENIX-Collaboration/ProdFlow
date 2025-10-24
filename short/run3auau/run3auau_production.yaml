@@ -6,7 +6,7 @@
 # submit: true     # create and submit condor jobs; default: false 
 # dstspider: true  # move dsts from the lake and register them; default: true
 # histspider: true # register additional .root files on gpfs; default: true
-# Note: off, on, yes, no, are also valid
+# Note that off, on, yes, no, are also valid
 
 ## Allow overriding some parameters - only relevant for condor, i.e. submission
 # jobmem: 4096MB # default: none
@@ -59,9 +59,9 @@ sphnxprod02:
   # Calib
   Full_STREAMING_EVENT_run3calib:
     config: streaming_physics_ana514_2025p006_v001.yaml
-    runs: [75000 99000]
+    runs: [74500 99000]
     jobprio: 3000
-    submit: off
+    submit: OFF
     dstspider: on
     
   DST_STREAMING_EVENT_run3calib:
@@ -81,7 +81,7 @@ sphnxprod02:
     config: streaming_cosmics_ana514_2025p006_v001.yaml
     runs: [74500 90000]
     jobprio: 2000
-    submit: off
+    submit: OFF
     dstspider: on
 
   # SEED physics
@@ -108,7 +108,7 @@ sphnxprod03:
   # Segment0 STREAMING
   Seg0_STREAMING_EVENT_run3physics:
     config: seg0_streaming_physics_new_nocdbtag_v001.yaml
-    runs: [75000 90000]
+    runs: [74500 90000]
     jobprio: 4500
     submit: on
     dstspider: on
@@ -142,7 +142,7 @@ sphnxprod04:
     config: calo_physics_new_nocdbtag_v001.yaml
     runs: [73000 99000]
     jobprio: 4500
-    submit: off
+    submit: OFF
     dstspider: on
     
   # Rolling CALOFITTING PRODUCTION
@@ -150,13 +150,13 @@ sphnxprod04:
     config: calo_physics_new_nocdbtag_v001.yaml
     runs: [73000 99000]
     jobprio: 4500
-    submit: off
+    submit: OFF
     dstspider: on
 
   # STREAMING physics
   Full_STREAMING_EVENT_run3physics:
     config: streaming_physics_ana514_2025p006_v001.yaml
-    runs: [75000 99000]
+    runs: [74500 99000]
     jobprio: 3000
     submit: on
     dstspider: on
