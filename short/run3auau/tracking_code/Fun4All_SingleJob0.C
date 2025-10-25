@@ -19,6 +19,7 @@
 
 
 #include <trackingqa/InttClusterQA.h>
+#include <inttrawhitqa/InttQa.h>
 #include <trackingqa/MicromegasClusterQA.h>
 #include <trackingqa/MvtxClusterQA.h>
 #include <trackingqa/TpcClusterQA.h>
@@ -184,6 +185,8 @@ void Fun4All_SingleJob0(
 
   auto intt = new InttRawHitQA;
   se->registerSubsystem(intt);
+
+  se->registerSubsystem(new InttQa);
   
   auto tpc = new TpcRawHitQA;
   se->registerSubsystem(tpc);
