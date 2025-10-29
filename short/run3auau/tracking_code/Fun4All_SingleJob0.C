@@ -63,7 +63,7 @@ void Fun4All_SingleJob0(
   G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING = true;
   
   auto se = Fun4AllServer::instance();
-  se->Verbosity(0);
+  se->Verbosity(1);
   se->VerbosityDownscale(100); // only print every 1000th event
   auto rc = recoConsts::instance();
   
@@ -182,10 +182,7 @@ void Fun4All_SingleJob0(
 
   auto mvtx = new MvtxRawHitQA;
   se->registerSubsystem(mvtx);
-
-  auto intt = new InttRawHitQA;
-  se->registerSubsystem(intt);
-
+  
   se->registerSubsystem(new InttQa);
   
   auto tpc = new TpcRawHitQA;
