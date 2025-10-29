@@ -26,7 +26,7 @@
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
 #include <mvtxrawhitqa/MvtxRawHitQA.h>
-#include <inttrawhitqa/InttRawHitQA.h>
+#include <inttrawhitqa/InttQa.h>
 #include <tpcqa/TpcRawHitQA.h>
 #include <phool/recoConsts.h>
 
@@ -149,7 +149,7 @@ void Fun4All_SingleJob0(
   auto mvtx = new MvtxRawHitQA;
   se->registerSubsystem(mvtx);
 
-  auto intt = new InttRawHitQA;
+  auto intt = new InttQa;
   se->registerSubsystem(intt);
   
   auto tpc = new TpcRawHitQA;
