@@ -35,7 +35,7 @@ sphnxprod01:
   # CLUSTER physics
   Full_TRKR_CLUSTER_run3physics:
     config: streaming_physics_ana514_2025p006_v001.yaml
-    runs: [69000 90000]
+    runs: [74500 90000]
     jobprio: 3000
     submit: on
     dstspider: on

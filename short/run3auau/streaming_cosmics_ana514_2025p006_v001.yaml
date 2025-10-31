@@ -43,7 +43,7 @@ Full_TRKR_CLUSTER_run3cosmics:
     intriplet:   ana514_nocdbtag_v001
 
   job:
-    script:                 run_singlejob0.sh
+    script:                 run_ana514_singlejob0.sh
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
     payload:                [tracking_code/*]
