@@ -33,7 +33,7 @@ Full_TRKR_CLUSTER_run3cosmics:
     period:      run3auau
     physicsmode: cosmics
     dataset:     run3auau # could be run3cosmics, run3calib, etc.
-    build:       ana.514
+    build:       ana.515
     dbtag:       2025p006
     version:     1
 
@@ -43,7 +43,7 @@ Full_TRKR_CLUSTER_run3cosmics:
     intriplet:   ana514_nocdbtag_v001
 
   job:
-    script:                 run_ana514_singlejob0.sh
+    script:                 run_ana515_singlejob0.sh
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
     payload:                [tracking_code/*]
@@ -66,7 +66,7 @@ Full_TRKR_SEED_run3cosmics:
   input:
     db:          fcr
     table:       datasets
-    intriplet:   ana514_2025p006_v001
+    intriplet:   ana515_2025p006_v001
 
   job:
     script:                 run_jobA.sh
