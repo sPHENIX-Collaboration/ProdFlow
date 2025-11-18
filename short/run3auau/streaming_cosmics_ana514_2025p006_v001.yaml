@@ -4,7 +4,7 @@ Full_STREAMING_EVENT_run3cosmics:
     dsttype:    DST_STREAMING_EVENT
     period:     run3auau
     physicsmode: cosmics
-    dataset:    run3auau # could be run3cosmics, run3calib, etc.
+    dataset:    run3cosmics # could be run3cosmics, run3calib, etc.
     build:      ana.514
     dbtag:      nocdbtag
     version:    1
@@ -32,7 +32,7 @@ Full_TRKR_CLUSTER_run3cosmics:
     dsttype:     DST_TRKR_CLUSTER
     period:      run3auau
     physicsmode: cosmics
-    dataset:     run3auau # could be run3cosmics, run3calib, etc.
+    dataset:     run3cosmics
     build:       ana.515
     dbtag:       2025p006
     version:     1
@@ -58,7 +58,7 @@ Full_TRKR_SEED_run3cosmics:
     dsttype:     DST_TRKR_SEED
     period:      run3auau
     physicsmode: cosmics
-    dataset:     run3auau # could be run3cosmics, run3calib, etc.
+    dataset:     run3cosmics
     build:       ana.514
     dbtag:       2025p006
     version:     1
