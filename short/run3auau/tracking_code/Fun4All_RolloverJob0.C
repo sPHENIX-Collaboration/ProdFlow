@@ -47,7 +47,8 @@ R__LOAD_LIBRARY(libtrackingqa.so)
 void Fun4All_RolloverJob0(
     const int nEvents = 2,
     const int runnumber = 41626,
-    const std::string outfilename = "cosmics",
+    const std::string outdir = ".",
+    const std::string outfilename = "out.root",
     const int neventsper = 100,
     const int startseg = 0,
     const std::string dbtag = "2024p001",
@@ -207,6 +208,9 @@ void Fun4All_RolloverJob0(
   }
   out->SetEventNumberRollover(neventsper); // event number for rollover
   out->StartSegment(startseg); // starting segment number
+  out->UseFileRule();
+  out->SetClosingScript("./stageout.sh");
+  out->SetClosingScriptArgs(outdir);
   se->registerOutputManager(out);
 
   se->run(nEvents);
