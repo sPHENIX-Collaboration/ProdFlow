@@ -163,8 +163,6 @@ void Fun4All_RolloverJob0(
 
   Tpc_LaserEventIdentifying();
 
-  TPC_LaminationClustering();
-
   TPC_LaserClustering();
 
   auto tpcclusterizer = new TpcClusterizer;
@@ -203,7 +201,6 @@ void Fun4All_RolloverJob0(
   if(G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING)
   {
     out->AddNode("LASER_CLUSTER");
-    out->AddNode("LAMINATION_CLUSTER");
   }
   out->SetEventNumberRollover(neventsper); // event number for rollover
   out->StartSegment(startseg); // starting segment number
