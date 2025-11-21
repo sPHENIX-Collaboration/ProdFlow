@@ -132,8 +132,6 @@ void Fun4All_SingleJob0(
 
   Tpc_LaserEventIdentifying();
   
-  TPC_LaminationClustering();
-
   TPC_LaserClustering();
 
   TPC_Clustering_run2pp();
@@ -165,7 +163,6 @@ void Fun4All_SingleJob0(
   if(G4TPC::ENABLE_CENTRAL_MEMBRANE_CLUSTERING)
   {
     out->AddNode("LASER_CLUSTER");
-    out->AddNode("LAMINATION_CLUSTER");
   }
   out->StripRunNode("CYLINDERGEOM_MVTX");
   out->StripRunNode("CYLINDERGEOM_INTT");
