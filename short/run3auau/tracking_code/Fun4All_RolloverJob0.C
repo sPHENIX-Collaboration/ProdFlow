@@ -213,6 +213,14 @@ void Fun4All_RolloverJob0(
   out->SetClosingScriptArgs(outdir);
   se->registerOutputManager(out);
 
+  auto *hm = QAHistManagerDef::getHistoManager();
+  cout << "HM is " << hm << endl;
+  gSystem->Exit(1);
+
+  // hm->SetOutDir(outdir);
+  // hm->SetFileName(outfilename);
+  // se->registerHistoManager(hm);
+
   se->run(nEvents);
   se->End();
 
