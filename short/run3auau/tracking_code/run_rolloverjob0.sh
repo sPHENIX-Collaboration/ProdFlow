@@ -35,7 +35,9 @@ if [[ -n $listsfound ]]; then
     echo ---
 fi
 
-root_line="Fun4All_RolloverJob0.C(${nevents},${run},\"${logbase}.root\",${neventsper},\"${dbtag}\",\"infile.list\")"
+stump=${logbase%%-*}. # Same as stump=$(echo "$logbase" | cut -d- -f1)
+
+root_line="Fun4All_RolloverJob0.C(${nevents},${run},\".\",\"${stump}\",${neventsper},\"${dbtag}\",\"infile.list\")"
 full_command="root.exe -q -b '${root_line}'"
 
 echo "--- Executing macro"
