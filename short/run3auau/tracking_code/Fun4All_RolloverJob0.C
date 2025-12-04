@@ -187,7 +187,7 @@ void Fun4All_RolloverJob0(
 
   auto *LaserQA = new TpcLaserQA;
   se->registerSubsystem(LaserQA);
-  std::string dstoutname = "DST_" + outfilename;
+  std::string dstoutname = outfilename;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", dstoutname);
   out->AddNode("Sync");
   out->AddNode("EventHeader");
