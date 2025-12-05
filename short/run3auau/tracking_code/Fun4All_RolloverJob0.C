@@ -211,6 +211,7 @@ void Fun4All_RolloverJob0(
   hm->CopyRolloverSetting(out);
   std::string histoout = "HIST_" + outfilename;
   hm->setOutfileName(histoout);
+  hm->SetClosingScriptArgs(outdir);
 
   se->run(nEvents);
   se->End();
