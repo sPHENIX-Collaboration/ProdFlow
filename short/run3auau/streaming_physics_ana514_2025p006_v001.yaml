@@ -97,7 +97,7 @@ Full_TRKR_SEED_run3physics:
     db:          fcr
     table:       datasets
     intriplet:   ana515_2025p006_v001
-    cut_segment: 10
+    # cut_segment: 10
 
   job:
     script:                 run_jobA.sh
