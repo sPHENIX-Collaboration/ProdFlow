@@ -1,0 +1,36 @@
+
+################################# Prod01 #######################################
+sphnxprod01:
+  defaultlocations:
+    submitdir:  /sphenix/data/data02/sphnxpro/production/run3pp/submission/{rule}
+    prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
+    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3pp
+
+  # STREAMING physics
+  Full_STREAMING_EVENT_run3pp:
+    config: ppstreaming_physics_ana523_2025p007_v001.yaml
+    runs: [79146 90000]
+    jobprio: 95
+    submit: on
+    dstspider: on
+    finishmon: on
+
+# TRKR_CLUSTER physics
+  Full_TRKR_CLUSTER_run3pp:
+    config: ppstreaming_physics_ana523_2025p007_v001.yaml
+    runs: [79146 90000]
+    jobprio: 95
+    submit: on
+    dstspider: on
+    finishmon: on
+
+# TRKR_SEED physics
+  Full_TRKR_SEED_run3pp:
+    config: ppstreaming_physics_ana523_2025p007_v001.yaml
+    runs: [79146 90000]
+    jobprio: 95
+    submit: on
+    dstspider: on
+    finishmon: on
+
+###############################################################################
