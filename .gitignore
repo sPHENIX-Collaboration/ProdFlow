@@ -1,6 +1,7 @@
 # Added by Kolja on 2025-09-30
 *.png
 
+*.odbc.ini
 
 # Pre-existing
 .pathena
