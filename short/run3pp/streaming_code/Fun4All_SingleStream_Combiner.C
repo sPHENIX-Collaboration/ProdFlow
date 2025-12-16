@@ -55,7 +55,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   vector<string> gl1_infile;
   gl1_infile.push_back(input_gl1file);
 
- 
+
 // MVTX
   vector<string> mvtx_infile;
   mvtx_infile.push_back(input_mvtxfile00);
@@ -101,7 +101,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   recoConsts *rc = recoConsts::instance();
   CDBInterface::instance()->Verbosity(1);
   rc->set_StringFlag("CDB_GLOBALTAG", dbtag );
-  
+
   rc->set_IntFlag("RUNNUMBER", runnumber);
   Fun4AllStreamingInputManager *in = new Fun4AllStreamingInputManager("Comb");
 //  in->Verbosity(3);
@@ -122,7 +122,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   }
   i = 0;
 
-  
+
   bool isInttStreaming = true;
   for (auto iter : intt_infile)
   {
@@ -130,7 +130,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
     {
       SingleInttPoolInput *intt_sngl = new SingleInttPoolInput("INTT_" + to_string(i));
       //intt_sngl->Verbosity(3);
-   
+
       /// find the ebdc number from the filename
       std::string filepath, felix;
       std::ifstream ifs(iter);
@@ -209,7 +209,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       //   sngl->Verbosity(3);
       mm_sngl->SetBcoRange(10);
       mm_sngl->SetNegativeBco(2);
-      mm_sngl->SetBcoPoolSize(50);
+      mm_sngl->SetBcoPoolSize(150);
       mm_sngl->AddListFile(iter);
       in->registerStreamingInput(mm_sngl, InputManagerType::MICROMEGAS);
       i++;
@@ -244,15 +244,15 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 	break;
       }
       auto inttcalib = new InttCalib("INTTCalib_" + felix);
-      char hotmapfilename[500]; 
+      char hotmapfilename[500];
       sprintf(hotmapfilename,"./CALIB_HOTMAP_%s-%08i-%05i.root",type.c_str(), runnumber, 0);
-      
+
       char bcomapfilename[500];
       sprintf(bcomapfilename,"./CALIB_BCOMAP_%s-%08i-%05i.root", type.c_str(), runnumber, 0);
 
       char pngfilename[500];
       sprintf(pngfilename, "./CALIB_PNG_%s-%08i-%05i.root", type.c_str(), runnumber, 0);
-      
+
       inttcalib->SetRawHitContainerName("INTTRAWHIT_" + felix);
       inttcalib->SetHotMapCdbFile(hotmapfilename);
       inttcalib->SetBcoMapCdbFile(bcomapfilename);
@@ -262,7 +262,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
       se->registerSubsystem(inttcalib);
     }
   }
-  
+
   SyncReco *sync = new SyncReco();
   se->registerSubsystem(sync);
 
@@ -275,7 +275,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 
   char outfile[500];
   sprintf(outfile,"./%s.root",type.c_str());
-  
+
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("out",outfile);
   out->UseFileRule();
   out->SetEventNumberRollover(neventsper); // event number for rollover
@@ -295,7 +295,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
 
   char histoutfile[500];
   sprintf(histoutfile,"./HIST_%s-%08i-%05i.root",type.c_str(),runnumber,0);
-  QAHistManagerDef::saveQARootFile(histoutfile);  
+  QAHistManagerDef::saveQARootFile(histoutfile);
 
   delete se;
   cout << "all done" << endl;
