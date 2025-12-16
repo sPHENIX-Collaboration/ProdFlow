@@ -274,6 +274,7 @@ void Fun4All_JobA(
   finder->setTrackQualityCut(1000000000);
   finder->setNmvtxRequired(3);
   finder->setOutlierPairCut(0.1);
+  finder->set_pp_mode(TRACKING::pp_mode);
   finder->setTrackMapName("SiliconSvtxTrackMap");
   finder->setVertexMapName("SiliconSvtxVertexMap");
   se->registerSubsystem(finder);
