@@ -121,9 +121,12 @@ void Fun4All_JobA(
   auto silicon_Seeding = new PHActsSiliconSeeding;
   silicon_Seeding->Verbosity(0);
   silicon_Seeding->setStrobeRange(-5,5);
+  // these get us to about 83% INTT > 1
+  silicon_Seeding->setinttRPhiSearchWindow(0.2);
+  silicon_Seeding->setinttZSearchWindow(2.0);
   silicon_Seeding->isStreaming();
-  silicon_Seeding->seedAnalysis(false);
-  silicon_Seeding->setinttRPhiSearchWindow(0.4);
+  silicon_Seeding->strobeWindowLowSearch(-1);
+  silicon_Seeding->strobeWindowHighSearch(2);
   se->registerSubsystem(silicon_Seeding);
 
   auto merger = new PHSiliconSeedMerger;
@@ -274,6 +277,7 @@ void Fun4All_JobA(
   finder->setTrackQualityCut(1000000000);
   finder->setNmvtxRequired(3);
   finder->setOutlierPairCut(0.1);
+  finder->set_pp_mode(TRACKING::pp_mode);
   finder->setTrackMapName("SiliconSvtxTrackMap");
   finder->setVertexMapName("SiliconSvtxVertexMap");
   se->registerSubsystem(finder);
