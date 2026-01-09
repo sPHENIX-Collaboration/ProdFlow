@@ -9,6 +9,7 @@
 #include <Trkr_Clustering.C>
 #include <Trkr_RecoInit.C>
 #include <Trkr_Reco.C>
+#include <Trkr_TpcReadoutInit.C>
 
 #include <fun4all/Fun4AllUtils.h>
 #include <fun4all/Fun4AllDstInputManager.h>
@@ -62,12 +63,13 @@ void Fun4All_JobA(
   std::ifstream ifs(filelist);
   std::string filepath;
   int i = 0;
+  int runNumber = 0;
   while(std::getline(ifs,filepath))
     {
       if(i==0)
 	{
 	   std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(filepath);
-	   int runNumber = runseg.first;
+	   runNumber = runseg.first;
 	   int segment = runseg.second;
 	   rc->set_IntFlag("RUNNUMBER", runNumber);
 	   rc->set_IntFlag("RUNSEGMENT", segment);
@@ -89,7 +91,7 @@ void Fun4All_JobA(
   /*
    * Flags for seeding macro
    */
-  
+  TpcReadoutInit(runNumber);
   TRACKING::pp_mode = true;
   
   Enable::MVTX_APPLYMISALIGNMENT = true;
