@@ -24,15 +24,15 @@ Full_STREAMING_EVENT_run3cosmics:
     request_memory:         2024MB
     request_xferslots:     '3'    
     batch_name:            '{rule_name}_{dataset}_{outtriplet}'
-    priority:              '3500'
+    priority:              '90'
 
 #______________________________________________________________________________________________________________________
 Full_TRKR_CLUSTER_run3cosmics:
   params:
     dsttype:     DST_TRKR_CLUSTER
     period:      run3auau
-    physicsmode: cosmics
     dataset:     run3cosmics
+    physicsmode: cosmics
     build:       ana.515
     dbtag:       2025p006
     version:     1
@@ -40,7 +40,8 @@ Full_TRKR_CLUSTER_run3cosmics:
   input:
     db:          fcr
     table:       datasets
-    intriplet:   ana514_nocdbtag_v001
+    # intriplet:   ana514_nocdbtag_v001
+    intriplet:   new_nocdbtag_v001
 
   job:
     script:                 run_ana515_singlejob0.sh
@@ -48,9 +49,9 @@ Full_TRKR_CLUSTER_run3cosmics:
     neventsper:             10000
     payload:                [tracking_code/*]
     request_memory:         12228MB
-    request_cpus:          '4'
+    request_cpus:          '1'
     batch_name:            '{rule_name}_{dataset}_{outtriplet}'
-    priority:              '3500'
+    priority:              '100'
 
 #______________________________________________________________________________________________________________________
 Full_TRKR_SEED_run3cosmics:
@@ -76,4 +77,4 @@ Full_TRKR_SEED_run3cosmics:
     request_memory:         4096MB
     request_cpus:          '2'
     batch_name:            '{rule_name}_{dataset}_{outtriplet}'
-    priority:              '3500'
+    priority:              '30'

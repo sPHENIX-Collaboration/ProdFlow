@@ -24,7 +24,7 @@ Full_STREAMING_EVENT_run3physics:
     request_memory:         3072MB
     request_xferslots:     '3'    
     batch_name:            '{rule_name}_{dataset}_{outtriplet}'
-    priority:              '3500'
+    priority:              '90'
 
 #______________________________________________________________________________________________________________________
 Full_TRKR_CLUSTER_run3physics:
@@ -50,7 +50,7 @@ Full_TRKR_CLUSTER_run3physics:
     request_memory:         12228MB
     request_cpus:          '4'
     batch_name:            '{rule_name}_{dataset}_{outtriplet}'
-    priority:              '3500'
+    priority:              '60'
 
 #______________________________________________________________________________________________________________________
 Full_TRKR_SEED_run3physics:
@@ -76,7 +76,7 @@ Full_TRKR_SEED_run3physics:
     request_memory:         4096MB
     request_cpus:          '2'
     batch_name:            '{rule_name}_{dataset}_{outtriplet}'
-    priority:              '3500'
+    priority:              '29'
 
 ##########################################################################
 ## Same output, but using older combined input DSTs created with ana.514
@@ -105,5 +105,5 @@ From514_TRKR_CLUSTER_run3physics:
     request_memory:         12228MB
     request_cpus:          '4'
     batch_name:            '{rule_name}_{dataset}_{outtriplet}'
-    priority:              '3500'
+    priority:              '60'
 
