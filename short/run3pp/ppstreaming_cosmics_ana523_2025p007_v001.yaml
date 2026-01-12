@@ -48,7 +48,7 @@ Full_TRKR_CLUSTER_run3cosmics:
     neventsper:             1000
     payload:                [tracking_code/*]
     request_memory:         12228MB
-    request_cpus:          '4'
+    request_cpus:          '1'
     batch_name:            '{rule_name}_{dataset}_{outtriplet}'
     priority:              '3500'
 

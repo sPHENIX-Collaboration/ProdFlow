@@ -5,29 +5,28 @@ sphnxprod01:
     submitdir:  /sphenix/data/data02/sphnxpro/production/run3pp/submission/{rule}
     prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
     configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3pp
-
   # STREAMING physics
   Full_STREAMING_EVENT_run3pp:
     config: ppstreaming_physics_ana523_2025p007_v001.yaml
-    runs: [79146 90000]
+    runs: [79600 90000]
     jobprio: 90
     submit: on
     dstspider: on
     finishmon: on
 
-# TRKR_CLUSTER physics
+  # TRKR_CLUSTER physics
   Full_TRKR_CLUSTER_run3pp:
-    config: ppstreaming_physics_ana523_2025p007_v001.yaml
-    runs: [79146 90000]
+    config: ppstreaming_from523_physics_ana526_2025p008_v001.yaml
+    runs: [79300 90000]
     jobprio: 60
     submit: on
     dstspider: on
     finishmon: on
 
-# TRKR_SEED physics
+  # TRKR_SEED physics
   Full_TRKR_SEED_run3pp:
-    config: ppstreaming_physics_ana523_2025p007_v001.yaml
-    runs: [79146 90000]
+    config: ppstreaming_from523_physics_ana526_2025p008_v001.yaml
+    runs: [79300 90000]
     jobprio: 30
     submit: on
     dstspider: on
@@ -81,7 +80,7 @@ sphnxprod03:
   # Segment0 STREAMING
   Seg0_STREAMING_EVENT_run3pp:
     config: seg0_ppstreaming_physics_new_nocdbtag_v001.yaml
-    runs: [79146 90000]
+    runs: [79600 90000]
     nevents: 400000
     jobprio: 95
     submit: on

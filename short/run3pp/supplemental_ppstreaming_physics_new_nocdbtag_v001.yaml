@@ -78,7 +78,7 @@ Full_TRKR_CLUSTER_run3calib:
     neventsper:             10000
     payload:                [tracking_code/*]
     request_memory:         12228MB
-    request_cpus:          '3'
+    request_cpus:          '1'
     batch_name:            '{rule_name}_{dataset}_{outtriplet}'
     priority:              '100'
 #______________________________________________________________________________________________________________________
