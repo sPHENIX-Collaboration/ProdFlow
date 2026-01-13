@@ -95,6 +95,7 @@ void Fun4All_SingleJob0(
       std::string inputname = "InputManager" + std::to_string(i);
       auto hitsin = new Fun4AllDstInputManager(inputname);
       hitsin->fileopen(filepath);
+      hitsin->CacheSize(0);
       se->registerInputManager(hitsin);
       i++;
     }
