@@ -51,3 +51,29 @@ Full_TRKR_SEED_run3pp:
     batch_name:            '{rule_name}_{dataset}_{outtriplet}'
     priority:              '30'
 
+#______________________________________________________________________________________________________________________
+Full_TRKR_TRACK_run3pp:
+  params:
+    dsttype:     DST_TRKR_TRACK
+    period:      run3pp
+    physicsmode: physics
+    dataset:     run3pp
+    build:       ana.530
+    dbtag:       2025p009
+    version:     1
+  input:
+    db:          fcr
+    table:       datasets
+    intriplet:   ana530_2025p009_v001
+    # cut_segment: 10
+
+  job:
+    script:                 run_jobC.sh
+    log:                   '{condor}/{logbase}.condor'
+    neventsper:             1000
+    payload:                [tracking_code/*]
+    request_memory:         4096MB
+    request_cpus:          '2'
+    batch_name:            '{rule_name}_{dataset}_{outtriplet}'
+    priority:              '30'
+
