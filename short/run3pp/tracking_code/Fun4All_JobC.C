@@ -333,7 +333,7 @@ void Fun4All_JobC(
 
   
   Tracking_Reco_SiTpcTrackMatching_run2pp("TRKR_CLUSTER_SEED");
-  Tracking_Reco_TrackFit_run2pp("TRKR_CLUSTER_SEED");
+  Tracking_Reco_TrackFit_run2pp("","TRKR_CLUSTER_SEED");
   Tracking_Reco_Vertex_run2pp("TRKR_CLUSTER_SEED");
   
   auto tpcsiliconqa = new TpcSiliconQA;
