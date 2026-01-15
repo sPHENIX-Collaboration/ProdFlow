@@ -48,13 +48,13 @@ sphnxprod02:
     dstspider: on
     finishmon: on
 
-  Full_TRKR_SEED_run3physics:
-    config: streaming_physics_ana523_2025p007_v001.yaml
-    runs: [72500 75000]
-    jobprio: 29
-    submit: on
-    dstspider: on
-    finishmon: on
+  # Full_TRKR_SEED_run3physics:
+  #   config: streaming_physics_ana523_2025p007_v001.yaml
+  #   runs: [72500 75000]
+  #   jobprio: 29
+  #   submit: on
+  #   dstspider: on
+  #   finishmon: on
 
 ################################# Prod03 #######################################    
 sphnxprod03:
