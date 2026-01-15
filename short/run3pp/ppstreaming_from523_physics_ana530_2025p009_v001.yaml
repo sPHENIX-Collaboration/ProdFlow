@@ -51,10 +51,13 @@ Full_TRKR_SEED_run3pp:
     batch_name:            '{rule_name}_{dataset}_{outtriplet}'
     priority:              '30'
 
+
+
+### SPECIAL PRODUCTION FOR CALIBRATED RUNS 
 #______________________________________________________________________________________________________________________
-Full_TRKR_TRACK_run3pp:
+Calibrated_TRKR_TRACKS_run3pp:
   params:
-    dsttype:     DST_TRKR_TRACK
+    dsttype:     DST_TRKR_TRACKS
     period:      run3pp
     physicsmode: physics
     dataset:     run3pp
@@ -75,5 +78,5 @@ Full_TRKR_TRACK_run3pp:
     request_memory:         4096MB
     request_cpus:          '2'
     batch_name:            '{rule_name}_{dataset}_{outtriplet}'
-    priority:              '30'
+    priority:              '100'
 

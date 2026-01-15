@@ -41,6 +41,15 @@ sphnxprod02:
     prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
     configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3pp
 
+  # 2nd location for TRKR_SEED physics
+  Full_TRKR_SEED_run3pp:
+    config: ppstreaming_from523_physics_ana526_2025p008_v001.yaml
+    runs: [79300 90000]
+    jobprio: 30
+    submit: on
+    dstspider: off
+    finishmon: off
+
   # Supplemental Laser
   Full_STREAMING_EVENT_run3line_laser:
     config: supplemental_ppstreaming_physics_new_nocdbtag_v001.yaml
@@ -140,14 +149,22 @@ sphnxprod04:
     finishmon: on
 
 ### Special production for one calibrated store
-  # TRKR_SEED physics
+# TRKR_SEED physics
   Full_TRKR_SEED_run3pp:
-    config: ppstreaming_from523_physics_ana526_2025p008_v001.yaml
-    runs: [79300 90000]
+    config: ppstreaming_from523_physics_ana530_2025p009_v001.yaml
+    runs: [ 79507 79516]
     jobprio: 30
     submit: off
     dstspider: on
     finishmon: on
-
+  
+# TRKR_TRACKS physics
+  Calibrated_TRKR_TRACKS_run3pp:
+    config: ppstreaming_from523_physics_ana530_2025p009_v001.yaml
+    runs: [ 79507 79516]
+    jobprio: 70
+    submit: off
+    dstspider: on
+    finishmon: on
 
 ###############################################################################
