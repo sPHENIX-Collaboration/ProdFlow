@@ -1,0 +1,57 @@
+#______________________________________________________________________________________________________________________
+Full_TRIGGERED_EVENT_run3physics:
+  params:
+    dsttype:    DST_TRIGGERED_EVENT
+    period:     run3auau
+    physicsmode: physics
+    dataset:    run3auau # could be run3physics, run3calib, etc.
+    build:      ana.530
+    dbtag:      nocdbtag
+    version:    1
+
+  input:
+    db:          rawr
+    table:       datasets
+    min_run_time:   300
+    min_run_events: 100000
+    combine_seg0_only: true
+
+  job:
+    script:                 run_eventcombine.sh
+    # arguments:             '{nevents} {outbase} {logbase} {run} {seg} {daqhost} {outdir} {finaldir} {buildarg} {tag} {inputs} None {neventsper} {logdir} {comment} {histdir} {payload}'
+    log:                   '{condor}/{logbase}.condor'
+    neventsper:             10000
+    payload:                [triggered_code/*]
+    request_memory:         2024MB
+    request_xferslots:     '3'    
+    batch_name:            '{dsttype}_{dataset}_{outtriplet}'
+    priority:              '3500'
+
+#______________________________________________________________________________________________________________________
+Full_CALOFITTING_run3physics:
+  params:
+    dsttype:     DST_CALOFITTING
+    period:      run3auau
+    physicsmode: physics
+    dataset:     run3auau
+    build:       ana.530
+    dbtag:       2025p008
+    version:     1
+
+  input:
+    db:          fcr
+    table:       datasets
+    intriplet:   ana530_2025p008_v001
+
+  job:
+    script:                 run_fitting.sh
+    log:                   '{condor}/{logbase}.condor'
+    neventsper:             100000
+    payload:                [calo_code/*]
+    request_memory:         2500MB
+    request_cpus:          '1'
+    batch_name:            '{dsttype}_{dataset}_{outtriplet}'
+    priority:              '3500'
+
+###############################################################################################
+
