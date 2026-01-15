@@ -22,5 +22,5 @@ Full_TRKR_TRACKS_run3pp:
     request_memory:         4096MB
     request_cpus:          '2'
     batch_name:            '{rule_name}_{dataset}_{outtriplet}'
-    priority:              '30'
+    priority:              '100'
 
