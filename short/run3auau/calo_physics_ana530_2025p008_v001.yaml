@@ -41,7 +41,7 @@ Full_CALOFITTING_run3physics:
   input:
     db:          fcr
     table:       datasets
-    intriplet:   ana530_2025p008_v001
+    intriplet:   ana530_nocdbtag_v001
 
   job:
     script:                 run_fitting.sh

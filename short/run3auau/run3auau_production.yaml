@@ -92,16 +92,16 @@ sphnxprod04:
 ################################# Snippets #######################################
   # # Rolling TRIGGERED production
   # Full_TRIGGERED_EVENT_run3physics:
-  #   config: calo_physics_new_nocdbtag_v001.yaml
-  #   runs: [76900 78954]
+  #   config: calo_physics_ana530_2025p008_v001.yaml
+  #   runs: [78950 90000]
   #   jobprio: 90
   #   submit: OFF
   #   dstspider: on
     
   # # Rolling CALOFITTING PRODUCTION
   # Full_CALOFITTING_run3physics:
-  #   config: calo_physics_new_nocdbtag_v001.yaml
-  #   runs: [76900 78954]
+  #   config: calo_physics_ana530_2025p008_v001.yaml
+  #   runs: [78950 90000]
   #   jobprio: 40
   #   submit: OFF
   #   dstspider: on
