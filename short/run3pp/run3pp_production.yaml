@@ -154,7 +154,7 @@ sphnxprod04:
     config: ppstreaming_from523_physics_ana530_2025p009_v001.yaml
     runs: [ 79507 79516]
     jobprio: 30
-    submit: off
+    submit: on
     dstspider: on
     finishmon: on
   
@@ -162,8 +162,8 @@ sphnxprod04:
   Calibrated_TRKR_TRACKS_run3pp:
     config: ppstreaming_from523_physics_ana530_2025p009_v001.yaml
     runs: [ 79507 79516]
-    jobprio: 70
-    submit: off
+    jobprio: 30
+    submit: on
     dstspider: on
     finishmon: on
 
