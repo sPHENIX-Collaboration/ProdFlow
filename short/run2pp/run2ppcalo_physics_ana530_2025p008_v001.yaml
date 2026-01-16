@@ -1,0 +1,56 @@
+#______________________________________________________________________________________________________________________
+Full_TRIGGERED_EVENT_run2pp:
+  params:
+    dsttype:    DST_TRIGGERED_EVENT
+    period:     run2pp
+    physicsmode: physics
+    dataset:    run2pp
+    build:      ana.530
+    dbtag:      nocdbtag
+    version:    1
+
+  input:
+    db:          rawr
+    table:       datasets
+    min_run_time:   300
+    min_run_events: 100000
+    combine_seg0_only: true
+
+  job:
+    script:                 run_eventcombine.sh
+    log:                   '{condor}/{logbase}.condor'
+    neventsper:             10000
+    payload:                [calo_code/*]
+    request_memory:         2024MB
+    request_xferslots:     '3'    
+    batch_name:            '{dsttype}_{dataset}_{outtriplet}'
+    priority:              '90'
+
+#______________________________________________________________________________________________________________________
+Full_CALOFITTING_run2pp:
+  params:
+    dsttype:     DST_CALOFITTING
+    period:      run2pp
+    physicsmode: physics
+    dataset:     run2pp
+    build:       ana.530
+    dbtag:       2025p008
+    version:     1
+
+  input:
+    db:          fcr
+    table:       datasets
+    intriplet:   ana530_nocdbtag_v001
+
+  job:
+    script:                 run_fitting.sh
+    log:                   '{condor}/{logbase}.condor'
+    neventsper:             100000
+    payload:                [calo_code/*]
+    request_memory:         2500MB
+    request_cpus:          '1'
+    batch_name:            '{dsttype}_{dataset}_{outtriplet}'
+    priority:              '60'
+
+###############################################################################################
+
