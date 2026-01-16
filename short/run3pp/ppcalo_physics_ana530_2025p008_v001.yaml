@@ -20,7 +20,7 @@ Full_TRIGGERED_EVENT_run3pp:
     script:                 run_eventcombine.sh
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
-    payload:                [triggered_code/*]
+    payload:                [calo_code/*]
     request_memory:         2024MB
     request_xferslots:     '3'    
     batch_name:            '{dsttype}_{dataset}_{outtriplet}'
