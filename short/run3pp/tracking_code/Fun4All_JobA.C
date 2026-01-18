@@ -195,7 +195,9 @@ void Fun4All_JobA(
 
   
   auto clusterPruner = new DSTClusterPruning("DSTClusterPruning");
+  clusterPruner->pruneAllSeeds();
   se->registerSubsystem(clusterPruner);
+  
   
   se->run(nEvents);
   se->End();
