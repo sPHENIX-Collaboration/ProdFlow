@@ -57,7 +57,8 @@ void Fun4All_RolloverJob0(
     const int neventsper = 100,
     const int startseg = 0,
     const std::string& dbtag = "2024p001",
-    const std::string& filelist = "filelist.list")
+    const std::string& filelist = "filelist.list",
+    const std::string& histdir = "")
 {
 
   gSystem->Load("libg4dst.so");
@@ -211,8 +212,13 @@ void Fun4All_RolloverJob0(
   hm->CopyRolloverSetting(out);
   std::string histoout = "HIST_" + outfilename;
   hm->setOutfileName(histoout);
-  hm->SetClosingScriptArgs(outdir);
-
+  if ( histdir != "" )
+  {
+    hm->SetClosingScriptArgs(histdir);
+  } else {
+    hm->SetClosingScriptArgs(outdir);
+  }
+  
   se->run(nEvents);
   se->End();
 

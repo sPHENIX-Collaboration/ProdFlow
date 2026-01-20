@@ -43,7 +43,7 @@ stump=${logbase%%-*}  # Remove run/segment bit from the name. Same as stump=$(ec
 stump=${stump}.root   # Restore .root
 # stump=${stump#DST_}   # Remove leading DST_
 
-root_line="Fun4All_RolloverJob0.C(${nevents},${run},\"${outdir}\",\"${stump}\",${neventsper},${startseg},\"${dbtag}\",\"infile.list\")"
+root_line="Fun4All_RolloverJob0.C(${nevents},${run},\"${outdir}\",\"${stump}\",${neventsper},${startseg},\"${dbtag}\",\"infile.list\",\"${histdir}\")"
 full_command="root.exe -q -b '${root_line}'"
 
 echo "--- Executing macro"
