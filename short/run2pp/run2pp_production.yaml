@@ -1,0 +1,48 @@
+## To improve readability, give each host some default locations
+## Can be overriden (for running in dev, for example)
+#  Note: individually switching between dev and main for submission and spiders is too much of a hassle. Deal with it.
+
+## Example with all options, most won't be used most of the time
+# submit: true     # create and submit condor jobs; default: false 
+# dstspider: true  # move dsts from the lake and register them; default: true
+# histspider: true # register additional .root files on gpfs; default: true
+# Note that off, on, yes, no, are also valid
+
+## Allow overriding some parameters - only relevant for condor, i.e. submission
+# jobmem: 4096MB # default: none
+# jobprio: 10000 # default: none
+
+#### IMPORTANT: You CANNOT repeat the same rule inside the same host tag.
+####            The yaml reader picks up the first instance and silently ignores the rest.
+####            Running the same rule across multiple hosts is okay, but stick to spiders
+####            or exclusive run lists. Submission does not have a locking mechanism (yet)
+
+################################# Prod01 #######################################
+sphnxprod01:
+  defaultlocations:
+    submitdir:  /sphenix/data/data02/sphnxpro/production/run3pp/submission/{rule}
+    prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
+    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run2pp
+
+  # Rolling TRIGGERED production
+  Full_TRIGGERED_EVENT_run2pp:
+    config: run2ppcalo_physics_new_2024p024_v001.yaml
+    # runs: [47540 47542]
+    # jobprio: 100
+    runlist: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run2pp/reproc_calo_18Jan26.list
+    jobprio: 90
+    submit: on
+    dstspider: on
+    finishmon: on
+
+  # Rolling CALOFITTING PRODUCTION
+  Full_CALOFITTING_run2pp:
+    config: run2ppcalo_physics_new_2024p024_v001.yaml
+    # runs: [47540 47542]
+    # jobprio: 100
+    runlist: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run2pp/reproc_calo_18Jan26.list
+    jobprio: 60
+    submit: on
+    dstspider: on
+    finishmon: on
+
