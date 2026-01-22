@@ -1,0 +1,97 @@
+
+################################# Prod01 #######################################
+### Standard full production 
+sphnxprod01:
+  defaultlocations:
+    submitdir:  /sphenix/data/data02/sphnxpro/production/run3oo/submission/{rule}
+    prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
+    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3oo
+
+  # STREAMING physics
+  Full_STREAMING_EVENT_run3oo:
+    config: oostreaming_physics_ana532.yaml
+    runs: [82000 99000]
+    jobprio: 90
+    submit: off
+    dstspider: off
+    finishmon: off
+
+  # TRKR_CLUSTER physics
+  Full_TRKR_CLUSTER_run3oo:
+    config: ootracking_from532_physics_ana532_2025p009_v001.yaml
+    runs: [82000 99000]
+    jobprio: 60
+    submit: off
+    dstspider: off
+    finishmon: off
+
+  # TRKR_SEED physics
+  Full_TRKR_SEED_run3oo:
+    config: ootracking_from532_physics_ana532_2025p009_v001.yaml
+    runs: [82000 99000]
+    jobprio: 30
+    submit: off
+    dstspider: off
+    finishmon: off
+
+###############################################################################
+
+################################# Prod02 #######################################
+### Unusual productions, doubled full production
+sphnxprod02:
+  defaultlocations:
+    submitdir:  /sphenix/data/data02/sphnxpro/production/run3oo/submission/{rule}
+    prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
+    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3oo
+
+###############################################################################
+
+################################# Prod03 #######################################    
+### Segment 0 productions and special productions
+sphnxprod03:
+  defaultlocations:
+    submitdir:  /sphenix/data/data02/sphnxpro/production/run3oo/submission/{rule}
+    prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
+    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3oo
+
+  # Segment0 STREAMING
+  Seg0_STREAMING_EVENT_run3oo:
+    config: seg0_oostreaming_physics_new_nocdbtag_v001.yaml
+    runs: [82000 99000]
+    nevents: 400000
+    jobprio: 95
+    submit: off
+    dstspider: off
+    finishmon: off   
+
+  # Segment0 CLUSTER
+  Seg0_TRKR_CLUSTER_run3oo:
+    config: seg0_oostreaming_physics_new_nocdbtag_v001.yaml
+    runs: [82000 99000]]
+    jobprio: 65
+    submit: off
+    dstspider: off
+    finishmon: off
+
+  # Segment0 SEED
+  Seg0_TRKR_SEED_run3oo:
+    config: seg0_oostreaming_physics_new_nocdbtag_v001.yaml
+    runs: [82000 99000]
+    jobprio: 35
+    submit: off
+    dstspider: off
+    finishmon: off
+
+################################# Prod04 #######################################
+### Reserved for Chris
+
+sphnxprod04:
+  defaultlocations:
+    submitdir:  /sphenix/data/data02/sphnxpro/production/run3oo/submission/{rule}
+    prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
+    configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3oo
+
+#______________________________________________________________________________________________________________________
+
+
+###############################################################################
