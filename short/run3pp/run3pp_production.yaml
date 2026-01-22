@@ -108,7 +108,7 @@ sphnxprod03:
   # STREAMING cosmics
   Full_STREAMING_EVENT_run3cosmics:
     config: ppstreaming_cosmics_ana523_2025p007_v001.yaml
-    runs: [81210 90000]
+    runs: [81210 99000]
     jobprio: 92
     submit: on
     dstspider: on
@@ -117,7 +117,7 @@ sphnxprod03:
 # TRKR_CLUSTER cosmics
   Full_TRKR_CLUSTER_run3cosmics:
     config: ppstreaming_cosmics_ana523_2025p007_v001.yaml
-    runs: [81210 90000]
+    runs: [81210 99000]
     jobprio: 92
     submit: on
     dstspider: on
@@ -126,7 +126,7 @@ sphnxprod03:
   # Supplemental Laser
   Full_STREAMING_EVENT_run3line_laser:
     config: supplemental_ppstreaming_physics_new_nocdbtag_v001.yaml
-    runs: [81210 90000]
+    runs: [81210 99000]
     jobprio: 100
     submit: on
     dstspider: on
@@ -135,7 +135,7 @@ sphnxprod03:
   # Supplemental Calib
   Full_STREAMING_EVENT_run3calib:
     config: supplemental_ppstreaming_physics_new_nocdbtag_v001.yaml
-    runs: [81210 90000]
+    runs: [81210 99000]
     jobprio: 100
     submit: on
     dstspider: on
@@ -144,7 +144,7 @@ sphnxprod03:
   # Supplemental Calib
   Full_TRKR_CLUSTER_run3calib:
     config: supplemental_ppstreaming_physics_new_nocdbtag_v001.yaml
-    runs: [81210 90000]
+    runs: [81210 99000]
     jobprio: 100
     submit: on
     dstspider: on
