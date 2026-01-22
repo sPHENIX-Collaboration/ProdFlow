@@ -1,0 +1,26 @@
+#______________________________________________________________________________________________________________________
+Full_TRKR_TRACKS_run3pp:
+  params:
+    dsttype:     DST_TRKR_TRACKS
+    period:      run3pp
+    physicsmode: physics
+    dataset:     run3pp
+    build:       ana.530
+    dbtag:       2025p008
+    version:     1
+  input:
+    db:          fcr
+    table:       datasets
+    intriplet:   ana526_2025p008_v001
+    # cut_segment: 10
+
+  job:
+    script:                 run_jobC.sh
+    log:                   '{condor}/{logbase}.condor'
+    neventsper:             1000
+    payload:                [tracking_code/*]
+    request_memory:         4096MB
+    request_cpus:          '2'
+    batch_name:            '{rule_name}_{dataset}_{outtriplet}'
+    priority:              '100'
+
