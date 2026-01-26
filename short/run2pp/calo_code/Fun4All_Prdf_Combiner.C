@@ -108,7 +108,7 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("dstout",outfile);
   out->SplitLevel(0);
   out->UseFileRule();
-  out->SetNEvents(100000); 
+  out->SetEventNumberRollover(100000);
   // out->SetClosingScript("copyscript.pl");      // script to call on file close (not quite working yet...)
   // out->SetClosingScriptArgs(" -mv -outdir " + outdir);  // additional beyond the name of the file
   // out->SetClosingScript("/bin/echo");      // script to call on file close (not quite working yet...)
