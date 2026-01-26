@@ -10,32 +10,32 @@ sphnxprod01:
   # STREAMING physics
   Full_STREAMING_EVENT_run3pp:
     config: ppstreaming_physics_ana532.yaml
-    # runs: [79000 81668]
-    runs: [79507 79516]
+    runs: [79000 81668]
+    # runs: [79507 79516] # calibrated runs
     jobprio: 90
-    submit: off
-    dstspider: off
-    finishmon: off
+    submit: on
+    dstspider: on
+    finishmon: on
 
   # TRKR_CLUSTER physics
   Full_TRKR_CLUSTER_run3pp:
-    config: ppstreaming_from532_physics_ana532_2025p009_v001.yaml
-    # runs: [79000 81668]
-    runs: [79507 79516]
+    config: pptracking_from532_physics_ana532_2025p009_v001.yaml
+    runs: [79000 81668]
+    # runs: [79507 79516]
     jobprio: 60
-    submit: off
-    dstspider: off
-    finishmon: off
+    submit: on
+    dstspider: on
+    finishmon: on
 
   # TRKR_SEED physics
   Full_TRKR_SEED_run3pp:
-    config: ppstreaming_from532_physics_ana532_2025p009_v001.yaml
-    # runs: [79000 81668]
-    runs: [79507 79516]
+    config: pptracking_from532_physics_ana532_2025p009_v001.yaml
+    runs: [79000 81668]
+    # runs: [79507 79516]
     jobprio: 30
-    submit: off
-    dstspider: off
-    finishmon: off
+    submit: on
+    dstspider: on
+    finishmon: on
 
 ###############################################################################
 
@@ -46,6 +46,17 @@ sphnxprod02:
     submitdir:  /sphenix/data/data02/sphnxpro/production/run3pp/submission/{rule}
     prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
     configbase: /sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3pp
+
+
+  # TRKR_SEED physics
+  Full_TRKR_SEED_run3pp:
+    config: pptracking_from532_physics_ana532_2025p009_v001.yaml
+    runs: [79000 81668]
+    # runs: [79507 79516]
+    jobprio: 30
+    submit: on
+    dstspider: off
+    finishmon: off
 
   # ## CALO - small range, just for testing
   # # Rolling TRIGGERED production
