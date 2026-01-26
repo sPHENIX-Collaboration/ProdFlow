@@ -8,6 +8,8 @@
 
 #include <calovalid/CaloFittingQA.h>
 
+#include <calopacketskimmer/CaloPacketSkimmer.h>
+
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
@@ -23,7 +25,9 @@
 
 #include <phool/recoConsts.h>
 
-#include <calopacketskimmer/CaloPacketSkimmer.h>
+#include <TSystem.h>
+
+#include <fstream>
 
 R__LOAD_LIBRARY(libfun4allraw.so)
 R__LOAD_LIBRARY(libcalovalid.so)
@@ -32,7 +36,7 @@ R__LOAD_LIBRARY(libCaloPacketSkimmer.so)
 
 // this pass containis the reco process that's stable wrt time stamps(raw tower building)
 void Fun4All_Year2_Fitting(int nEvents = 100,
-			   const std::string inlist = "files.list",
+                           const std::string &inlist = "files.list",
                            const std::string &outfile = "DST_CALOFITTING_run3auau_new_newcdbtag_v008-00054530-00000.root",
                            const std::string &outfile_hist = "HIST_CALOFITTINGQA_run3auau_new_newcdbtag_v008-00054530-00000.root",
                            const std::string &dbtag = "newcdbtag")
@@ -45,7 +49,7 @@ void Fun4All_Year2_Fitting(int nEvents = 100,
 
   recoConsts *rc = recoConsts::instance();
 
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outfile);
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outfile);
   int runnumber = runseg.first;
   // conditions DB flags and timestamp
   rc->set_StringFlag("CDB_GLOBALTAG", dbtag);
@@ -73,37 +77,37 @@ void Fun4All_Year2_Fitting(int nEvents = 100,
   // In->AddFile(fname);
   // se->registerInputManager(In);
   Fun4AllInputManager *In = nullptr;
-  ifstream infile;
+  std::ifstream infile;
   infile.open(inlist);
-    int iman = 0;
-    std::string line;
-    if (infile.is_open())
+  int iman = 0;
+  std::string line;
+  if (infile.is_open())
+  {
+    while (std::getline(infile, line))
     {
-      while (std::getline(infile, line))
+      if (line[0] == '#')
       {
-	if (line[0] == '#')
-	{
-	  std::cout << "found commented out line " << line << std::endl;
-	  continue;
-	}
-	std::cout << line << std::endl;
-	std::string magname = "DSTin_" + std::to_string(iman);
-	In = new Fun4AllDstInputManager(magname);
-	In->Verbosity(1);
-	In->AddFile(line);
-	se->registerInputManager(In);
-	iman++;
+        std::cout << "found commented out line " << line << std::endl;
+        continue;
       }
-      infile.close();
+      std::cout << line << std::endl;
+      std::string magname = "DSTin_" + std::to_string(iman);
+      In = new Fun4AllDstInputManager(magname);
+      In->Verbosity(1);
+      In->AddFile(line);
+      se->registerInputManager(In);
+      iman++;
     }
-    if (iman == 0)
-    {
-      std::cout << "No files in filelist" << std::endl;
-      gSystem->Exit(1);
-    }
-       Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfile);
-   out->StripCompositeNode("Packets");
-   se->registerOutputManager(out);
+    infile.close();
+  }
+  if (iman == 0)
+  {
+    std::cout << "No files in filelist" << std::endl;
+    gSystem->Exit(1);
+  }
+  Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfile);
+  out->StripCompositeNode("Packets");
+  se->registerOutputManager(out);
   // se->Print();
   if (nEvents < 0)
   {
