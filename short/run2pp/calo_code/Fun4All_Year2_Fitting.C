@@ -10,6 +10,8 @@
 
 #include <calopacketskimmer/CaloPacketSkimmer.h>
 
+#include <mbd/MbdReco.h>
+
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
@@ -49,11 +51,9 @@ void Fun4All_Year2_Fitting(int nEvents = 100,
 
   recoConsts *rc = recoConsts::instance();
 
-  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outfile);
-  int runnumber = runseg.first;
   // conditions DB flags and timestamp
   rc->set_StringFlag("CDB_GLOBALTAG", dbtag);
-  rc->set_uint64Flag("TIMESTAMP", runnumber);
+
   CDBInterface::instance()->Verbosity(1);
 
   FlagHandler *flag = new FlagHandler();
@@ -65,6 +65,10 @@ void Fun4All_Year2_Fitting(int nEvents = 100,
 
   CaloPacketSkimmer *calopacket = new CaloPacketSkimmer();
   se->registerSubsystem(calopacket);
+
+  MbdReco *mbd = new MbdReco();
+  mbd->DoOnlyFits();
+  se->registerSubsystem(mbd);
 
   Process_Calo_Fitting();
 
@@ -83,6 +87,7 @@ void Fun4All_Year2_Fitting(int nEvents = 100,
   std::string line;
   if (infile.is_open())
   {
+    bool first{true};
     while (std::getline(infile, line))
     {
       if (line[0] == '#')
@@ -90,6 +95,14 @@ void Fun4All_Year2_Fitting(int nEvents = 100,
         std::cout << "found commented out line " << line << std::endl;
         continue;
       }
+      if (first)
+      {
+        std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(line);
+        int runnumber = runseg.first;
+        rc->set_uint64Flag("TIMESTAMP", runnumber);
+        first = false;
+      }
+
       std::cout << line << std::endl;
       std::string magname = "DSTin_" + std::to_string(iman);
       In = new Fun4AllDstInputManager(magname);
