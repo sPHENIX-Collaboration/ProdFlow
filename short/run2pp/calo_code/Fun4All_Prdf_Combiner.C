@@ -12,11 +12,9 @@
 
 #include <ffarawmodules/ClockDiffCheck.h>
 
-#include <TIterator.h>
-#include <TString.h>
 #include <TSystem.h>
-#include <TSystemDirectory.h>
-#include <TSystemFile.h>
+
+#include <filesystem>
 
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libfun4allraw.so)
@@ -26,7 +24,7 @@ R__LOAD_LIBRARY(libffarawmodules.so)
 void Fun4All_Prdf_Combiner(int nEvents = 0,
                            const std::string &daqhost = "seb15",
                            const std::string &outbase = "delme",
-                           const std::string &outdir = "/sphenix/data/data02/sphnxpro/scratch/kolja/test/")
+                           const std::string &outdir = "/sphenix/data/data02/sphnxpro/scratch/kolja/test")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -39,29 +37,21 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
   in->registerGl1TriggeredInput(gl1);
 
   SingleTriggeredInput *input = new SingleTriggeredInput(daqhost);
-  if (daqhost == "seb18")
-  {
-    input->KeepPackets();
-  }
 
-  //  input->Verbosity(10);
-  TSystemDirectory workdir("workdir", ".");
-  TList *listfiles = workdir.GetListOfFiles();
-  TIter listnext(listfiles);
-  while (auto *listfile = (TSystemFile *) listnext())
+  for (const auto &entry : std::filesystem::directory_iterator("."))
   {
-    TString fname = listfile->GetName();
-    if (!fname.EndsWith(".list")) continue;
+    std::string fname = entry.path().filename().string();
+    if (!fname.ends_with(".list")) continue;
     if (fname == "gl1daq.list") continue;
-    if (fname.Contains(daqhost))
+    if (fname.find(daqhost) != std::string::npos)
     {
       std::ifstream infile;
-      infile.open(fname.Data());
+      infile.open(fname);
       std::cout << "Adding " << fname << std::endl;
       if (infile.is_open())
       {
         infile.close();
-        input->AddListFile(fname.Data());
+        input->AddListFile(fname);
         in->registerTriggeredInput(input);
         break;  // don't need to break; but we should probably sort if we use multiple input lists
       }
