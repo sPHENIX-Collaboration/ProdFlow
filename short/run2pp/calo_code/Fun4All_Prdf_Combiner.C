@@ -24,7 +24,7 @@ R__LOAD_LIBRARY(libffarawmodules.so)
 void Fun4All_Prdf_Combiner(int nEvents = 0,
                            const std::string &daqhost = "seb15",
                            const std::string &outbase = "delme",
-                           const std::string &outdir = "/sphenix/user/pinkenbu/prodtest")
+                           const std::string &outdir = "/sphenix/data/data02/sphnxpro/scratch/kolja/test")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
