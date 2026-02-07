@@ -14,7 +14,7 @@ Full_TRIGGERED_EVENT_run2pp:
     table:       datasets
     min_run_time:   300
     min_run_events: 100000
-    combine_seg0_only: true
+    combine_seg0_only: false
 
   job:
     script:                 run_eventcombine.sh
@@ -52,5 +52,31 @@ Full_CALOFITTING_run2pp:
     batch_name:            '{dsttype}_{dataset}_{outtriplet}'
     priority:              '60'
 
+#______________________________________________________________________________________________________________________
+Full_JETSKIMMER_run2pp:
+  params:
+    dsttype:     DST_JETCALO
+    period:      run2pp
+    physicsmode: physics
+    dataset:     run2pp
+    build:       new
+    dbtag:       2024p024
+    version:     1
+
+  input:
+    db:          fcr
+    table:       datasets
+    intriplet:   new_2024p024_v001
+    indsttype:   DST_CALOFITTING
+
+  job:
+    script:                 run_jetskimmer.sh
+    log:                   '{condor}/{logbase}.condor'
+    neventsper:             100000
+    payload:                [calo_code/*]
+    request_memory:         4000MB
+    request_cpus:          '1'
+    batch_name:            '{dsttype}_{dataset}_{outtriplet}'
+    priority:              '60'
 ###############################################################################################
 
