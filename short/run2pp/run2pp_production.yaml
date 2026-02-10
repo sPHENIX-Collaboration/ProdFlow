@@ -33,7 +33,7 @@ sphnxprod01:
     jobprio: 90
     submit: on
     dstspider: on
-    finishmon: on
+    finishmon: off
 
   # Rolling CALOFITTING PRODUCTION
   Full_CALOFITTING_run2pp:
@@ -44,5 +44,5 @@ sphnxprod01:
     jobprio: 60
     submit: on
     dstspider: on
-    finishmon: on
+    finishmon: off
 

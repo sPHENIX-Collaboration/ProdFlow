@@ -55,7 +55,7 @@ sphnxprod02:
     # runs: [79507 79516]
     jobprio: 30
     submit: on
-    dstspider: off
+    dstspider: on
     finishmon: off
 
   # ## CALO - small range, just for testing
@@ -66,7 +66,7 @@ sphnxprod02:
   #   jobprio: 90
   #   submit: off
   #   dstspider: off
-  #   finishmon: on
+  #   finishmon: off
 
   # # Rolling CALOFITTING PRODUCTION
   # Full_CALOFITTING_run3pp:
@@ -75,7 +75,7 @@ sphnxprod02:
   #   jobprio: 40
   #   submit: off
   #   dstspider: off
-  #   finishmon: on
+  #   finishmon: off
 
 ###############################################################################
 
@@ -95,7 +95,7 @@ sphnxprod03:
     jobprio: 95
     submit: on
     dstspider: on
-    finishmon: on    
+    finishmon: on
 
   # Segment0 CLUSTER
   Seg0_TRKR_CLUSTER_run3pp:
@@ -123,7 +123,7 @@ sphnxprod03:
     jobprio: 92
     submit: on
     dstspider: on
-    finishmon: on
+    finishmon: off
 
 # TRKR_CLUSTER cosmics
   Full_TRKR_CLUSTER_run3cosmics:
@@ -132,7 +132,7 @@ sphnxprod03:
     jobprio: 92
     submit: on
     dstspider: on
-    finishmon: on
+    finishmon: off
 
   # Supplemental Laser
   Full_STREAMING_EVENT_run3line_laser:
@@ -141,7 +141,7 @@ sphnxprod03:
     jobprio: 100
     submit: on
     dstspider: on
-    finishmon: on
+    finishmon: off
 
   # Supplemental Calib
   Full_STREAMING_EVENT_run3calib:
@@ -150,7 +150,7 @@ sphnxprod03:
     jobprio: 100
     submit: on
     dstspider: on
-    finishmon: on
+    finishmon: off
 
   # Supplemental Calib
   Full_TRKR_CLUSTER_run3calib:
@@ -159,7 +159,7 @@ sphnxprod03:
     jobprio: 100
     submit: on
     dstspider: on
-    finishmon: on
+    finishmon: off
 
 ################################# Prod04 #######################################
 ### Reserved for Chris

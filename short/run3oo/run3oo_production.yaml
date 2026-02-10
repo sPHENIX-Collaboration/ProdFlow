@@ -9,30 +9,30 @@ sphnxprod01:
 
   # STREAMING physics
   Full_STREAMING_EVENT_run3oo:
-    config: oostreaming_physics_ana532.yaml
-    runs: [82000 99000]
+    config: oostreaming_physics_ana534.yaml
+    runs: [82372 82703]
     jobprio: 90
-    submit: off
-    dstspider: off
-    finishmon: off
+    submit: on
+    dstspider: on
+    finishmon: on
 
   # TRKR_CLUSTER physics
   Full_TRKR_CLUSTER_run3oo:
-    config: ootracking_from532_physics_ana532_2025p009_v001.yaml
-    runs: [82000 99000]
+    config: ootracking_from534_physics_ana534_2025p009_v001.yaml
+    runs: [82372 82703]
     jobprio: 60
-    submit: off
-    dstspider: off
-    finishmon: off
+    submit: on
+    dstspider: on
+    finishmon: on
 
   # TRKR_SEED physics
   Full_TRKR_SEED_run3oo:
-    config: ootracking_from532_physics_ana532_2025p009_v001.yaml
-    runs: [82000 99000]
+    config: ootracking_from534_physics_ana534_2025p009_v001.yaml
+    runs: [82372 82703]
     jobprio: 30
-    submit: off
-    dstspider: off
-    finishmon: off
+    submit: on
+    dstspider: on
+    finishmon: on
 
 ###############################################################################
 
@@ -57,30 +57,30 @@ sphnxprod03:
   # Segment0 STREAMING
   Seg0_STREAMING_EVENT_run3oo:
     config: seg0_oostreaming_physics_new_nocdbtag_v001.yaml
-    runs: [82000 99000]
+    runs: [82372 82703]
     nevents: 400000
     jobprio: 95
-    submit: off
-    dstspider: off
-    finishmon: off   
+    submit: on
+    dstspider: on
+    finishmon: on   
 
   # Segment0 CLUSTER
   Seg0_TRKR_CLUSTER_run3oo:
     config: seg0_oostreaming_physics_new_nocdbtag_v001.yaml
-    runs: [82000 99000]]
+    runs: [82372 82703]
     jobprio: 65
-    submit: off
-    dstspider: off
-    finishmon: off
+    submit: on
+    dstspider: on
+    finishmon: on
 
   # Segment0 SEED
   Seg0_TRKR_SEED_run3oo:
     config: seg0_oostreaming_physics_new_nocdbtag_v001.yaml
-    runs: [82000 99000]
+    runs: [82372 82703]
     jobprio: 35
-    submit: off
-    dstspider: off
-    finishmon: off
+    submit: on
+    dstspider: on
+    finishmon: on
 
 ################################# Prod04 #######################################
 ### Reserved for Chris

@@ -29,7 +29,7 @@ sphnxprod01:
   #   runs: [77000 78601]
   #   jobprio: 59
   #   submit: off
-  #   dstspider: on
+  #   dstspider: off
   #   finishmon: off
     
 ################################# Prod02 #######################################
@@ -44,17 +44,17 @@ sphnxprod02:
     config: streaming_physics_ana523_2025p007_v001.yaml
     runs: [72500 75000]
     jobprio: 59
-    submit: on
-    dstspider: on
-    finishmon: on
+    submit: off
+    dstspider: off
+    finishmon: off
 
   # Full_TRKR_SEED_run3physics:
   #   config: streaming_physics_ana523_2025p007_v001.yaml
   #   runs: [72500 75000]
   #   jobprio: 29
-  #   submit: on
-  #   dstspider: on
-  #   finishmon: on
+  #   submit: off
+  #   dstspider: off
+  #   finishmon: off
 
 ################################# Prod03 #######################################    
 sphnxprod03:
@@ -68,9 +68,9 @@ sphnxprod03:
     config: streaming_physics_ana523_2025p007_v001.yaml
     runs: [72500 75000]
     jobprio: 29
-    submit: on
-    dstspider: on
-    finishmon: on
+    submit: off
+    dstspider: off
+    finishmon: off
 
 
 ################################# prod04 #######################################
@@ -86,7 +86,7 @@ sphnxprod04:
   #   runs: [76000 78954]
   #   jobprio: 29
   #   submit: off
-  #   dstspider: on
+  #   dstspider: off
   #   finishmon: off
 
 ################################# Snippets #######################################
@@ -96,7 +96,7 @@ sphnxprod04:
   #   runs: [78950 90000]
   #   jobprio: 90
   #   submit: OFF
-  #   dstspider: on
+  #   dstspider: off
     
   # # Rolling CALOFITTING PRODUCTION
   # Full_CALOFITTING_run3physics:
@@ -104,6 +104,4 @@ sphnxprod04:
   #   runs: [78950 90000]
   #   jobprio: 40
   #   submit: OFF
-  #   dstspider: on
-
-
+  #   dstspider: off
