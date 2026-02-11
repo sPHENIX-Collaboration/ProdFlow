@@ -36,7 +36,6 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
   //  gl1->Verbosity(10);
   in->registerGl1TriggeredInput(gl1);
 
-  SingleTriggeredInput *input = new SingleTriggeredInput(daqhost);
 
   for (const auto &entry : std::filesystem::directory_iterator("."))
   {
@@ -51,16 +50,13 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
       if (infile.is_open())
       {
         infile.close();
+	SingleTriggeredInput *input = new SingleTriggeredInput(daqhost);
         input->AddListFile(fname);
         in->registerTriggeredInput(input);
-        break;  // don't need to break; but we should probably sort if we use multiple input lists
       }
     }
   }
   se->registerInputManager(in);
-  // In principle, more than one input file list can be supported
-  // std::vector<TString> filenames; // collect names first so they can be ordered
-  // std::sort(filenames.begin(), filenames.end());
 
   SyncReco *sync = new SyncReco();
   se->registerSubsystem(sync);
@@ -77,7 +73,6 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
   // std::string outfile = "DST_TRIGGERED_EVENT_" + daqhost + "_run2pp_new_nocdbtag_v001.root";
   std::string outfile = outbase + ".root";
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("dstout", outfile);
-  out->SplitLevel(0);
   out->UseFileRule();
   out->SetEventNumberRollover(100000);
   out->SetClosingScript("./stageout.sh");
