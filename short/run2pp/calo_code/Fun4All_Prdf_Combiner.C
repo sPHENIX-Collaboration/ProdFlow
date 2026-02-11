@@ -83,10 +83,11 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
   out->SetClosingScript("./stageout.sh");
   out->SetClosingScriptArgs(outdir + " " + "0");  // additional beyond the name of the file
   se->registerOutputManager(out);
-  if (nEvents >= 0)
+  if (nEvents < 0)
   {
-    se->run(nEvents);
+    return;
   }
+  se->run(nEvents);
   se->End();
   delete se;
   std::cout << "all done" << std::endl;
