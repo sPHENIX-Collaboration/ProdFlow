@@ -9,7 +9,7 @@ sphnxprod01:
 
   # STREAMING physics
   Full_STREAMING_EVENT_run3oo:
-    config: oostreaming_physics_ana534.yaml
+    config: oostreaming_physics_ana537.yaml
     runs: [82372 82703]
     jobprio: 90
     submit: on
