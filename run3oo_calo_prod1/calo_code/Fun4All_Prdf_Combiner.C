@@ -1,3 +1,4 @@
+hello world
 #include <fun4all/Fun4AllServer.h>
 #include <fun4all/Fun4AllInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
