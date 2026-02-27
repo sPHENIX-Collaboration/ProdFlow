@@ -1,0 +1,47 @@
+
+################################# Prod01 #######################################
+### Standard full production 
+sphnxprod01:
+  defaultlocations:
+    prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
+    configbase: /sphenix/u/sphnxpro/Production2026/run3oo_calo_prod1/run3oo_calo_prod1
+    submitdir:  /sphenix/data/data02/sphnxpro/production/run3oo/submission/{rule}
+
+  # Event combining
+  pro1_TRIGGERED_EVENT_run3oo:
+    config: run3oo_calo_physics_prod1_2025p009.yaml
+    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_calo_prod1/run3oo_calo_prod1/runlist_run3oo_calo_prod1
+    # runs: [82374 82703]
+    jobprio: 90
+    submit: on
+    dstspider: on
+    finishmon: on
+
+  # Waveform fitting
+  pro1_CALOFITTING_run3oo:
+    config: run3oo_calo_physics_prod1_2025p009.yaml
+    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_calo_prod1/run3oo_calo_prod1/runlist_run3oo_calo_prod1
+    jobprio: 60
+    submit: on
+    dstspider: on
+    finishmon: on
+
+################################# Prod02 #######################################
+### Additional host for FITTING
+sphnxprod02:
+  defaultlocations:
+    prodbase:   /sphenix/u/sphnxpro/mainkolja/sphenixprod
+    configbase: /sphenix/u/sphnxpro/Production2026/run3oo_calo_prod1/run3oo_calo_prod1
+    submitdir:  /sphenix/data/data02/sphnxpro/production/run3oo/submission/{rule}
+
+
+  # Waveform fitting
+  pro1_CALOFITTING_run3oo:
+    config: run3oo_calo_physics_prod1_2025p009.yaml
+    runlist: /sphenix/u/sphnxpro/Production2026/run3oo_calo_prod1/run3oo_calo_prod1/runlist_run3oo_calo_prod1
+    jobprio: 60
+    submit: off
+    dstspider: off
+    finishmon: off
+    
+###############################################################################
