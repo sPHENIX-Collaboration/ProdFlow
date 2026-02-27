@@ -1,5 +1,5 @@
 #______________________________________________________________________________
-pro1_TRIGGERED_EVENT_run3oo:
+prod1_TRIGGERED_EVENT_run3oo:
   params:
     dsttype:    DST_TRIGGERED_EVENT
     period:     run3oo
@@ -26,12 +26,12 @@ pro1_TRIGGERED_EVENT_run3oo:
     priority:              '90'
 
 #______________________________________________________________________________
-pro1_CALOFITTING_run3oo:
+prod1_CALOFITTING_run3oo:
   params:
     dsttype:     DST_CALOFITTING
-    period:      run3pp
+    period:      run3oo
     physicsmode: physics
-    dataset:     run3pp
+    dataset:     run3oo
     build:       pro.1
     dbtag:       2025p009
     version:     1
@@ -51,5 +51,5 @@ pro1_CALOFITTING_run3oo:
     batch_name:            '{dsttype}_{dataset}_{outtriplet}'
     priority:              '60'
 
-###############################################################################################
+###############################################################################
 

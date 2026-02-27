@@ -8,7 +8,7 @@ sphnxprod01:
     submitdir:  /sphenix/data/data02/sphnxpro/production/run3oo/submission/{rule}
 
   # Event combining
-  pro1_TRIGGERED_EVENT_run3oo:
+  prod1_TRIGGERED_EVENT_run3oo:
     config: run3oo_calo_physics_prod1_2025p009.yaml
     runlist: /sphenix/u/sphnxpro/Production2026/run3oo_calo_prod1/run3oo_calo_prod1/runlist_run3oo_calo_prod1
     # runs: [82374 82703]
@@ -18,7 +18,7 @@ sphnxprod01:
     finishmon: on
 
   # Waveform fitting
-  pro1_CALOFITTING_run3oo:
+  prod1_CALOFITTING_run3oo:
     config: run3oo_calo_physics_prod1_2025p009.yaml
     runlist: /sphenix/u/sphnxpro/Production2026/run3oo_calo_prod1/run3oo_calo_prod1/runlist_run3oo_calo_prod1
     jobprio: 60
@@ -36,7 +36,7 @@ sphnxprod02:
 
 
   # Waveform fitting
-  pro1_CALOFITTING_run3oo:
+  prod1_CALOFITTING_run3oo:
     config: run3oo_calo_physics_prod1_2025p009.yaml
     runlist: /sphenix/u/sphnxpro/Production2026/run3oo_calo_prod1/run3oo_calo_prod1/runlist_run3oo_calo_prod1
     jobprio: 60
