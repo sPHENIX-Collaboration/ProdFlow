@@ -22,7 +22,7 @@ prod1_TRIGGERED_EVENT_run3oo:
     payload:                [calo_code/*]
     request_memory:         2024MB
     request_xferslots:     '3'    
-    batch_name:            '{dsttype}_{dataset}_{outtriplet}'
+    batch_name:            '{rule_name}_{dataset}_{outtriplet}'
     priority:              '90'
 
 #______________________________________________________________________________
@@ -48,7 +48,7 @@ prod1_CALOFITTING_run3oo:
     payload:                [calo_code/*]
     request_memory:         2500MB
     request_cpus:          '1'
-    batch_name:            '{dsttype}_{dataset}_{outtriplet}'
+    batch_name:            '{rule_name}_{dataset}_{outtriplet}'
     priority:              '60'
 
 ###############################################################################
