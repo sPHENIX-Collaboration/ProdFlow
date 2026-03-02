@@ -36,7 +36,6 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
   //  gl1->Verbosity(10);
   in->registerGl1TriggeredInput(gl1);
 
-
   for (const auto &entry : std::filesystem::directory_iterator("."))
   {
     std::string fname = entry.path().filename().string();
@@ -50,7 +49,7 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
       if (infile.is_open())
       {
         infile.close();
-	SingleTriggeredInput *input = new SingleTriggeredInput(daqhost);
+        SingleTriggeredInput *input = new SingleTriggeredInput(daqhost);
         input->AddListFile(fname);
         in->registerTriggeredInput(input);
       }
