@@ -20,7 +20,7 @@ prod1_TRIGGERED_EVENT_run3oo:
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
     payload:                [calo_code/*]
-    request_memory:         2024MB
+    request_memory:         2 GB, 3 GB, 5 GB
     request_xferslots:     '3'    
     batch_name:            '{rule_name}_{dataset}_{outtriplet}'
     priority:              '90'
@@ -46,7 +46,7 @@ prod1_CALOFITTING_run3oo:
     log:                   '{condor}/{logbase}.condor'
     neventsper:             100000
     payload:                [calo_code/*]
-    request_memory:         2500MB
+    request_memory:         2500MB, 4GB, 6GB
     request_cpus:          '1'
     batch_name:            '{rule_name}_{dataset}_{outtriplet}'
     priority:              '60'
