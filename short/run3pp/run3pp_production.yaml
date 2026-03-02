@@ -9,23 +9,23 @@ sphnxprod01:
 
   # STREAMING physics
   Full_STREAMING_EVENT_run3pp:
-    config: ppstreaming_physics_ana532.yaml
+    config: ppstreaming_physics_ana537.yaml
     runs: [79000 81668]
     # runs: [79507 79516] # calibrated runs
     jobprio: 90
-    submit: on
-    dstspider: on
-    finishmon: on
-
+    submit: off
+    dstspider: off
+    finishmon: off
+  
   # TRKR_CLUSTER physics
   Full_TRKR_CLUSTER_run3pp:
     config: pptracking_from532_physics_ana532_2025p009_v001.yaml
     runs: [79000 81668]
     # runs: [79507 79516]
     jobprio: 60
-    submit: on
-    dstspider: on
-    finishmon: on
+    submit: off
+    dstspider: off
+    finishmon: off
 
   # TRKR_SEED physics
   Full_TRKR_SEED_run3pp:
@@ -33,9 +33,9 @@ sphnxprod01:
     runs: [79000 81668]
     # runs: [79507 79516]
     jobprio: 30
-    submit: on
-    dstspider: on
-    finishmon: on
+    submit: off
+    dstspider: off
+    finishmon: off
 
 ###############################################################################
 
@@ -54,8 +54,8 @@ sphnxprod02:
     runs: [79000 81668]
     # runs: [79507 79516]
     jobprio: 30
-    submit: on
-    dstspider: on
+    submit: off
+    dstspider: off
     finishmon: off
 
   # ## CALO - small range, just for testing
@@ -93,27 +93,27 @@ sphnxprod03:
     runs: [81210 81668]
     nevents: 400000
     jobprio: 95
-    submit: on
-    dstspider: on
-    finishmon: on
+    submit: off
+    dstspider: off
+    finishmon: off
 
   # Segment0 CLUSTER
   Seg0_TRKR_CLUSTER_run3pp:
     config: seg0_ppstreaming_physics_new_nocdbtag_v001.yaml
     runs: [81210 81668]
     jobprio: 65
-    submit: on
-    dstspider: on
-    finishmon: on
+    submit: off
+    dstspider: off
+    finishmon: off
 
   # Segment0 SEED
   Seg0_TRKR_SEED_run3pp:
     config: seg0_ppstreaming_physics_new_nocdbtag_v001.yaml
     runs: [81210 81668]
     jobprio: 35
-    submit: on
-    dstspider: on
-    finishmon: on
+    submit: off
+    dstspider: off
+    finishmon: off
 
 ## SPECIAL TRACKING  (cosmics, calib, laser)
   # STREAMING cosmics
@@ -121,8 +121,8 @@ sphnxprod03:
     config: ppstreaming_cosmics_ana523_2025p007_v001.yaml
     runs: [81210 99000]
     jobprio: 92
-    submit: on
-    dstspider: on
+    submit: off
+    dstspider: off
     finishmon: off
 
 # TRKR_CLUSTER cosmics
@@ -130,8 +130,8 @@ sphnxprod03:
     config: ppstreaming_cosmics_ana523_2025p007_v001.yaml
     runs: [81210 99000]
     jobprio: 92
-    submit: on
-    dstspider: on
+    submit: off
+    dstspider: off
     finishmon: off
 
   # Supplemental Laser
@@ -139,8 +139,8 @@ sphnxprod03:
     config: supplemental_ppstreaming_physics_new_nocdbtag_v001.yaml
     runs: [81210 99000]
     jobprio: 100
-    submit: on
-    dstspider: on
+    submit: off
+    dstspider: off
     finishmon: off
 
   # Supplemental Calib
@@ -148,8 +148,8 @@ sphnxprod03:
     config: supplemental_ppstreaming_physics_new_nocdbtag_v001.yaml
     runs: [81210 99000]
     jobprio: 100
-    submit: on
-    dstspider: on
+    submit: off
+    dstspider: off
     finishmon: off
 
   # Supplemental Calib
@@ -157,8 +157,8 @@ sphnxprod03:
     config: supplemental_ppstreaming_physics_new_nocdbtag_v001.yaml
     runs: [81210 99000]
     jobprio: 100
-    submit: on
-    dstspider: on
+    submit: off
+    dstspider: off
     finishmon: off
 
 ################################# Prod04 #######################################

@@ -60,27 +60,27 @@ sphnxprod03:
     runs: [82372 82703]
     nevents: 400000
     jobprio: 95
-    submit: on
-    dstspider: on
-    finishmon: on   
+    submit: off
+    dstspider: off
+    finishmon: off   
 
   # Segment0 CLUSTER
   Seg0_TRKR_CLUSTER_run3oo:
     config: seg0_oostreaming_physics_new_nocdbtag_v001.yaml
     runs: [82372 82703]
     jobprio: 65
-    submit: on
-    dstspider: on
-    finishmon: on
+    submit: off
+    dstspider: off
+    finishmon: off
 
   # Segment0 SEED
   Seg0_TRKR_SEED_run3oo:
     config: seg0_oostreaming_physics_new_nocdbtag_v001.yaml
     runs: [82372 82703]
     jobprio: 35
-    submit: on
-    dstspider: on
-    finishmon: on
+    submit: off
+    dstspider: off
+    finishmon: off
 
 ################################# Prod04 #######################################
 ### Reserved for Chris
