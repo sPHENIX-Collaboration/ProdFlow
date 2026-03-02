@@ -13,18 +13,18 @@ sphnxprod01:
     runlist: /sphenix/u/sphnxpro/Production2026/run3oo_calo_prod1/run3oo_calo_prod1/runlist_run3oo_calo_prod1
     # runs: [82374 82703]
     jobprio: 90
-    submit: on
-    dstspider: on
-    finishmon: on
+    submit: off
+    dstspider: off
+    finishmon: off
 
   # Waveform fitting
   prod1_CALOFITTING_run3oo:
     config: run3oo_calo_physics_prod1_2025p009.yaml
     runlist: /sphenix/u/sphnxpro/Production2026/run3oo_calo_prod1/run3oo_calo_prod1/runlist_run3oo_calo_prod1
     jobprio: 60
-    submit: on
-    dstspider: on
-    finishmon: on
+    submit: off
+    dstspider: off
+    finishmon: off
 
 ################################# Prod02 #######################################
 ### Additional host for FITTING
