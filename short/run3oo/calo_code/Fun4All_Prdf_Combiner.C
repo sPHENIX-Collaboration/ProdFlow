@@ -51,6 +51,10 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
         infile.close();
         SingleTriggeredInput *input = new SingleTriggeredInput(daqhost);
         input->AddListFile(fname);
+        if (daqhost == "seb20")
+        {
+          input->KeepPacket(12001);
+        }
         in->registerTriggeredInput(input);
       }
     }
