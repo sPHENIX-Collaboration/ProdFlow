@@ -39,7 +39,8 @@ R__LOAD_LIBRARY(libCaloPacketSkimmer.so)
 // this pass containis the reco process that's stable wrt time stamps(raw tower building)
 void Fun4All_Year2_Fitting(int nEvents = 100,
                            const std::string &inlist = "files.list",
-                           const std::string &outfile = "DST_CALOFITTING_run3oo_new_newcdbtag_v008-00082703-00000.root",
+                           const std::string &outfile1 = "DST_CALOFITTING_run3oo_pro1_newcdbtag_v008-00082703-00000.root",
+                           const std::string &outfile2 = "DST_ZDC_RAW_run3oo_pro1_newcdbtag_v008-00082703-00000.root",
                            const std::string &outfile_hist = "HIST_CALOFITTINGQA_run3auau_new_newcdbtag_v008-00082703-00000.root",
                            const std::string &dbtag = "newcdbtag")
 {
@@ -65,10 +66,6 @@ void Fun4All_Year2_Fitting(int nEvents = 100,
 
   CaloPacketSkimmer *calopacket = new CaloPacketSkimmer();
   se->registerSubsystem(calopacket);
-
-  MbdReco *mbd = new MbdReco();
-  mbd->DoOnlyFits();
-  se->registerSubsystem(mbd);
 
   Process_Calo_Fitting();
 
@@ -118,8 +115,12 @@ void Fun4All_Year2_Fitting(int nEvents = 100,
     std::cout << "No files in filelist" << std::endl;
     gSystem->Exit(1);
   }
-  Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfile);
+  Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfile1);
   out->StripCompositeNode("Packets");
+  out->StripNode("12001");
+  se->registerOutputManager(out);
+  out = new Fun4AllDstOutputManager("DSTOUTzdc", outfile2);
+  out->AddNode("12001");
   se->registerOutputManager(out);
   // se->Print();
   if (nEvents < 0)
