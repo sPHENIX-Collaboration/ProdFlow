@@ -120,6 +120,8 @@ void Fun4All_Year2_Fitting(int nEvents = 100,
   out->StripNode("12001");
   se->registerOutputManager(out);
   out = new Fun4AllDstOutputManager("DSTOUTzdc", outfile2);
+  out->AddNode("EventHeader");
+  out->AddNode("Sync");
   out->AddNode("12001");
   se->registerOutputManager(out);
   // se->Print();
