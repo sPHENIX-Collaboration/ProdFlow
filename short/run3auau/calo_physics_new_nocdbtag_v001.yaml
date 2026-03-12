@@ -29,7 +29,7 @@ Full_TRIGGERED_EVENT_run3physics:
     filesystem:
       logdir:   "/sphenix/data/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"
       histdir:  "/sphenix/data/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/hist"
-
+      condor:            "/tmp/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"
 
 #______________________________________________________________________________________________________________________
 Full_CALOFITTING_run3physics:
@@ -59,6 +59,7 @@ Full_CALOFITTING_run3physics:
     filesystem:
       logdir:   "/sphenix/data/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"
       histdir:  "/sphenix/data/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/hist"
+      condor:            "/tmp/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"
 
 ###############################################################################################
 
