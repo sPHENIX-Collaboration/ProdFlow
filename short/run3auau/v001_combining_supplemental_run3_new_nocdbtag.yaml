@@ -8,7 +8,7 @@ DST_STREAMING_EVENT_run3line_laser:
     period:     run3auau
     physicsmode: line_laser
     dataset:    run3line_laser # could be run3cosmics, run3calib, etc.
-    build:      new
+    build:      ana.540
     dbtag:      nocdbtag
     version:    1
 
@@ -25,10 +25,10 @@ DST_STREAMING_EVENT_run3line_laser:
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
     payload:                [streaming_code/*]
-    request_memory:         2024MB
+    request_memory:         3072MB
     request_xferslots:     '3'
     batch_name:            '{dsttype}_{dataset}_{outtriplet}'
-    priority:              '3500'
+    priority:              '100'
 
 
 ################################################################################

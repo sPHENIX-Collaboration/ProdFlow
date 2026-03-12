@@ -26,6 +26,10 @@ Full_TRIGGERED_EVENT_run3physics:
     request_xferslots:     '3'    
     batch_name:            '{dsttype}_{dataset}_{outtriplet}'
     priority:              '3500'
+    filesystem:
+      logdir:   "/sphenix/data/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"
+      histdir:  "/sphenix/data/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/hist"
+
 
 #______________________________________________________________________________________________________________________
 Full_CALOFITTING_run3physics:
@@ -52,6 +56,9 @@ Full_CALOFITTING_run3physics:
     request_cpus:          '1'
     batch_name:            '{dsttype}_{dataset}_{outtriplet}'
     priority:              '3500'
+    filesystem:
+      logdir:   "/sphenix/data/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/log"
+      histdir:  "/sphenix/data/data03/sphnxpro/{prodmode}/{period}/{physicsmode}/{outtriplet}/{leafdir}/{rungroup}/hist"
 
 ###############################################################################################
 

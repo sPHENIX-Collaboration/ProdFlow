@@ -37,6 +37,16 @@ sphnxprod01:
     dstspider: off
     finishmon: off
 
+  # TRKR_TRACKS physics
+  Full_TRKR_TRACKS_run3pp:
+    config: pptracking_from532_physics_ana538_2025p011_v001.yaml
+    runs: [79507 79712]
+    # runs: [79507 79516]
+    jobprio: 30
+    submit: off
+    dstspider: off
+    finishmon: off
+
 ###############################################################################
 
 ################################# Prod02 #######################################
