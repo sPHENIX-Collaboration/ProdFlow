@@ -63,5 +63,8 @@ ls -la
 ls -la
 
 echo All done
+
+python ${SPHENIXPROD_SCRIPT_PATH}/sphenixdbutils.py jobended --exit-code ${status_f4a:-1}
+
 exit ${status_f4a:-1}
 
