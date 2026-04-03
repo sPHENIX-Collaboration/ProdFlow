@@ -101,7 +101,7 @@ void Fun4All_SingleStream_Combiner(int nEvents = 0,
   recoConsts *rc = recoConsts::instance();
   CDBInterface::instance()->Verbosity(1);
   rc->set_StringFlag("CDB_GLOBALTAG", dbtag );
-
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
   rc->set_IntFlag("RUNNUMBER", runnumber);
   Fun4AllStreamingInputManager *in = new Fun4AllStreamingInputManager("Comb");
 //  in->Verbosity(3);
