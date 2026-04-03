@@ -20,7 +20,7 @@ v666_TRKR_CLUSTER_run3pp:
     log:                   '{condor}/{logbase}.condor'
     neventsper:             1000
     payload:                [tracking_code/*]
-    request_memory:         8GB, 12GB, 16GB, 24GB
+    request_memory:         8GB, 12GB, 16GB # tried 6GB
     request_cpus:          '1'
     batch_name:            '{rule_name}_{dataset}_{outtriplet}'
     priority:              '60'
