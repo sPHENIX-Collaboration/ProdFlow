@@ -46,16 +46,16 @@ for i in ${payload[@]}; do
     cp --verbose ${subdir}/${i} .
 done
 
-if [[ "${inputs}" == *"dbinput"* ]]; then
-    echo "Getting inputs via cups.  ranges is not set."
-    inputs=( $(./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs) )
-fi
-
 if [ -e odbc.ini ]; then
 echo export ODBCINI=./odbc.ini
      export ODBCINI=./odbc.ini
 else
      echo No odbc.ini file detected.  Using system odbc.ini
+fi
+
+if [[ "${inputs}" == *"dbinput"* ]]; then
+    echo "Getting inputs via cups.  ranges is not set."
+    inputs=( $(./cups.py -r ${runnumber} -s ${segment} -d ${outbase} getinputs) )
 fi
 
 # Debugging info
@@ -94,7 +94,7 @@ status_f4a=0
 for infile_ in ${inputs[@]}; do
     infile=$( basename ${infile_} )
     cp -v ${infile_} .
-    outfile=${infile/CALOFITTING/CALO}
+    outfile=${logbase}.root
     outhist=${outfile/DST_CALO/HIST_CALOQA}
     root.exe -q -b Fun4All_Year2_Calib.C\(${nevents},\"${infile}\",\"${outfile}\",\"${outhist}\",\"${dbtag}\"\);  status_f4a=$?
 
