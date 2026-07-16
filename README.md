@@ -1,3 +1,2 @@
-# sPHENIX Production Workflows
-
-## Calorimeter Production 13 October 2023
+# THIS REPO IS NO LONGER USED
+Please use https://github.com/sPHENIX-Collaboration/prodmacros instead
