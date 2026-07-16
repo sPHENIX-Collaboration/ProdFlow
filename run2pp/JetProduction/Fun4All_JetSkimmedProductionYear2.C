@@ -54,7 +54,6 @@ void Fun4All_JetSkimmedProductionYear2(int nEvents=1000,
                         const std::string& outfile_low= "DST_JETCALO-00000000-000000.root",
                         const std::string& outfile_high= "DST_Jet-00000000-000000.root",
                         const std::string& outfile_hist= "HIST_CALOQA-00000000-000000.root",
-                        const std::string& outfile_tree= "TREE_CALOQA-00000000-000000.root",
                         const std::string& dbtag= "ProdA_2024"
   )
 {
