@@ -21,7 +21,7 @@ v666_STREAMING_EVENT_run3pp:
     log:                   '{condor}/{logbase}.condor'
     neventsper:             10000
     payload:                [streaming_code/*]
-    request_memory:         2500MB, 4GB, 6GB
+    request_memory:         1500MB, 2GB, 2500MB, 4GB, 6GB, 10GB
     request_xferslots:     '3'    
     batch_name:            '{rule_name}_{dataset}_{outtriplet}'
     priority:              '90'

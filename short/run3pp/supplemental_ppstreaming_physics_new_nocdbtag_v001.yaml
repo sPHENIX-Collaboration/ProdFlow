@@ -6,7 +6,7 @@ Full_STREAMING_EVENT_run3line_laser:
     period:     run3pp
     physicsmode: line_laser
     dataset:    run3line_laser # could be run3cosmics, run3calib, etc.
-    build:      new
+    build:      ana.540
     dbtag:      nocdbtag
     version:    1
 

@@ -217,5 +217,3 @@ if [ -e cups.stat ]; then
 fi
 
 exit ${status_f4a}
-
-

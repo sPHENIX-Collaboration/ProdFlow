@@ -24,7 +24,6 @@ if [[ $# != 1 ]] ; then
     echo "Multiple or no GL1 files found:" >&2
     ls -l `echo $@`                        >&2
     echo Stop.                             >&2
-    # ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e 111 --nevents 0 --inc 
     exit 111
 fi
 gl1file=$1
@@ -37,9 +36,8 @@ ls -l | grep list
 set -- `find . -maxdepth 1 -name \*.list -a -not -name $gl1file`
 if [[ $# != 1 ]] ; then
     echo "Multiple or not enough .list files found:"     >&2
-    ls -l `echo $@`                        >&2
-    echo Stop.                             >&2
-    # ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e 111 --nevents 0 --inc 
+    ls -l `echo $@`                                      >&2
+    echo Stop.                                           >&2
     exit 111
 fi
 [[ $1 == *intt* ]] && inttfile=$1
@@ -55,13 +53,11 @@ for l in *list; do
     cat $l
 done
 
-echo "--- Executing macro"
-
 root_line="Fun4All_SingleStream_Combiner.C(${nevents},${run},\"${outdir}\",\"${histdir}\",\"${outbase}\",${neventsper},\"${dbtag}\",\"${gl1file}\",\"${ebdcfile}\",\"${inttfile}\",\"${mvtxfile}\",\"${tpotfile}\");"
 full_command="root.exe -q -b '${root_line}'"
 
-echo "${full_command}"
-eval "${full_command}" ;  status_f4a=$?
+echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
+. ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
 
 shopt -s nullglob
 for hfile in HIST_*.root; do
@@ -72,11 +68,10 @@ for cfile in CALIB_*.root; do
     echo ./stageout ${cfile} to ${histdir}
     ./stageout.sh ${cfile} ${histdir}
 done
-
 shopt -u nullglob
 
-# There should be no output files hanging around  (TODO add number of root files to exit code)
-ls -la 
+# There should be no output files hanging around
+echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
+. ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
 
-echo "All done"
 exit ${status_f4a:-1}

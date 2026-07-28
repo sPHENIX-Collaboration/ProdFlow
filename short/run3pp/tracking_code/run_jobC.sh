@@ -32,9 +32,8 @@ echo end of ls -la '*.list'
 root_line="Fun4All_JobC.C(${nevents},\"${logbase}.root\",\"${dbtag}\",\"infile.list\")"
 full_command="root.exe -q -b '${root_line}'"
 
-echo "--- Executing macro"
-echo "${full_command}"
-eval "${full_command}" ;  status_f4a=$?
+echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
+. ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
 
 echo ./stageout.sh ${logbase}.root ${outdir} ${dbid}
 ./stageout.sh ${logbase}.root ${outdir} ${dbid}
@@ -44,7 +43,7 @@ for hfile in HIST_*.root; do
     ./stageout.sh ${hfile} ${histdir}
 done
 
-ls -la
+echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
+. ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
 
-echo done
 exit ${status_f4a:-1}

@@ -1,0 +1,8 @@
+# This file lists the active production steering files for the master cron job.
+# One full path per line. Lines starting with # are ignored.
+
+/sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3auau/run3auau_production.yaml
+/sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3pp/run3pp_production.yaml
+/sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3oo/run3oo_production.yaml
+/sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run2pp/run2pp_production.yaml
+/sphenix/u/sphnxpro/mainkolja/ProdFlow/short/run3cosmics/run3cosmics_production.yaml

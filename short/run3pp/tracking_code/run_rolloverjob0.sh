@@ -46,25 +46,13 @@ stump=${stump}.root   # Restore .root
 root_line="Fun4All_RolloverJob0.C(${nevents},${run},\"${outdir}\",\"${stump}\",${neventsper},${startseg},\"${dbtag}\",\"infile.list\",\"${histdir}\")"
 full_command="root.exe -q -b '${root_line}'"
 
-echo "--- Executing macro"
-echo "${full_command}"
-eval "${full_command}" ;  status_f4a=$?
+echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
+. ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
 
-ls -la
+## Stage out histos etc. here
 
-# echo ./stageout.sh ${logbase}.root ${outdir}
-# ./stageout.sh ${logbase}.root ${outdir}
-
-# for hfile in HIST_*.root; do
-#     echo stageout.sh ${hfile} to ${histdir}
-#     ./stageout.sh ${hfile} ${histdir}
-# done
-
-ls -la
-
-echo All done
-
-python ${SPHENIXPROD_SCRIPT_PATH}/sphenixdbutils.py jobended --exit-code ${status_f4a:-1}
+echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
+. ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
 
 exit ${status_f4a:-1}
 

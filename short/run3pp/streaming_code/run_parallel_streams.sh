@@ -4,7 +4,6 @@
 echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_prep.sh
 . ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_prep.sh
 echo "Initialization done; back in $0"
-##
 
 echo "---------------------------------------------"
 echo "Running streaming eventcombine for run ${run} on ${daqhost}"
@@ -24,7 +23,6 @@ if [[ $# != 1 ]] ; then
     echo "Multiple or no GL1 files found:" >&2
     ls -l `echo $@`                        >&2
     echo Stop.                             >&2
-    # ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e 111 --nevents 0 --inc 
     exit 111
 fi
 gl1file=$1
@@ -39,7 +37,6 @@ if [[ $# != 1 ]] ; then
     echo "Multiple or not enough .list files found:"     >&2
     ls -l `echo $@`                        >&2
     echo Stop.                             >&2
-    # ./cups.py -v -r ${runnumber} -s ${segment} -d ${outbase} finished -e 111 --nevents 0 --inc 
     exit 111
 fi
 [[ $1 == *intt* ]] && inttfile=$1
@@ -60,8 +57,8 @@ echo "--- Executing macro"
 root_line="Fun4All_SingleStream_Combiner.C(${nevents},${run},\"${outdir}\",\"${histdir}\",\"${outbase}\",${neventsper},\"${dbtag}\",\"${gl1file}\",\"${ebdcfile}\",\"${inttfile}\",\"${mvtxfile}\",\"${tpotfile}\");"
 full_command="root.exe -q -b '${root_line}'"
 
-echo "${full_command}"
-eval "${full_command}" ;  status_f4a=$?
+echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
+. ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_exec.sh
 
 shopt -s nullglob
 for hfile in HIST_*.root; do
@@ -72,14 +69,9 @@ for cfile in CALIB_*.root; do
     echo ./stageout ${cfile} to ${histdir}
     ./stageout.sh ${cfile} ${histdir}
 done
-
 shopt -u nullglob
 
-# There should be no output files hanging around  (TODO add number of root files to exit code)
-ls -la 
-
-echo "All done"
-
-python ${SPHENIXPROD_SCRIPT_PATH}/sphenixdbutils.py jobended --exit-code ${status_f4a:-1}
+echo Sourcing ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
+. ${SPHENIXPROD_SCRIPT_PATH}/common_runscript_finish.sh
 
 exit ${status_f4a:-1}

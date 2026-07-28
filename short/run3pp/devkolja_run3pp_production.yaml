@@ -1,0 +1,27 @@
+
+################################# devkolja dev test ###############################
+sphnxprod03:
+  defaultlocations:
+    submitdir:  /sphenix/data/data02/sphnxpro/production/run3pp/submission/{rule}
+    prodbase:   /sphenix/u/sphnxpro/devkolja/sphenixprod
+    configbase: /sphenix/u/sphnxpro/devkolja/ProdFlow/short/run3pp
+
+  # STREAMING physics
+  v666_STREAMING_EVENT_run3pp:
+    config: v666_ppstreaming_physics_ana532.yaml
+    runs: [79570 79670]
+    jobprio: 90
+    submit: on
+    dstspider: on
+    finishmon: off
+
+  # TRKR_CLUSTER physics
+  v666_TRKR_CLUSTER_run3pp:
+    config: v666_pptracking_from532_physics_ana534_2025p009_v001.yaml
+    runs: [79570 79670]
+    jobprio: 60
+    submit: on
+    dstspider: off
+    finishmon: off
+
+###############################################################################
