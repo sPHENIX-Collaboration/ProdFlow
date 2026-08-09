@@ -107,7 +107,7 @@ void Fun4All_JobA(
   //note: these are designed to be used only if static corrections are also applied
   G4TPC::ENABLE_AVERAGE_CORRECTIONS = false;
   G4TPC::USE_PHI_AS_RAD_AVERAGE_CORRECTIONS = false;
-  G4TPC::average_correction_filename = CDBInterface::instance()->getUrl("TPC_LAMINATION_FIT_CORRECTION");
+  G4TPC::average_correction_filename = CDBInterface::instance()->getUrl("Tpc_Average_Correction");
 
   
   TrackingInit();
