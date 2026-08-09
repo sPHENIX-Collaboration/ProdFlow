@@ -1,0 +1,194 @@
+#
+#FileCatalog=# select dataset,dsttype,count(filename),sum(events) from datasets where dsttype='DST_CALOFITTING_run2pp' group by dataset,dsttype;
+#     dataset     |        dsttype         | count  |     sum     
+#-----------------+------------------------+--------+-------------
+# ana451_2024p009 | DST_CALOFITTING_run2pp |  50343 |  4976087047
+# ana446_2024p007 | DST_CALOFITTING_run2pp | 148286 | 14632177735
+#(2 rows)
+
+# Downstream products
+DST_CALO_run2pp_new_2024p010:
+   params:
+     name:       DST_CALO_run2pp
+     build:      ana.462
+     build_name: ana462
+     dbtag:      2024p010
+     version :   2
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
+     script  :   runy2calib.sh
+     payload :   ./ProdFlow/run2pp/CaloProduction/
+     mem     :   4096MB
+     neventsper: 50000
+     rsync  : "./ProdFlow/run2pp/CaloProduction/*,cups.py,bachi.py,odbc.ini"
+
+   input:
+     db: filecatalog
+     query: |-
+         select 
+                'filecatalog/datasets'                                  as source      , 
+                runnumber                                                              , 
+                segment                                                                ,
+                filename                                                as files       ,
+                filename || ':' || 0 || ':' || events                   as fileranges 
+         from  
+                datasets
+         where 
+                dataset='ana472_2024p010_v001' and dsttype='DST_CALOFITTING_run2pp'
+                {run_condition}
+
+                 and runnumber<=53880
+           
+         {limit_condition}
+
+         ;
+   job:
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '3900'
+
+
+# Downstream products
+DST_JETS_run2pp_new_2024p010:
+   params:
+     name:       DST_JETS_run2pp
+     build:      ana.462
+     build_name: ana462
+     dbtag:      2024p010
+     version : 1
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
+     script  :   runjets.sh
+     payload :   ./ProdFlow/run2pp/JetProduction/
+     mem     :   2096MB
+     neventsper: 50000
+     rsync  : "./ProdFlow/run2pp/JetProduction/*,cups.py,bachi.py,odbc.ini"
+
+   input:
+     db: filecatalog
+     query: |-
+         select 
+                'filecatalog/datasets'                                  as source      , 
+                runnumber                                                              , 
+                segment                                                                ,
+                filename                                                as files       ,
+                'X'                   as fileranges 
+         from  
+                datasets
+         where 
+                filename like 'DST_CALO_run2pp_ana462_2024p010%'
+                {run_condition}
+                and runnumber>53880
+           
+         {limit_condition}
+
+         ;
+   job:
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '3900'
+
+
+
+
+# Downstream products
+DST_JETCALO_run2pp_ana462_2024p010:
+   params:
+     name:       DST_JETCALO_run2pp
+     build:      ana.462
+     build_name: ana462
+     dbtag:      2024p010
+     version:    2
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
+     script  :   runy2jetskim.sh
+     payload :   ./ProdFlow/run2pp/JetProduction/
+     mem     :   4096MB
+     neventsper: 50000
+     rsync  : "./ProdFlow/run2pp/JetProduction/*,cups.py"
+
+   input:
+     db: filecatalog
+     query: |-
+         select
+                'filecatalog/datasets'                                  as source      ,
+                runnumber                                                              ,
+                segment                                                                ,
+                filename                                                as files       ,
+                filename || ':' || 0 || ':' || events                   as fileranges
+         from
+                datasets
+         where
+                dataset='ana462_2024p010_v001' and dsttype='DST_CALOFITTING_run2pp'
+                {run_condition}
+
+                 and runnumber<=53880
+
+         {limit_condition}
+
+         ;
+   job:
+     arguments             : "$(nevents) {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '3900'
+
+
+
+
+
+# Downstream products
+DST_CALOFITTING_run2pp_ana468_2024p012:
+   params:
+     name:       DST_CALOFITTING_run2pp
+     nevents:    0
+     build:      ana.468
+     build_name: ana468
+     dbtag:      2024p012
+     version : 1
+     logbase :   $(name)_$(build)_$(tag)_$(version)-$INT(run,{RUNFMT})-$INT(seg,{SEGFMT})
+     outbase :   $(name)_$(build)_$(tag)_$(version)
+     script  :   runy2fitting.sh
+     payload :   ./ProdFlow/run2pp/CaloProduction/
+     mem     :   1024MB
+     neventsper: 50000
+     rsync  : "./ProdFlow/run2pp/CaloProduction/*,cups.py"
+
+   input:
+     db: filecatalog
+     query: |-
+         select 
+                'filecatalog/datasets'                                  as source      , 
+                runnumber                                                              , 
+                segment                                                                ,
+                filename                                                as files       ,
+                filename || ':' || 0 || ':' || events                   as fileranges 
+         from  
+                datasets
+         where 
+                filename like 'DST_TRIGGERED_EVENT_run2pp_ana462_nocdbtag%'
+                {run_condition}
+
+                 and runnumber<=53880
+           
+         {limit_condition}
+
+         ;
+   job:
+     arguments             : "{nevents} {outbase} {logbase} $(run) $(seg) $(outdir) $(buildarg) $(tag) $(inputs) $(ranges) {neventsper} {logdir} {histdir} {PWD} {rsync}"
+     output_destination    : '{logdir}'
+     log                   : '{condor}/{logbase}.condor'
+     accounting_group      : "group_sphenix.mdc2"
+     accounting_group_user : "sphnxpro"
+     priority : '3900'
+
+
+
